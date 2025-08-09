@@ -30,7 +30,6 @@ fun AppNavigation() {
 
 }
 
-
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
