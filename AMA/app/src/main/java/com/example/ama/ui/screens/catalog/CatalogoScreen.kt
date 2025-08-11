@@ -60,7 +60,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 
 import androidx.compose.foundation.layout.Box
-
+import androidx.compose.material.icons.automirrored.outlined.ViewList
 
 
 // ------------------------------------------------------------------------------------
@@ -127,7 +127,7 @@ fun CatalogScreen(
                     // Cambiar lista <-> grilla
                     IconButton(onClick = { onToggleLayout(!isGrid) }) {
                         Icon(
-                            imageVector = if (isGrid) Icons.Outlined.ViewList else Icons.Outlined.GridView,
+                            imageVector = if (isGrid) Icons.AutoMirrored.Outlined.ViewList else Icons.Outlined.GridView,
                             contentDescription = if (isGrid) "Ver en lista" else "Ver en cuadrícula"
                         )
                     }
@@ -403,8 +403,6 @@ fun ProductCard(
 // ------------------------------------------------------------------------------------
 @Composable
 fun CatalogScreenPreview() {
-    val listState = rememberLazyListState()
-    val gridState = rememberLazyGridState()
     val sample = listOf(
         Product("1","Bufanda de lana tejida a mano",15000.0,"","Juana Pérez", true,3,"RM", ProductType.TEXTIL),
         Product("2","Juego de cerámica pintado a mano",25000.0,"","Cristóbal Elte", true,1,"Valparaíso", ProductType.CERAMICA)
@@ -438,13 +436,14 @@ fun CatalogScreenPreview() {
      @OptIn(ExperimentalMaterial3Api::class)
      @Composable
      fun <T> MultiSelectDropdown(
+         modifier: Modifier = Modifier,
          label: String,
          items: List<T>,
          selected: Set<T>,
          onToggle: (T) -> Unit,
          onSelectAll: (Boolean) -> Unit,        // true = seleccionar todos, false = limpiar
          itemLabel: (T) -> String = { it.toString() },
-         modifier: Modifier = Modifier
+
      ) {
          var expanded by remember { mutableStateOf(false) }
 
