@@ -7,13 +7,18 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
+
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.GridView
+import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.ShoppingCart
 import androidx.compose.material.icons.outlined.ViewList
 import androidx.compose.material3.Badge
@@ -22,16 +27,21 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,16 +49,25 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.ama.R
 import java.text.NumberFormat
 import java.util.Locale
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+
+import androidx.compose.foundation.layout.Box
+
+
 
 // ------------------------------------------------------------------------------------
 // Modelo (incluye autor y disponibilidad para cumplir HU 31)
 // ------------------------------------------------------------------------------------
+enum class ProductType { TEXTIL, MADERA, CERAMICA, OTRO }
+
 data class Product(
     val id: String,
     val name: String,
@@ -56,9 +75,10 @@ data class Product(
     val imageUrl: String,
     val author: String,
     val isActive: Boolean = true,
-    val stock: Int = 1
+    val stock: Int = 1,
+    val region: String,             // 👈 Región (ej. "RM", "Biobío", etc.)
+    val type: ProductType           // 👈 Tipo (TEXTIL/MADERA/CERAMICA/OTRO)
 )
-
 // ------------------------------------------------------------------------------------
 // Pantalla Catálogo
 // - Toggle lista/grilla
@@ -70,19 +90,35 @@ data class Product(
 @Composable
 fun CatalogScreen(
     products: List<Product>,
+    cartCount: Int,
+    snackbarHostState: SnackbarHostState,
     onAddToCart: (Product) -> Unit,
     onViewDetail: (Product) -> Unit,
-    cartCount: Int = 0,
-    snackbarHostState: SnackbarHostState = SnackbarHostState(),
-    // layout & scroll (provistos por la Route)
+
+    // layout
     isGrid: Boolean,
     onToggleLayout: (Boolean) -> Unit,
     listState: LazyListState,
     gridState: LazyGridState,
-    // filtro HU31
+
+    // “Solo disponibles”
     onlyAvailable: Boolean,
-    onToggleOnlyAvailable: (Boolean) -> Unit
-) {
+    onToggleOnlyAvailable: (Boolean) -> Unit,
+
+    // búsqueda
+    query: String,
+    onQueryChange: (String) -> Unit,
+
+    // filtros
+    availableRegions: List<String>,
+    selectedRegions: Set<String>,
+    onToggleRegion: (String) -> Unit,
+
+    availableTypes: List<ProductType>,
+    selectedTypes: Set<ProductType>,
+    onToggleType: (ProductType) -> Unit
+)
+ {
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -98,15 +134,9 @@ fun CatalogScreen(
 
                     // Switch "Solo disponibles"
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text(
-                            text = "Solo disp.",
-                            style = MaterialTheme.typography.labelMedium
-                        )
+                        Text(text = "Solo disp.", style = MaterialTheme.typography.labelMedium)
                         Spacer(Modifier.width(6.dp))
-                        Switch(
-                            checked = onlyAvailable,
-                            onCheckedChange = onToggleOnlyAvailable
-                        )
+                        Switch(checked = onlyAvailable, onCheckedChange = onToggleOnlyAvailable)
                     }
                     Spacer(Modifier.width(8.dp))
 
@@ -123,53 +153,129 @@ fun CatalogScreen(
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { padding ->
 
-        if (isGrid) {
-            // ---------- CUADRÍCULA (responsive) ----------
-            LazyVerticalGrid(
-                columns = GridCells.Adaptive(minSize = 160.dp),
-                state = gridState,
+        Column(
+            modifier = Modifier
+                .padding(padding)
+                .fillMaxSize()
+        ) {
+            // ===== Encabezado: Buscador + Filtros =====
+            Column(
                 modifier = Modifier
-                    .padding(padding)
-                    .fillMaxSize(),
-                contentPadding = PaddingValues(12.dp),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                items(products, key = { it.id }) { p ->
-                    ProductCard(
-                        product = p,
-                        onAddToCart = onAddToCart,
-                        onViewDetail = onViewDetail
-                    )
+                // BUSCADOR
+                OutlinedTextField(
+                    value = query,                          // <- viene de props
+                    onValueChange = onQueryChange,          // <- viene de props
+                    modifier = Modifier.fillMaxWidth(),
+                    placeholder = { Text("Buscar artesanía…") },
+                    singleLine = true,
+                    leadingIcon = { Icon(Icons.Outlined.Search, contentDescription = null) },
+                    trailingIcon = {
+                        if (query.isNotBlank()) {
+                            IconButton(onClick = { onQueryChange("") }) {
+                                Icon(Icons.Outlined.Close, contentDescription = "Limpiar")
+                            }
+                        }
+                    }
+                )
+
+                // FILTROS: Regiones
+                MultiSelectDropdown(
+                    label = "Región",
+                    items = availableRegions,
+                    selected = selectedRegions,
+                    onToggle = onToggleRegion,
+                    onSelectAll = { selectAll ->
+                        if (selectAll) {
+                            availableRegions.forEach { if (it !in selectedRegions) onToggleRegion(it) }
+                        } else {
+                            selectedRegions.toList().forEach { onToggleRegion(it) }
+                        }
+                    },
+                    itemLabel = { it }
+                )
+
+                Spacer(Modifier.height(8.dp))
+
+                MultiSelectDropdown(
+                    label = "Tipo de producto",
+                    items = availableTypes,
+                    selected = selectedTypes,
+                    onToggle = onToggleType,
+                    onSelectAll = { selectAll ->
+                        if (selectAll) {
+                            availableTypes.forEach { if (it !in selectedTypes) onToggleType(it) }
+                        } else {
+                            selectedTypes.toList().forEach { onToggleType(it) }
+                        }
+                    },
+                    itemLabel = {
+                        when (it) {
+                            ProductType.TEXTIL   -> "Textil"
+                            ProductType.MADERA   -> "Madera"
+                            ProductType.CERAMICA -> "Cerámica"
+                            ProductType.OTRO     -> "Otro"
+                        }
+                    }
+                )
+
+            // ===== Resultados =====
+            if (products.isEmpty()) {
+                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text("No se encontraron productos con ese nombre")
                 }
-            }
-        } else {
-            // ---------- LISTA ----------
-            LazyColumn(
-                state = listState,
-                modifier = Modifier
-                    .padding(padding)
-                    .fillMaxSize(),
-                contentPadding = PaddingValues(12.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                items(products, key = { it.id }) { p ->
-                    ProductItem(
-                        product = p,
-                        onAddToCart = onAddToCart,
-                        onViewDetail = onViewDetail
-                    )
+            } else {
+                if (isGrid) {
+                    LazyVerticalGrid(
+                        columns = GridCells.Adaptive(minSize = 160.dp),
+                        state = gridState,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(horizontal = 12.dp),
+                        contentPadding = PaddingValues(bottom = 12.dp),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        items(products, key = { it.id }) { p ->
+                            ProductCard(
+                                product = p,
+                                onAddToCart = onAddToCart,
+                                onViewDetail = onViewDetail
+                            )
+                        }
+                    }
+                } else {
+                    LazyColumn(
+                        state = listState,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(horizontal = 12.dp),
+                        contentPadding = PaddingValues(bottom = 12.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        items(products, key = { it.id }) { p ->
+                            ProductItem(
+                                product = p,
+                                onAddToCart = onAddToCart,
+                                onViewDetail = onViewDetail
+                            )
+                        }
+                    }
                 }
             }
         }
     }
-}
+    }
+ }
 
 // ------------------------------------------------------------------------------------
 // Tarjeta "grande" para vista de lista
 // ------------------------------------------------------------------------------------
 @Composable
-private fun ProductItem(
+fun ProductItem(
     product: Product,
     onAddToCart: (Product) -> Unit,
     onViewDetail: (Product) -> Unit
@@ -235,11 +341,12 @@ private fun ProductItem(
     }
 }
 
+
 // ------------------------------------------------------------------------------------
 // Tarjeta "compacta" para vista de grilla
 // ------------------------------------------------------------------------------------
 @Composable
-private fun ProductCard(
+fun ProductCard(
     product: Product,
     onAddToCart: (Product) -> Unit,
     onViewDetail: (Product) -> Unit
@@ -290,21 +397,112 @@ private fun ProductCard(
     }
 }
 
+
 // ------------------------------------------------------------------------------------
 // Preview básico (solo UI)
 // ------------------------------------------------------------------------------------
-@Preview(showBackground = true, widthDp = 360)
 @Composable
-private fun CatalogPreview() {
+fun CatalogScreenPreview() {
+    val listState = rememberLazyListState()
+    val gridState = rememberLazyGridState()
     val sample = listOf(
-        Product("1", "Bufanda de lana tejida a mano", 15000.0, "", "Juana Pérez"),
-        Product("2", "Juego de cerámica pintado a mano", 25000.0, "", "Cristóbal Elte")
+        Product("1","Bufanda de lana tejida a mano",15000.0,"","Juana Pérez", true,3,"RM", ProductType.TEXTIL),
+        Product("2","Juego de cerámica pintado a mano",25000.0,"","Cristóbal Elte", true,1,"Valparaíso", ProductType.CERAMICA)
     )
+    val snackbar = remember { SnackbarHostState() }
     MaterialTheme {
-        // Para el preview fijo usamos lista; en tu app real los estados vienen de la Route
-        // y el ViewModel.
-        // (No pasamos listState/gridState aquí para mantener el preview simple)
-        // Puedes crear una versión @Preview específica de la Route si lo prefieres.
-        // Este preview es solo ilustrativo del look & feel.
+        CatalogScreen(
+            products = sample,
+            cartCount = 2,
+            snackbarHostState = snackbar,
+            onAddToCart = {},
+            onViewDetail = {},
+            isGrid = true,
+            onToggleLayout = {},
+            listState = LazyListState(0,0),
+            gridState = LazyGridState(),
+            onlyAvailable = true,
+            onToggleOnlyAvailable = {},
+            query = "",
+            onQueryChange = {},
+            availableRegions = listOf("Araucanía","Biobío","RM","Valparaíso"),
+            selectedRegions = emptySet(),
+            onToggleRegion = {},
+            availableTypes = ProductType.entries,
+            selectedTypes = emptySet(),
+            onToggleType = {}
+        )
     }
-}
+  }
+
+     @OptIn(ExperimentalMaterial3Api::class)
+     @Composable
+     fun <T> MultiSelectDropdown(
+         label: String,
+         items: List<T>,
+         selected: Set<T>,
+         onToggle: (T) -> Unit,
+         onSelectAll: (Boolean) -> Unit,        // true = seleccionar todos, false = limpiar
+         itemLabel: (T) -> String = { it.toString() },
+         modifier: Modifier = Modifier
+     ) {
+         var expanded by remember { mutableStateOf(false) }
+
+         ExposedDropdownMenuBox(
+             expanded = expanded,
+             onExpandedChange = { expanded = !expanded },
+             modifier = modifier
+         ) {
+             OutlinedTextField(
+                 readOnly = true,
+                 value = when {
+                     selected.isEmpty()            -> "Ninguno"
+                     selected.size == items.size   -> "Todos"
+                     else -> selected.joinToString(", ") { itemLabel(it) }
+                 },
+                 onValueChange = {},
+                 label = { Text(label) },
+                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
+                 modifier = Modifier
+                     .menuAnchor()
+                     .fillMaxWidth()
+             )
+
+             ExposedDropdownMenu(
+                 expanded = expanded,
+                 onDismissRequest = { expanded = false },
+             ) {
+                 // Seleccionar todos / Limpiar
+                 DropdownMenuItem(
+                     text = {
+                         Text(if (selected.size == items.size) "Limpiar selección" else "Seleccionar todos")
+                     },
+                     onClick = {
+                         val selectAll = selected.size != items.size
+                         onSelectAll(selectAll)
+                     }
+                 )
+
+                 HorizontalDivider()
+
+                 // Items con checkbox
+                 items.forEach { item ->
+                     val checked = item in selected
+                     DropdownMenuItem(
+                         text = {
+                             Row(verticalAlignment = Alignment.CenterVertically) {
+                                 Checkbox(checked = checked, onCheckedChange = null)
+                                 Spacer(Modifier.width(8.dp))
+                                 Text(itemLabel(item))
+                             }
+                         },
+                         onClick = { onToggle(item) } // dejamos abierto para multiselección
+                     )
+                 }
+             }
+         }
+     }
+
+
+
+

@@ -5,7 +5,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.*
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
@@ -20,45 +19,54 @@ import androidx.compose.runtime.LaunchedEffect
 
 @Composable
 fun CatalogRoute(
-    onViewDetail: (String) -> Unit,
-    vm: CatalogViewModel
+    vm: CatalogViewModel,
+    onViewDetail: (String) -> Unit
 ) {
-    val products   by vm.products.collectAsStateWithLifecycle()
-    val cartCount  by vm.cartCount.collectAsStateWithLifecycle()
-    val onlyAvail  by vm.onlyAvailable.collectAsStateWithLifecycle() // si lo usas
-
-    LaunchedEffect(Unit) { vm.refresh() }
+    val products       by vm.products.collectAsStateWithLifecycle()
+    val cartCount      by vm.cartCount.collectAsStateWithLifecycle()
+    val onlyAvail      by vm.onlyAvailable.collectAsStateWithLifecycle()
+    val query          by vm.query.collectAsStateWithLifecycle()
+    val selectedRegs   by vm.regions.collectAsStateWithLifecycle()
+    val selectedTypes  by vm.types.collectAsStateWithLifecycle()
 
     val snackbar = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
+    // layout y estados de scroll
     var isGrid by remember { mutableStateOf(true) }
     val listState = rememberLazyListState()
     val gridState = rememberLazyGridState()
 
-    LaunchedEffect(products.size, isGrid) {
-        snapshotFlow {
-            if (isGrid) gridState.layoutInfo.visibleItemsInfo.lastOrNull()?.index
-            else listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index
-        }
-            .filterNotNull()
-            .distinctUntilChanged()
-            .collect { last ->
-                if (last >= products.lastIndex - 2) vm.loadMore()
-            }
-    }
+    LaunchedEffect(Unit) { vm.refresh() }
 
     CatalogScreen(
+        // datos y acciones básicas
         products = products,
         cartCount = cartCount,
         snackbarHostState = snackbar,
         onAddToCart = { p -> scope.launch { vm.addToCart(p); snackbar.showSnackbar("Agregado") } },
         onViewDetail = { p -> onViewDetail(p.id) },
+
+        // layout
         isGrid = isGrid,
         onToggleLayout = { isGrid = it },
         listState = listState,
         gridState = gridState,
+
+        // switch “Solo disponibles”
         onlyAvailable = onlyAvail,
-        onToggleOnlyAvailable = { vm.setOnlyAvailable(it) } // si lo mantienes
+        onToggleOnlyAvailable = { vm.setOnlyAvailable(it) },
+
+        // 🔎 búsqueda + filtros
+        query = query,
+        onQueryChange = { vm.setQuery(it) },
+
+        availableRegions = vm.availableRegions,
+        selectedRegions = selectedRegs,
+        onToggleRegion = { r -> vm.toggleRegion(r) },
+
+        availableTypes = vm.availableTypes,      // << te faltaba
+        selectedTypes = selectedTypes,           // << te faltaba
+        onToggleType = { t -> vm.toggleType(t) } // << te faltaba
     )
 }

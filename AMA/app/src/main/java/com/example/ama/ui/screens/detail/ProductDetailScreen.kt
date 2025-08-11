@@ -20,8 +20,7 @@ import java.text.NumberFormat
 import java.util.Locale
 import com.example.ama.R
 import androidx.compose.ui.res.painterResource
-
-
+import com.example.ama.ui.screens.catalog.ProductType
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -94,6 +93,16 @@ fun ProductDetailScreen(
                 text = description ?: "Artesanía hecha a mano por personas mayores. Pieza única con valor cultural.",
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.Normal
+            )
+            Text("Región: ${product.region}", style = MaterialTheme.typography.bodyMedium)
+            Text(
+                "Tipo: " + when(product.type) {
+                    ProductType.TEXTIL -> "Textil"
+                    ProductType.MADERA -> "Madera"
+                    ProductType.CERAMICA -> "Cerámica"
+                    ProductType.OTRO -> "Otro"
+                },
+                style = MaterialTheme.typography.bodyMedium
             )
 
             Spacer(Modifier.weight(1f))
