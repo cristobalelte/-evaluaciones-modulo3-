@@ -3,5 +3,20 @@
     <string name="catalog_title">Catálogo de productos</string>
     <string name="add_to_cart">Agregar al carrito</string>
     <string name="view_detail">Ver detalle</string>
+    <string name="pop_back">back_pop</string>
+    <string name="app_description">description_app</string>
+    <string name="Textil_prod">prod_Textil</string>
+    <string name="Madera_prod">prod_Madera</string>
+    <string name="Ceramica_prod">prod_Ceramica</string>
+    <string name="Otro_prod">prod_Otro</string>
+    <string name="Buscar_prod">prod_Buscar</string>
+    <string name="Region_prod">prod_Region</string>
+    <string name="Tipo_producto">producto_Tipo</string>
+    <string name="No_encontrado_prod">prod_No_encontrado</string>
+    <string name="Bufanda_amano">amano_Bufanda</string>
+    <string name="Ceramica_amano">amano_Ceramica</string>
+    <string name="Limpiar_seleccion">seleccion_Limpiar</string>
+    <string name="Sel_todos">todos_Sel</string>
+    <string name="Limpiar_campo">campo_Limpiar</string>
 
 </resources>

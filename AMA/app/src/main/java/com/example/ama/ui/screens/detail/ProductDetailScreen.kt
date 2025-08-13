@@ -20,6 +20,7 @@ import java.text.NumberFormat
 import java.util.Locale
 import com.example.ama.R
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import com.example.ama.ui.screens.catalog.ProductType
 
 
@@ -41,7 +42,7 @@ fun ProductDetailScreen(
                 title = { Text(product.name, maxLines = 1) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.Filled.ArrowBack, contentDescription = "Volver")
+                        Icon(Icons.Filled.ArrowBack, contentDescription = stringResource(R.string.pop_back))
                     }
                 }
             )
@@ -90,17 +91,17 @@ fun ProductDetailScreen(
 
             // Descripción (si te la pasan; si no, un texto amigable)
             Text(
-                text = description ?: "Artesanía hecha a mano por personas mayores. Pieza única con valor cultural.",
+                text = description ?: stringResource(R.string.app_description),
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.Normal
             )
             Text("Región: ${product.region}", style = MaterialTheme.typography.bodyMedium)
             Text(
                 "Tipo: " + when(product.type) {
-                    ProductType.TEXTIL -> "Textil"
-                    ProductType.MADERA -> "Madera"
-                    ProductType.CERAMICA -> "Cerámica"
-                    ProductType.OTRO -> "Otro"
+                    ProductType.TEXTIL -> stringResource(R.string.Textil_prod)
+                    ProductType.MADERA -> stringResource(R.string.Madera_prod)
+                    ProductType.CERAMICA -> stringResource(R.string.Ceramica_prod)
+                    ProductType.OTRO -> stringResource(R.string.Otro_prod)
                 },
                 style = MaterialTheme.typography.bodyMedium
             )
@@ -114,7 +115,7 @@ fun ProductDetailScreen(
             ) {
                 Icon(Icons.Outlined.ShoppingCart, contentDescription = null)
                 Spacer(Modifier.width(8.dp))
-                Text("Agregar al carrito")
+                Text(stringResource(R.string.add_to_cart))
             }
         }
     }

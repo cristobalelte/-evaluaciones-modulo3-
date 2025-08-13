@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">AMA</string>
+    <string name="catalog_title">Product catalog</string>
+    <string name="add_to_cart">Add to cart</string>
+    <string name="view_detail">See detail</string>
+    <string name="pop_back">Return</string>
+    <string name="app_description">Handmade by seniors. A unique piece with cultural value.</string>
+    <string name="Textil_prod">Textile</string>
+    <string name="Madera_prod">Wood</string>
+    <string name="Ceramica_prod">Ceramics</string>
+    <string name="Otro_prod">Other</string>
+    <string name="Buscar_prod">Search crafts…</string>
+    <string name="Region_prod">Region</string>
+    <string name="Tipo_producto">Product type</string>
+    <string name="No_encontrado_prod">No products were found with that name</string>
+    <string name="Bufanda_amano">Hand-knitted wool scarf</string>
+    <string name="Ceramica_amano">Hand-painted ceramic set</string>
+    <string name="Limpiar_seleccion">Clear selection</string>
+    <string name="Sel_todos">Select all</string>
+    <string name="Limpiar_campo">Clean</string>
+</resources>

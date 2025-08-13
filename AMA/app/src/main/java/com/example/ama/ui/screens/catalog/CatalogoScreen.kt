@@ -164,13 +164,13 @@ fun CatalogScreen(
                     value = query,                          // <- viene de props
                     onValueChange = onQueryChange,          // <- viene de props
                     modifier = Modifier.fillMaxWidth(),
-                    placeholder = { Text("Buscar artesanía…") },
+                    placeholder = { Text(stringResource(id = R.string.Buscar_prod)) },
                     singleLine = true,
                     leadingIcon = { Icon(Icons.Outlined.Search, contentDescription = null) },
                     trailingIcon = {
                         if (query.isNotBlank()) {
                             IconButton(onClick = { onQueryChange("") }) {
-                                Icon(Icons.Outlined.Close, contentDescription = "Limpiar")
+                                Icon(Icons.Outlined.Close, contentDescription = stringResource(id = R.string.Limpiar_campo))
                             }
                         }
                     }
@@ -178,7 +178,7 @@ fun CatalogScreen(
 
                 // FILTROS: Regiones
                 MultiSelectDropdown(
-                    label = "Región",
+                    label = stringResource(id = R.string.Region_prod),
                     items = availableRegions,
                     selected = selectedRegions,
                     onToggle = onToggleRegion,
@@ -195,7 +195,7 @@ fun CatalogScreen(
                 Spacer(Modifier.height(8.dp))
 
                 MultiSelectDropdown(
-                    label = "Tipo de producto",
+                    label = stringResource(id = R.string.Tipo_producto),
                     items = availableTypes,
                     selected = selectedTypes,
                     onToggle = onToggleType,
@@ -219,7 +219,7 @@ fun CatalogScreen(
             // ===== Resultados =====
             if (products.isEmpty()) {
                 Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text("No se encontraron productos con ese nombre")
+                    Text(stringResource(R.string.No_encontrado_prod))
                 }
             } else {
                 if (isGrid) {
@@ -396,8 +396,8 @@ fun ProductCard(
 @Composable
 fun CatalogScreenPreview() {
     val sample = listOf(
-        Product("1","Bufanda de lana tejida a mano",15000.0,"","Juana Pérez", true,3,"RM", ProductType.TEXTIL),
-        Product("2","Juego de cerámica pintado a mano",25000.0,"","Cristóbal Elte", true,1,"Valparaíso", ProductType.CERAMICA)
+        Product("1",stringResource(R.string.Bufanda_amano),15000.0,"","Juana Pérez", true,3,"RM", ProductType.TEXTIL),
+        Product("2",stringResource(R.string.Ceramica_amano),25000.0,"","Cristóbal Elte", true,1,"Valparaíso", ProductType.CERAMICA)
     )
     val snackbar = remember { SnackbarHostState() }
     MaterialTheme {
@@ -467,7 +467,7 @@ fun CatalogScreenPreview() {
                  // Seleccionar todos / Limpiar
                  DropdownMenuItem(
                      text = {
-                         Text(if (selected.size == items.size) "Limpiar selección" else "Seleccionar todos")
+                         Text(if (selected.size == items.size) stringResource(R.string.Limpiar_seleccion) else stringResource(R.string.Sel_todos))
                      },
                      onClick = {
                          val selectAll = selected.size != items.size
