@@ -58,9 +58,7 @@ import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
-
 import androidx.compose.foundation.layout.Box
-import androidx.compose.material.icons.automirrored.outlined.ViewList
 
 
 // ------------------------------------------------------------------------------------
@@ -94,13 +92,12 @@ fun CatalogScreen(
     snackbarHostState: SnackbarHostState,
     onAddToCart: (Product) -> Unit,
     onViewDetail: (Product) -> Unit,
-
+    onOpenCart: () -> Unit,
     // layout
     isGrid: Boolean,
     onToggleLayout: (Boolean) -> Unit,
     listState: LazyListState,
     gridState: LazyGridState,
-
     // “Solo disponibles”
     onlyAvailable: Boolean,
     onToggleOnlyAvailable: (Boolean) -> Unit,
@@ -125,12 +122,15 @@ fun CatalogScreen(
                 title = { Text(stringResource(id = R.string.catalog_title)) },
                 actions = {
                     // Cambiar lista <-> grilla
-                    IconButton(onClick = { onToggleLayout(!isGrid) }) {
-                        Icon(
-                            imageVector = if (isGrid) Icons.AutoMirrored.Outlined.ViewList else Icons.Outlined.GridView,
-                            contentDescription = if (isGrid) "Ver en lista" else "Ver en cuadrícula"
-                        )
+                    IconButton(onClick = onOpenCart) {
+                        BadgedBox(badge = { if (cartCount > 0) Badge { Text("$cartCount") } }) {
+                            Icon(
+                                imageVector = Icons.Outlined.ShoppingCart,
+                                contentDescription = "Carrito"
+                            )
+                        }
                     }
+
 
                     // Switch "Solo disponibles"
                     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -140,13 +140,7 @@ fun CatalogScreen(
                     }
                     Spacer(Modifier.width(8.dp))
 
-                    // Carrito con badge
-                    BadgedBox(badge = { if (cartCount > 0) Badge { Text("$cartCount") } }) {
-                        Icon(
-                            imageVector = Icons.Outlined.ShoppingCart,
-                            contentDescription = "Carrito"
-                        )
-                    }
+
                 }
             )
         },
@@ -271,9 +265,8 @@ fun CatalogScreen(
     }
  }
 
-// ------------------------------------------------------------------------------------
 // Tarjeta "grande" para vista de lista
-// ------------------------------------------------------------------------------------
+
 @Composable
 fun ProductItem(
     product: Product,
@@ -342,9 +335,8 @@ fun ProductItem(
 }
 
 
-// ------------------------------------------------------------------------------------
-// Tarjeta "compacta" para vista de grilla
-// ------------------------------------------------------------------------------------
+
+// Tarjeta "compacta"
 @Composable
 fun ProductCard(
     product: Product,
@@ -428,7 +420,8 @@ fun CatalogScreenPreview() {
             onToggleRegion = {},
             availableTypes = ProductType.entries,
             selectedTypes = emptySet(),
-            onToggleType = {}
+            onToggleType = {},
+            onOpenCart = {}
         )
     }
   }

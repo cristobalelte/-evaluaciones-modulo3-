@@ -5,22 +5,21 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.*
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.LaunchedEffect
-
+import androidx.navigation.NavController
 
 
 @Composable
 fun CatalogRoute(
     vm: CatalogViewModel,
-    onViewDetail: (String) -> Unit
+    navController: NavController,
+    onViewDetail: (String) -> Unit,
+    onOpenCart: () -> Unit
 ) {
     val products       by vm.products.collectAsStateWithLifecycle()
     val cartCount      by vm.cartCount.collectAsStateWithLifecycle()
@@ -46,7 +45,7 @@ fun CatalogRoute(
         snackbarHostState = snackbar,
         onAddToCart = { p -> scope.launch { vm.addToCart(p); snackbar.showSnackbar("Agregado") } },
         onViewDetail = { p -> onViewDetail(p.id) },
-
+        onOpenCart = { navController.navigate("cart") },
         // layout
         isGrid = isGrid,
         onToggleLayout = { isGrid = it },
