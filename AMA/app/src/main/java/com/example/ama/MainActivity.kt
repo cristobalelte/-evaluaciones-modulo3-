@@ -5,6 +5,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -16,9 +18,19 @@ import com.example.ama.ui.screens.catalog.CatalogViewModel
 import com.example.ama.ui.screens.detail.ProductDetailRoute
 import com.example.ama.ui.screens.carrito.CartRoute
 import com.example.ama.ui.theme.AMATheme
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+        val splashScreen = installSplashScreen()
+        var showSplashScreen = true
+        splashScreen.setKeepOnScreenCondition { showSplashScreen }
+
+        lifecycleScope.launch {
+            delay(2000)
+            showSplashScreen = false
+        }
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
