@@ -7,7 +7,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
-
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyGridState
@@ -319,6 +318,8 @@ fun ProductItem(
             ) {
                 Button(
                     onClick = { onAddToCart(product) },
+                    //Cambio de shape btn agregar al carrito:
+                    shape = MaterialTheme.shapes.medium,
                     modifier = Modifier.weight(1f)
                 ) {
                     Text(text = stringResource(id = R.string.add_to_cart))

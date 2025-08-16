@@ -276,6 +276,7 @@ fun AMATheme(
     MaterialTheme(
         colorScheme = colorScheme,
         typography = AppTypography,
+        shapes = AppShape,
         content = content
     )
 }

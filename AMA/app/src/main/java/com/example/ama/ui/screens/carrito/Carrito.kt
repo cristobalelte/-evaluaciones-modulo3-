@@ -2,6 +2,7 @@ package com.example.ama.ui.screens.carrito
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import com.example.ama.R
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowBack
@@ -11,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.ama.ui.screens.catalog.CatalogViewModel
@@ -42,7 +44,7 @@ fun CartScreen(
                 },
                 actions = {
                     if (items.isNotEmpty()) {
-                        TextButton(onClick = onClear) { Text("Vaciar") }
+                        TextButton(onClick = onClear) { Text(stringResource(R.string.carro_vaciar)) }
                     }
                 }
             )
@@ -64,9 +66,11 @@ fun CartScreen(
                 Button(
                     onClick = onCheckout,
                     enabled = items.isNotEmpty(),
+                    //Cambio de shape btn proceder al pago:
+                    shape = MaterialTheme.shapes.medium,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("Proceder al pago")
+                    Text(stringResource(R.string.pago_proceder))
                 }
             }
         }
@@ -78,7 +82,7 @@ fun CartScreen(
                     .padding(padding),
                 contentAlignment = Alignment.Center
             ) {
-                Text("Tu carrito está vacío")
+                Text(stringResource(R.string.carro_vacio))
             }
         } else {
             LazyColumn(

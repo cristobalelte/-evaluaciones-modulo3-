@@ -18,5 +18,8 @@
     <string name="Limpiar_seleccion">seleccion_Limpiar</string>
     <string name="Sel_todos">todos_Sel</string>
     <string name="Limpiar_campo">campo_Limpiar</string>
+    <string name="pago_proceder">proceder_pago</string>
+    <string name="carro_vacio">vacio_carro</string>
+    <string name="carro_vaciar">vaciar_carro</string>
 
 </resources>

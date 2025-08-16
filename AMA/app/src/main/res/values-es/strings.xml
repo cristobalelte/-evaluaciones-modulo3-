@@ -19,4 +19,7 @@
     <string name="Limpiar_seleccion">Limpiar selección</string>
     <string name="Sel_todos">Seleccionar todos</string>
     <string name="Limpiar_campo">Limpiar</string>
+    <string name="pago_proceder">Proceder al pago</string>
+    <string name="carro_vacio">Tu carrito está vacío</string>
+    <string name="carro_vaciar">Vaciar</string>
 </resources>
