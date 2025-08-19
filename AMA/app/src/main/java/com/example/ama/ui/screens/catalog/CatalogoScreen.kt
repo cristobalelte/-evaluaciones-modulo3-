@@ -193,6 +193,7 @@ fun CatalogScreen(
 
                 Spacer(Modifier.height(8.dp))
 
+                // FILTROS: Tipo de producto
                 MultiSelectDropdown(
                     label = stringResource(id = R.string.Tipo_producto),
                     items = availableTypes,
