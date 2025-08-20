@@ -7,6 +7,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.ama.ui.Login.LoginScreen
 import com.example.ama.ui.screens.carrito.CartRoute
 import com.example.ama.ui.screens.catalog.CatalogRoute
 import com.example.ama.ui.screens.catalog.CatalogViewModel
@@ -19,36 +20,48 @@ fun AppNavigation() {
     // Única instancia de ViewModel compartida
     val vm: CatalogViewModel = viewModel()
 
-    NavHost(navController, startDestination = "catalog") {
+    // en AppNavigation()
+    NavHost(
+        navController = navController,
+        startDestination = "login"   // 👈 ahora parte en login
+    ) {
+        composable("login") {
+            LoginScreen(
+                onLoggedIn = {
+                    navController.navigate("catalog") {
+                        popUpTo("login") { inclusive = true }   // quita login del back stack
+                        launchSingleTop = true
+                    }
+                }
+            )
+        }
 
-        //  Catálogo
         composable("catalog") {
             CatalogRoute(
                 vm = vm,
                 navController = navController,
                 onViewDetail = { id -> navController.navigate("detail/$id") },
-                onOpenCart = { navController.navigate("cart") }
+                onOpenCart = { navController.navigate("cart") } // 👈 Agregado
             )
         }
 
-        //  Detalle de producto
         composable(
-            route = "detail/{productId}",
-            arguments = listOf(navArgument("productId") { type = NavType.StringType })
+            route = "detail/{id}",
+            arguments = listOf(navArgument("id") { type = NavType.StringType })
         ) { backStackEntry ->
-            val productId = backStackEntry.arguments?.getString("productId") ?: return@composable
+            val id = backStackEntry.arguments?.getString("id") ?: return@composable
             ProductDetailRoute(
-                productId = productId,
-                onBack = { navController.popBackStack() },
-                vm = vm
+                vm = vm,
+                productId = id,
+                onBack = { navController.popBackStack() }
             )
         }
 
-        //  Carrito
+        // carrito si ya lo tienes:
         composable("cart") {
             CartRoute(
-                vm = vm,
-                onBack = { navController.popBackStack() }
+                onBack = { navController.popBackStack() },
+                vm = vm
             )
         }
     }

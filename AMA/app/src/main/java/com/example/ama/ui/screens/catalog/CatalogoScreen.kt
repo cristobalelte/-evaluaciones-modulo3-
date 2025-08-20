@@ -58,6 +58,10 @@ import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.foundation.layout.Box
+import androidx.compose.material.icons.automirrored.outlined.List
+import androidx.compose.material.icons.outlined.List
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.unit.sp
 
 
 // ------------------------------------------------------------------------------------
@@ -115,36 +119,42 @@ fun CatalogScreen(
     onToggleType: (ProductType) -> Unit
 )
  {
-    Scaffold(
-        topBar = {
-            CenterAlignedTopAppBar(
-                title = { Text(stringResource(id = R.string.catalog_title)) },
-                actions = {
-                    // Cambiar lista <-> grilla
-                    IconButton(onClick = onOpenCart) {
-                        BadgedBox(badge = { if (cartCount > 0) Badge { Text("$cartCount") } }) {
-                            Icon(
-                                imageVector = Icons.Outlined.ShoppingCart,
-                                contentDescription = "Carrito"
-                            )
-                        }
-                    }
+     var isGrid by remember { mutableStateOf(false) }
+     Scaffold(
+         topBar = {
+             CenterAlignedTopAppBar(
+                 title = { Text(stringResource(id = R.string.catalog_title)) },
+                 actions = {
+                     // Botón para cambiar lista <-> grilla
+                     IconButton(onClick = { isGrid = !isGrid }) {
+                         Icon(
+                             imageVector = if (isGrid) Icons.Outlined.GridView else Icons.Outlined.List,
+                             contentDescription = "Cambiar vista"
+                         )
+                     }
 
+                     // Carrito con badge
+                     IconButton(onClick = onOpenCart) {
+                         BadgedBox(badge = { if (cartCount > 0) Badge { Text("$cartCount") } }) {
+                             Icon(
+                                 imageVector = Icons.Outlined.ShoppingCart,
+                                 contentDescription = "Carrito"
+                             )
+                         }
+                     }
 
-                    // Switch "Solo disponibles"
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text(text = "Solo disp.", style = MaterialTheme.typography.labelMedium)
-                        Spacer(Modifier.width(6.dp))
-                        Switch(checked = onlyAvailable, onCheckedChange = onToggleOnlyAvailable)
-                    }
-                    Spacer(Modifier.width(8.dp))
-
-
-                }
-            )
-        },
-        snackbarHost = { SnackbarHost(snackbarHostState) }
-    ) { padding ->
+                     // Switch "Solo disponibles"
+                     Row(verticalAlignment = Alignment.CenterVertically) {
+                         Text(text = "Solo disp.", style = MaterialTheme.typography.labelMedium)
+                         Spacer(Modifier.width(6.dp))
+                         Switch(checked = onlyAvailable, onCheckedChange = onToggleOnlyAvailable)
+                     }
+                     Spacer(Modifier.width(8.dp))
+                 }
+             )
+         },
+         snackbarHost = { SnackbarHost(snackbarHostState) }
+     ) { padding ->
 
         Column(
             modifier = Modifier
@@ -165,6 +175,7 @@ fun CatalogScreen(
                     modifier = Modifier.fillMaxWidth(),
                     placeholder = { Text(stringResource(id = R.string.Buscar_prod)) },
                     singleLine = true,
+                    textStyle = TextStyle(fontSize = 20.sp),
                     leadingIcon = { Icon(Icons.Outlined.Search, contentDescription = null) },
                     trailingIcon = {
                         if (query.isNotBlank()) {
@@ -297,18 +308,21 @@ fun ProductItem(
                 text = product.name,
                 style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                 maxLines = 2,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
+                fontSize = 20.sp
             )
             Text(
                 text = product.author,
                 style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                fontSize = 15.sp
             )
 
             Text(
                 text = currency.format(product.price),
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.primary
+                color = MaterialTheme.colorScheme.primary,
+                fontSize = 15.sp
             )
 
             Spacer(Modifier.height(8.dp))
@@ -323,13 +337,13 @@ fun ProductItem(
                     shape = MaterialTheme.shapes.medium,
                     modifier = Modifier.weight(1f)
                 ) {
-                    Text(text = stringResource(id = R.string.add_to_cart))
+                    Text(text = stringResource(id = R.string.add_to_cart),fontSize = 20.sp)
                 }
                 OutlinedButton(
                     onClick = { onViewDetail(product) },
                     modifier = Modifier.weight(1f)
                 ) {
-                    Text(text = stringResource(id = R.string.view_detail))
+                    Text(text = stringResource(id = R.string.view_detail),fontSize = 20.sp)
                 }
             }
         }
@@ -352,7 +366,7 @@ fun ProductCard(
         elevation = CardDefaults.cardElevation(4.dp),
         onClick = { onViewDetail(product) }
     ) {
-        Column(Modifier.padding(10.dp)) {
+        Column(Modifier.padding(8.dp)) {
             AsyncImage(
                 model = product.imageUrl,
                 contentDescription = product.name,
@@ -366,26 +380,29 @@ fun ProductCard(
                 text = product.name,
                 style = MaterialTheme.typography.titleSmall,
                 maxLines = 2,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
+                fontSize = 20.sp
             )
             Text(
                 text = product.author,
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 maxLines = 1,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
+                fontSize = 15.sp
             )
             Text(
                 text = currency.format(product.price),
                 style = MaterialTheme.typography.titleSmall,
-                color = MaterialTheme.colorScheme.primary
+                color = MaterialTheme.colorScheme.primary,
+                fontSize = 15.sp
             )
             Spacer(Modifier.height(6.dp))
             Button(
                 onClick = { onAddToCart(product) },
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text(stringResource(R.string.add_to_cart))
+                Text(text = stringResource(id = R.string.add_to_cart),fontSize = 20.sp)
             }
         }
     }
