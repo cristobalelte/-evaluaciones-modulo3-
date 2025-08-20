@@ -21,6 +21,7 @@ import java.util.Locale
 import com.example.ama.R
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.sp
 import com.example.ama.ui.screens.catalog.ProductType
 
 
@@ -77,7 +78,8 @@ fun ProductDetailScreen(
             Text(
                 text = currency.format(product.price),
                 style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.primary
+                color = MaterialTheme.colorScheme.primary,
+                fontSize = 20.sp
             )
 
             // Autor real vs publicado por (si te pasan publishedBy)
@@ -87,15 +89,16 @@ fun ProductDetailScreen(
                 } else {
                     "Autor/a: ${product.author}"
                 }
-            Text(text = autorTexto, style = MaterialTheme.typography.bodyMedium)
+            Text(text = autorTexto, style = MaterialTheme.typography.bodyMedium, fontSize = 15.sp)
 
             // Descripción (si te la pasan; si no, un texto amigable)
             Text(
                 text = description ?: stringResource(R.string.app_description),
                 style = MaterialTheme.typography.bodyMedium,
-                fontWeight = FontWeight.Normal
+                fontWeight = FontWeight.Normal,
+                fontSize = 20.sp
             )
-            Text("Región: ${product.region}", style = MaterialTheme.typography.bodyMedium)
+            Text("Región: ${product.region}", style = MaterialTheme.typography.bodyMedium, fontSize = 15.sp)
             Text(
                 "Tipo: " + when(product.type) {
                     ProductType.TEXTIL -> stringResource(R.string.Textil_prod)
@@ -103,6 +106,7 @@ fun ProductDetailScreen(
                     ProductType.CERAMICA -> stringResource(R.string.Ceramica_prod)
                     ProductType.OTRO -> stringResource(R.string.Otro_prod)
                 },
+                fontSize = 20.sp,
                 style = MaterialTheme.typography.bodyMedium
             )
 
@@ -115,7 +119,8 @@ fun ProductDetailScreen(
             ) {
                 Icon(Icons.Outlined.ShoppingCart, contentDescription = null)
                 Spacer(Modifier.width(8.dp))
-                Text(stringResource(R.string.add_to_cart))
+                Text(stringResource(R.string.add_to_cart),
+                    fontSize = 20.sp)
             }
         }
     }
