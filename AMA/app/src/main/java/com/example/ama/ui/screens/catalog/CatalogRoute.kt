@@ -45,7 +45,7 @@ fun CatalogRoute(
         snackbarHostState = snackbar,
         onAddToCart = { p -> scope.launch { vm.addToCart(p); snackbar.showSnackbar("Agregado") } },
         onViewDetail = { p -> onViewDetail(p.id) },
-        onOpenCart = { navController.navigate("cart") },
+        onOpenCart = { navController.navigate("cart")  },
         // layout
         isGrid = isGrid,
         onToggleLayout = { isGrid = it },
