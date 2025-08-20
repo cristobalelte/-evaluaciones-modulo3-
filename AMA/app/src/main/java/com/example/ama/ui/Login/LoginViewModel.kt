@@ -10,7 +10,10 @@ class LoginViewModel : ViewModel() {
 
     var email by mutableStateOf("")
         private set
-    fun onEmailChange(v: String) { email = v }
+    fun onEmailChange(v: String) {
+        email = v
+        validateEmail(v) // 👈 validación inmediata al escribir
+    }
 
     var password by mutableStateOf("")
         private set
@@ -26,12 +29,18 @@ class LoginViewModel : ViewModel() {
     var isLoading by mutableStateOf(false)
         private set
 
-    fun validate(): Boolean {
+    /** 🔎 Valida SOLO el correo */
+    private fun validateEmail(value: String) {
         emailError =
-            if (email.isBlank()) "El correo no puede estar vacío"
-            else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches())
-                "Formato de correo inválido"
+            if (value.isBlank()) "El correo no puede estar vacío"
+            else if (!Regex("^[A-Za-z0-9+_.-]+@gmail\\.com$").matches(value))
+                "Debe ser un correo Gmail válido (ejemplo@gmail.com)"
             else null
+    }
+
+    /** 🔎 Valida TODO (correo + contraseña) */
+    fun validate(): Boolean {
+        validateEmail(email)
 
         passwordError =
             if (password.isBlank()) "La contraseña no puede estar vacía"
@@ -48,10 +57,8 @@ class LoginViewModel : ViewModel() {
     suspend fun login(): Boolean {
         if (!validate()) return false
         isLoading = true
-        // Simular red
-        delay(800)
+        delay(800) // Simula red
         isLoading = false
-        // Demo: acepta cualquier correo + pass >=6
         return true
     }
 }

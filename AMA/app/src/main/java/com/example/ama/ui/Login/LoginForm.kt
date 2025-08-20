@@ -45,6 +45,7 @@ fun LoginForm(
             value = vm.email,
             onValueChange = { vm.onEmailChange(it) },
             label = { Text("Correo electrónico") },
+            placeholder = { Text("ejemplo@gmail.com") },
             singleLine = true,
             isError = vm.emailError != null,
             keyboardOptions = KeyboardOptions(
