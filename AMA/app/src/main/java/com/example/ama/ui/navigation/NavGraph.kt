@@ -16,20 +16,18 @@ import com.example.ama.ui.screens.detail.ProductDetailRoute
 @Composable
 fun AppNavigation() {
     val navController = rememberNavController()
-
-    // Única instancia de ViewModel compartida
     val vm: CatalogViewModel = viewModel()
 
     // en AppNavigation()
     NavHost(
         navController = navController,
-        startDestination = "login"   // 👈 ahora parte en login
+        startDestination = "login"
     ) {
         composable("login") {
             LoginScreen(
                 onLoggedIn = {
                     navController.navigate("catalog") {
-                        popUpTo("login") { inclusive = true }   // quita login del back stack
+                        popUpTo("login") { inclusive = true }
                         launchSingleTop = true
                     }
                 }
@@ -41,7 +39,7 @@ fun AppNavigation() {
                 vm = vm,
                 navController = navController,
                 onViewDetail = { id -> navController.navigate("detail/$id") },
-                onOpenCart = { navController.navigate("cart") } // 👈 Agregado
+                onOpenCart = { navController.navigate("cart") }
             )
         }
 
@@ -57,7 +55,7 @@ fun AppNavigation() {
             )
         }
 
-        // carrito si ya lo tienes:
+
         composable("cart") {
             CartRoute(
                 onBack = { navController.popBackStack() },

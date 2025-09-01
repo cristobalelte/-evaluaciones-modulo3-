@@ -29,7 +29,7 @@ class LoginViewModel : ViewModel() {
     var isLoading by mutableStateOf(false)
         private set
 
-    /** 🔎 Valida SOLO el correo */
+    // Valida correo */
     private fun validateEmail(value: String) {
         emailError =
             if (value.isBlank()) "El correo no puede estar vacío"
@@ -51,7 +51,7 @@ class LoginViewModel : ViewModel() {
     }
 
     /**
-     * Simulación de login. En un proyecto real, llama a tu repo/servicio.
+     * Simulación de login.
      * Retorna `true` si el login “resultó”.
      */
     suspend fun login(): Boolean {
