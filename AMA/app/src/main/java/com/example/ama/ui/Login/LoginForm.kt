@@ -40,7 +40,7 @@ fun LoginForm(
 
         // Campos
         val vm = androidx.lifecycle.viewmodel.compose.viewModel<LoginViewModel>()
-
+        //Recuadro correo:
         OutlinedTextField(
             value = vm.email,
             onValueChange = { vm.onEmailChange(it) },
@@ -54,6 +54,7 @@ fun LoginForm(
             ),
             modifier = Modifier.fillMaxWidth()
         )
+        //Error al ingresar correo
         AnimatedVisibility(vm.emailError != null) {
             Text(
                 vm.emailError ?: "",
@@ -62,6 +63,7 @@ fun LoginForm(
             )
         }
 
+        //Recuadro ingreso contraseña:
         OutlinedTextField(
             value = vm.password,
             onValueChange = { vm.onPasswordChange(it) },
@@ -89,6 +91,8 @@ fun LoginForm(
             ),
             modifier = Modifier.fillMaxWidth()
         )
+
+        //Error contraseña:
         AnimatedVisibility(vm.passwordError != null) {
             Text(
                 vm.passwordError ?: "",
@@ -97,6 +101,7 @@ fun LoginForm(
             )
         }
 
+        //Se ordenan horizontalmente 3 elementos:
         Row(verticalAlignment = Alignment.CenterVertically) {
             Checkbox(
                 checked = vm.rememberMe,
@@ -108,8 +113,9 @@ fun LoginForm(
                 Text("¿Olvidaste tu contraseña?")
             }
         }
+        //Cierre Row
 
-        // Botón
+        // Botón Ingresar
         val scope = rememberCoroutineScope()
         Button(
             onClick = {

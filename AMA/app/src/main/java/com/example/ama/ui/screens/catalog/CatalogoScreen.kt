@@ -1,5 +1,6 @@
 package com.example.ama.ui.screens.catalog
 
+import androidx.compose.foundation.Image
 import androidx.compose.material3.ExperimentalMaterial3Api
 
 
@@ -60,8 +61,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.foundation.layout.Box
 import androidx.compose.material.icons.automirrored.outlined.List
 import androidx.compose.material.icons.outlined.List
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.sp
+import com.example.ama.ui.components.BottomBar
 
 
 // ------------------------------------------------------------------------------------
@@ -117,402 +120,551 @@ fun CatalogScreen(
     availableTypes: List<ProductType>,
     selectedTypes: Set<ProductType>,
     onToggleType: (ProductType) -> Unit
-)
- {
-     var isGrid by remember { mutableStateOf(false) }
-     Scaffold(
-         topBar = {
-             CenterAlignedTopAppBar(
-                 title = { Text(stringResource(id = R.string.catalog_title)) },
-                 actions = {
-                     // Botón para cambiar lista <-> grilla
-                     IconButton(onClick = { isGrid = !isGrid }) {
-                         Icon(
-                             imageVector = if (isGrid) Icons.Outlined.GridView else Icons.Outlined.List,
-                             contentDescription = "Cambiar vista"
-                         )
-                     }
+) {
+    var isGrid by remember { mutableStateOf(false) }
+    Scaffold(
+        topBar = {
+            CenterAlignedTopAppBar(
+//                 title = { Text(stringResource(id = R.string.catalog_title)) },
+                title = {
+//                     Box(
+//                         contentAlignment = Alignment.CenterStart
+//                            ) { // Usa Box para centrar la imagen
+                    Image(
+                        alignment = Alignment.CenterStart,
+                        painter = painterResource(id = R.drawable.logo_artemayor_horizontal), // Reemplaza 'mi_logo' con el nombre de tu imagen
+                        contentDescription = "Logo de la aplicación", // Descripción para accesibilidad
+//                             modifier = Modifier.size(120.dp) // Opcional: ajusta el tamaño de la imagen
+                        modifier = Modifier.fillMaxSize()
 
-                     // Carrito con badge
-                     IconButton(onClick = onOpenCart) {
-                         BadgedBox(badge = { if (cartCount > 0) Badge { Text("$cartCount") } }) {
-                             Icon(
-                                 imageVector = Icons.Outlined.ShoppingCart,
-                                 contentDescription = "Carrito"
-                             )
-                         }
-                     }
+                    )
+//                     }
+                },
 
-                     // Switch "Solo disponibles"
-                     Row(verticalAlignment = Alignment.CenterVertically) {
-                         Text(text = "Solo disp.", style = MaterialTheme.typography.labelMedium)
-                         Spacer(Modifier.width(6.dp))
-                         Switch(checked = onlyAvailable, onCheckedChange = onToggleOnlyAvailable)
-                     }
-                     Spacer(Modifier.width(8.dp))
-                 }
-             )
-         },
-         snackbarHost = { SnackbarHost(snackbarHostState) }
-     ) { padding ->
+                actions = {
+                    // Botón para cambiar lista <-> grilla
+//                     Image(painter= painterResource(R.mipmap.logo_app))
+//                     IconButton(
+//                         onClick = { isGrid = !isGrid }) {
+//                         Icon(
+////                             painter = painterResource(id = R.mipmap.logo_app),
+//                             imageVector = if (isGrid) Icons.Outlined.GridView else Icons.Outlined.List,
+//                             contentDescription = "Cambiar vista"
+//                         )
+//                     }
+
+                    // Carrito con badge
+                    IconButton(
+                        onClick = onOpenCart
+//                         modifier = Modifier.fillMaxSize()
+                    ) {
+                        BadgedBox(badge = { if (cartCount > 0) Badge { Text("$cartCount") } }) {
+                            Icon(
+                                imageVector = Icons.Outlined.ShoppingCart,
+                                contentDescription = "Carrito",
+                                modifier = Modifier.fillMaxSize()
+
+                            )
+                        }
+                    }
+
+                    // Switch "Solo disponibles"
+//                     Row(verticalAlignment = Alignment.CenterVertically) {
+//                         Text(text = "Solo disp.", style = MaterialTheme.typography.labelMedium)
+//                         Spacer(Modifier.width(6.dp))
+//                         Switch(checked = onlyAvailable, onCheckedChange = onToggleOnlyAvailable)
+//                     }
+                    Spacer(Modifier.width(8.dp))
+                }
+
+//                 Fin row
+            )
+        },
+        snackbarHost = { SnackbarHost(snackbarHostState) },
+
+        bottomBar = {
+            BottomBar()
+        }
+
+    ) { padding ->
 
         Column(
             modifier = Modifier
                 .padding(padding)
                 .fillMaxSize()
         ) {
-            // ===== Encabezado: Buscador + Filtros =====
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                // BUSCADOR
-                OutlinedTextField(
-                    value = query,                          // <- viene de props
-                    onValueChange = onQueryChange,          // <- viene de props
-                    modifier = Modifier.fillMaxWidth(),
-                    placeholder = { Text(stringResource(id = R.string.Buscar_prod)) },
-                    singleLine = true,
-                    textStyle = TextStyle(fontSize = 20.sp),
-                    leadingIcon = { Icon(Icons.Outlined.Search, contentDescription = null) },
-                    trailingIcon = {
-                        if (query.isNotBlank()) {
-                            IconButton(onClick = { onQueryChange("") }) {
-                                Icon(Icons.Outlined.Close, contentDescription = stringResource(id = R.string.Limpiar_campo))
-                            }
-                        }
-                    }
+            // Botón para cambiar lista <-> grilla
+            IconButton(
+                onClick = { isGrid = !isGrid }) {
+                Icon(
+//                             painter = painterResource(id = R.mipmap.logo_app),
+                    imageVector = if (isGrid) Icons.Outlined.GridView else Icons.Outlined.List,
+                    contentDescription = "Cambiar vista"
                 )
-
-                // FILTROS: Regiones
-                MultiSelectDropdown(
-                    label = stringResource(id = R.string.Region_prod),
-                    items = availableRegions,
-                    selected = selectedRegions,
-                    onToggle = onToggleRegion,
-                    onSelectAll = { selectAll ->
-                        if (selectAll) {
-                            availableRegions.forEach { if (it !in selectedRegions) onToggleRegion(it) }
-                        } else {
-                            selectedRegions.toList().forEach { onToggleRegion(it) }
-                        }
-                    },
-                    itemLabel = { it }
-                )
-
-                Spacer(Modifier.height(8.dp))
-
-                // FILTROS: Tipo de producto
-                MultiSelectDropdown(
-                    label = stringResource(id = R.string.Tipo_producto),
-                    items = availableTypes,
-                    selected = selectedTypes,
-                    onToggle = onToggleType,
-                    onSelectAll = { selectAll ->
-                        if (selectAll) {
-                            availableTypes.forEach { if (it !in selectedTypes) onToggleType(it) }
-                        } else {
-                            selectedTypes.toList().forEach { onToggleType(it) }
-                        }
-                    },
-                    itemLabel = {
-                        when (it) {
-                            ProductType.TEXTIL   -> "Textil"
-                            ProductType.MADERA   -> "Madera"
-                            ProductType.CERAMICA -> "Cerámica"
-                            ProductType.OTRO     -> "Otro"
-                        }
-                    }
-                )
-
-            // ===== Resultados =====
-            if (products.isEmpty()) {
-                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text(stringResource(R.string.No_encontrado_prod))
-                }
-            } else {
-                if (isGrid) {
-                    LazyVerticalGrid(
-                        columns = GridCells.Adaptive(minSize = 160.dp),
-                        state = gridState,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(horizontal = 12.dp),
-                        contentPadding = PaddingValues(bottom = 12.dp),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp),
-                        verticalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        items(products, key = { it.id }) { p ->
-                            ProductCard(
-                                product = p,
-                                onAddToCart = onAddToCart,
-                                onViewDetail = onViewDetail
-                            )
-                        }
-                    }
-                } else {
-                    LazyColumn(
-                        state = listState,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(horizontal = 12.dp),
-                        contentPadding = PaddingValues(bottom = 12.dp),
-                        verticalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        items(products, key = { it.id }) { p ->
-                            ProductItem(
-                                product = p,
-                                onAddToCart = onAddToCart,
-                                onViewDetail = onViewDetail
-                            )
-                        }
-                    }
-                }
             }
+
+//            Spacer(Modifier.height(8.dp))
+
+//            Row primeros 3 iconos:
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            )
+            {
+                IconButton(
+                    onClick = {}) {
+                    Icon(
+                        painter = painterResource(id = R.mipmap.lana_icon_foreground),
+                        modifier = Modifier.fillMaxSize(),
+                        contentDescription = "Cambiar vista"
+                    )
+
+                }
+
+
+                IconButton(
+                    onClick = {}) {
+                    Icon(
+                        painter = painterResource(id = R.mipmap.madera_icon_foreground),
+                        modifier = Modifier.fillMaxSize(),
+                        contentDescription = "Cambiar vista"
+                    )
+                }
+
+                IconButton(
+                    onClick = {}) {
+                    Icon(
+                        painter = painterResource(id = R.mipmap.ceramica_icon_foreground),
+                        modifier = Modifier.fillMaxSize(),
+                        contentDescription = "Cambiar vista"
+                    )
+                }
+
+
+            } //Fin Row 1
+
+//            Row ultimos 3 iconos:
+                Row( verticalAlignment = Alignment.CenterVertically,
+                   modifier = Modifier.fillMaxWidth()
+                )
+                {
+                    IconButton(
+                        onClick = {}) {
+                        Icon(
+                            painter = painterResource(id = R.mipmap.greda_icon_foreground),
+                            modifier = Modifier.fillMaxSize(),
+                            contentDescription = "Cambiar vista"
+                        )
+                    }
+
+
+                    IconButton(
+                        onClick = {}) {
+                        Icon(
+                            painter = painterResource(id = R.mipmap.hilo_icon_foreground),
+                            modifier = Modifier.fillMaxSize(),
+                            contentDescription = "Cambiar vista"
+                        )
+                    }
+
+                    IconButton(
+                        onClick = {}) {
+                        Icon(
+                            painter = painterResource(id = R.mipmap.pintura_icon_foreground),
+                            modifier = Modifier.fillMaxSize(),
+                            contentDescription = "Cambiar vista"
+                        )
+                    }
+
+                } //Fin Row 2
+
+//        ) {
+//            // Botón para cambiar lista <-> grilla
+//            IconButton(
+//                onClick = { isGrid = !isGrid }) {
+//                Icon(
+////                             painter = painterResource(id = R.mipmap.logo_app),
+//                    imageVector = if (isGrid) Icons.Outlined.GridView else Icons.Outlined.List,
+//                    contentDescription = "Cambiar vista"
+//                )
+//            }
+//            // ===== Encabezado: Buscador + Filtros =====
+//            Column(
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .padding(horizontal = 16.dp, vertical = 8.dp),
+//                verticalArrangement = Arrangement.spacedBy(8.dp)
+//            ) {
+//                // BUSCADOR
+//                OutlinedTextField(
+//                    value = query,                          // <- viene de props
+//                    onValueChange = onQueryChange,          // <- viene de props
+//                    modifier = Modifier.fillMaxWidth(),
+//                    placeholder = { Text(stringResource(id = R.string.Buscar_prod)) },
+//                    singleLine = true,
+//                    textStyle = TextStyle(fontSize = 20.sp),
+//                    leadingIcon = { Icon(Icons.Outlined.Search, contentDescription = null) },
+//                    trailingIcon = {
+//                        if (query.isNotBlank()) {
+//                            IconButton(onClick = { onQueryChange("") }) {
+//                                Icon(Icons.Outlined.Close, contentDescription = stringResource(id = R.string.Limpiar_campo))
+//                            }
+//                        }
+//                    }
+//                )
+//
+//                // FILTROS: Regiones
+//                MultiSelectDropdown(
+//                    label = stringResource(id = R.string.Region_prod),
+//                    items = availableRegions,
+//                    selected = selectedRegions,
+//                    onToggle = onToggleRegion,
+//                    onSelectAll = { selectAll ->
+//                        if (selectAll) {
+//                            availableRegions.forEach { if (it !in selectedRegions) onToggleRegion(it) }
+//                        } else {
+//                            selectedRegions.toList().forEach { onToggleRegion(it) }
+//                        }
+//                    },
+//                    itemLabel = { it }
+//                )
+//
+//                Spacer(Modifier.height(8.dp))
+//
+//                // FILTROS: Tipo de producto
+//                MultiSelectDropdown(
+//                    label = stringResource(id = R.string.Tipo_producto),
+//                    items = availableTypes,
+//                    selected = selectedTypes,
+//                    onToggle = onToggleType,
+//                    onSelectAll = { selectAll ->
+//                        if (selectAll) {
+//                            availableTypes.forEach { if (it !in selectedTypes) onToggleType(it) }
+//                        } else {
+//                            selectedTypes.toList().forEach { onToggleType(it) }
+//                        }
+//                    },
+//                    itemLabel = {
+//                        when (it) {
+//                            ProductType.TEXTIL   -> "Textil"
+//                            ProductType.MADERA   -> "Madera"
+//                            ProductType.CERAMICA -> "Cerámica"
+//                            ProductType.OTRO     -> "Otro"
+//                        }
+//                    }
+//                )
+//
+//            // ===== Resultados =====
+//            if (products.isEmpty()) {
+//                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+//                    Text(stringResource(R.string.No_encontrado_prod))
+//                }
+//            } else {
+//                if (isGrid) {
+//                    LazyVerticalGrid(
+//                        columns = GridCells.Adaptive(minSize = 160.dp),
+//                        state = gridState,
+//                        modifier = Modifier
+//                            .fillMaxSize()
+//                            .padding(horizontal = 12.dp),
+//                        contentPadding = PaddingValues(bottom = 12.dp),
+//                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+//                        verticalArrangement = Arrangement.spacedBy(12.dp)
+//                    ) {
+//                        items(products, key = { it.id }) { p ->
+//                            ProductCard(
+//                                product = p,
+//                                onAddToCart = onAddToCart,
+//                                onViewDetail = onViewDetail
+//                            )
+//                        }
+//                    }
+//                } else {
+//                    LazyColumn(
+//                        state = listState,
+//                        modifier = Modifier
+//                            .fillMaxSize()
+//                            .padding(horizontal = 12.dp),
+//                        contentPadding = PaddingValues(bottom = 12.dp),
+//                        verticalArrangement = Arrangement.spacedBy(12.dp)
+//                    ) {
+//                        items(products, key = { it.id }) { p ->
+//                            ProductItem(
+//                                product = p,
+//                                onAddToCart = onAddToCart,
+//                                onViewDetail = onViewDetail
+//                            )
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//    }
+            } //Cierre Column scope
         }
-    }
-    }
- }
 
 // Tarjeta "grande" para vista de lista
 
-@Composable
-fun ProductItem(
-    product: Product,
-    onAddToCart: (Product) -> Unit,
-    onViewDetail: (Product) -> Unit
-) {
-    val currency = remember { NumberFormat.getCurrencyInstance(Locale("es", "CL")) }
+        @Composable
+        fun ProductItem(
+            product: Product,
+            onAddToCart: (Product) -> Unit,
+            onViewDetail: (Product) -> Unit
+        ) {
+            val currency = remember { NumberFormat.getCurrencyInstance(Locale("es", "CL")) }
 
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onViewDetail(product) },
-        elevation = CardDefaults.cardElevation(4.dp)
-    ) {
-        Column(modifier = Modifier.padding(12.dp)) {
-            AsyncImage(
-                model = product.imageUrl,
-                contentDescription = product.name,
+            Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(180.dp),
-                contentScale = ContentScale.Crop
-            )
+                    .clickable { onViewDetail(product) },
+                elevation = CardDefaults.cardElevation(4.dp)
+            ) {
+                Column(modifier = Modifier.padding(12.dp)) {
+                    AsyncImage(
+                        model = product.imageUrl,
+                        contentDescription = product.name,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(180.dp),
+                        contentScale = ContentScale.Crop
+                    )
 
-            Spacer(Modifier.height(8.dp))
+                    Spacer(Modifier.height(8.dp))
 
-            Text(
-                text = product.name,
-                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
-                fontSize = 20.sp
-            )
-            Text(
-                text = product.author,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                fontSize = 15.sp
-            )
+                    Text(
+                        text = product.name,
+                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
+                        fontSize = 20.sp
+                    )
+                    Text(
+                        text = product.author,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        fontSize = 15.sp
+                    )
 
-            Text(
-                text = currency.format(product.price),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.primary,
-                fontSize = 15.sp
-            )
+                    Text(
+                        text = currency.format(product.price),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.primary,
+                        fontSize = 15.sp
+                    )
 
-            Spacer(Modifier.height(8.dp))
+                    Spacer(Modifier.height(8.dp))
 
-            Row(
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Button(
+                            onClick = { onAddToCart(product) },
+                            //Cambio de shape btn agregar al carrito:
+                            shape = MaterialTheme.shapes.medium,
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Text(text = stringResource(id = R.string.add_to_cart), fontSize = 20.sp)
+                        }
+                        OutlinedButton(
+                            onClick = { onViewDetail(product) },
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Text(text = stringResource(id = R.string.view_detail), fontSize = 20.sp)
+                        }
+                    }
+                }
+            }
+        }
+
+
+        // Tarjeta "compacta"
+        @Composable
+        fun ProductCard(
+            product: Product,
+            onAddToCart: (Product) -> Unit,
+            onViewDetail: (Product) -> Unit
+        ) {
+            val currency = remember { NumberFormat.getCurrencyInstance(Locale("es", "CL")) }
+
+            Card(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                elevation = CardDefaults.cardElevation(4.dp),
+                onClick = { onViewDetail(product) }
             ) {
-                Button(
-                    onClick = { onAddToCart(product) },
-                    //Cambio de shape btn agregar al carrito:
-                    shape = MaterialTheme.shapes.medium,
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Text(text = stringResource(id = R.string.add_to_cart),fontSize = 20.sp)
-                }
-                OutlinedButton(
-                    onClick = { onViewDetail(product) },
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Text(text = stringResource(id = R.string.view_detail),fontSize = 20.sp)
+                Column(Modifier.padding(8.dp)) {
+                    AsyncImage(
+                        model = product.imageUrl,
+                        contentDescription = product.name,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .aspectRatio(1f),
+                        contentScale = ContentScale.Crop
+                    )
+                    Spacer(Modifier.height(8.dp))
+                    Text(
+                        text = product.name,
+                        style = MaterialTheme.typography.titleSmall,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
+                        fontSize = 20.sp
+                    )
+                    Text(
+                        text = product.author,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        fontSize = 15.sp
+                    )
+                    Text(
+                        text = currency.format(product.price),
+                        style = MaterialTheme.typography.titleSmall,
+                        color = MaterialTheme.colorScheme.primary,
+                        fontSize = 15.sp
+                    )
+                    Spacer(Modifier.height(6.dp))
+                    Button(
+                        onClick = { onAddToCart(product) },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(text = stringResource(id = R.string.add_to_cart), fontSize = 20.sp)
+                    }
                 }
             }
         }
-    }
-}
 
 
-
-// Tarjeta "compacta"
-@Composable
-fun ProductCard(
-    product: Product,
-    onAddToCart: (Product) -> Unit,
-    onViewDetail: (Product) -> Unit
-) {
-    val currency = remember { NumberFormat.getCurrencyInstance(Locale("es", "CL")) }
-
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(4.dp),
-        onClick = { onViewDetail(product) }
-    ) {
-        Column(Modifier.padding(8.dp)) {
-            AsyncImage(
-                model = product.imageUrl,
-                contentDescription = product.name,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(1f),
-                contentScale = ContentScale.Crop
-            )
-            Spacer(Modifier.height(8.dp))
-            Text(
-                text = product.name,
-                style = MaterialTheme.typography.titleSmall,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
-                fontSize = 20.sp
-            )
-            Text(
-                text = product.author,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                fontSize = 15.sp
-            )
-            Text(
-                text = currency.format(product.price),
-                style = MaterialTheme.typography.titleSmall,
-                color = MaterialTheme.colorScheme.primary,
-                fontSize = 15.sp
-            )
-            Spacer(Modifier.height(6.dp))
-            Button(
-                onClick = { onAddToCart(product) },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(text = stringResource(id = R.string.add_to_cart),fontSize = 20.sp)
-            }
-        }
-    }
-}
-
-
-// ------------------------------------------------------------------------------------
+        // ------------------------------------------------------------------------------------
 // Preview básico (solo UI)
 // ------------------------------------------------------------------------------------
-@Composable
-fun CatalogScreenPreview() {
-    val sample = listOf(
-        Product("1",stringResource(R.string.Bufanda_amano),15000.0,"","Juana Pérez", true,3,"RM", ProductType.TEXTIL),
-        Product("2",stringResource(R.string.Ceramica_amano),25000.0,"","Cristóbal Elte", true,1,"Valparaíso", ProductType.CERAMICA)
-    )
-    val snackbar = remember { SnackbarHostState() }
-    MaterialTheme {
-        CatalogScreen(
-            products = sample,
-            cartCount = 2,
-            snackbarHostState = snackbar,
-            onAddToCart = {},
-            onViewDetail = {},
-            isGrid = true,
-            onToggleLayout = {},
-            listState = LazyListState(0,0),
-            gridState = LazyGridState(),
-            onlyAvailable = true,
-            onToggleOnlyAvailable = {},
-            query = "",
-            onQueryChange = {},
-            availableRegions = listOf("Araucanía","Biobío","RM","Valparaíso"),
-            selectedRegions = emptySet(),
-            onToggleRegion = {},
-            availableTypes = ProductType.entries,
-            selectedTypes = emptySet(),
-            onToggleType = {},
-            onOpenCart = {}
-        )
+        @Composable
+        fun CatalogScreenPreview() {
+            val sample = listOf(
+                Product(
+                    "1",
+                    stringResource(R.string.Bufanda_amano),
+                    15000.0,
+                    "",
+                    "Juana Pérez",
+                    true,
+                    3,
+                    "RM",
+                    ProductType.TEXTIL
+                ),
+                Product(
+                    "2",
+                    stringResource(R.string.Ceramica_amano),
+                    25000.0,
+                    "",
+                    "Cristóbal Elte",
+                    true,
+                    1,
+                    "Valparaíso",
+                    ProductType.CERAMICA
+                )
+            )
+            val snackbar = remember { SnackbarHostState() }
+            MaterialTheme {
+                CatalogScreen(
+                    products = sample,
+                    cartCount = 2,
+                    snackbarHostState = snackbar,
+                    onAddToCart = {},
+                    onViewDetail = {},
+                    isGrid = true,
+                    onToggleLayout = {},
+                    listState = LazyListState(0, 0),
+                    gridState = LazyGridState(),
+                    onlyAvailable = true,
+                    onToggleOnlyAvailable = {},
+                    query = "",
+                    onQueryChange = {},
+                    availableRegions = listOf("Araucanía", "Biobío", "RM", "Valparaíso"),
+                    selectedRegions = emptySet(),
+                    onToggleRegion = {},
+                    availableTypes = ProductType.entries,
+                    selectedTypes = emptySet(),
+                    onToggleType = {},
+                    onOpenCart = {}
+                )
+            }
+        }
+
+        @OptIn(ExperimentalMaterial3Api::class)
+        @Composable
+        fun <T> MultiSelectDropdown(
+            modifier: Modifier = Modifier,
+            label: String,
+            items: List<T>,
+            selected: Set<T>,
+            onToggle: (T) -> Unit,
+            onSelectAll: (Boolean) -> Unit,        // true = seleccionar todos, false = limpiar
+            itemLabel: (T) -> String = { it.toString() },
+
+            ) {
+            var expanded by remember { mutableStateOf(false) }
+
+            ExposedDropdownMenuBox(
+                expanded = expanded,
+                onExpandedChange = { expanded = !expanded },
+                modifier = modifier
+            ) {
+                OutlinedTextField(
+                    readOnly = true,
+                    value = when {
+                        selected.isEmpty() -> "Ninguno"
+                        selected.size == items.size -> "Todos"
+                        else -> selected.joinToString(", ") { itemLabel(it) }
+                    },
+                    onValueChange = {},
+                    label = { Text(label) },
+                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
+                    modifier = Modifier
+                        .menuAnchor()
+                        .fillMaxWidth()
+                )
+
+                ExposedDropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false },
+                ) {
+                    // Seleccionar todos / Limpiar
+                    DropdownMenuItem(
+                        text = {
+                            Text(
+                                if (selected.size == items.size) stringResource(R.string.Limpiar_seleccion) else stringResource(
+                                    R.string.Sel_todos
+                                )
+                            )
+                        },
+                        onClick = {
+                            val selectAll = selected.size != items.size
+                            onSelectAll(selectAll)
+                        }
+                    )
+
+                    HorizontalDivider()
+
+                    // Items con checkbox
+                    items.forEach { item ->
+                        val checked = item in selected
+                        DropdownMenuItem(
+                            text = {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Checkbox(checked = checked, onCheckedChange = null)
+                                    Spacer(Modifier.width(8.dp))
+                                    Text(itemLabel(item))
+                                }
+                            },
+                            onClick = { onToggle(item) } // dejamos abierto para multiselección
+                        )
+                    }
+                }
+            }
+        }
     }
-  }
 
-     @OptIn(ExperimentalMaterial3Api::class)
-     @Composable
-     fun <T> MultiSelectDropdown(
-         modifier: Modifier = Modifier,
-         label: String,
-         items: List<T>,
-         selected: Set<T>,
-         onToggle: (T) -> Unit,
-         onSelectAll: (Boolean) -> Unit,        // true = seleccionar todos, false = limpiar
-         itemLabel: (T) -> String = { it.toString() },
-
-     ) {
-         var expanded by remember { mutableStateOf(false) }
-
-         ExposedDropdownMenuBox(
-             expanded = expanded,
-             onExpandedChange = { expanded = !expanded },
-             modifier = modifier
-         ) {
-             OutlinedTextField(
-                 readOnly = true,
-                 value = when {
-                     selected.isEmpty()            -> "Ninguno"
-                     selected.size == items.size   -> "Todos"
-                     else -> selected.joinToString(", ") { itemLabel(it) }
-                 },
-                 onValueChange = {},
-                 label = { Text(label) },
-                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
-                 modifier = Modifier
-                     .menuAnchor()
-                     .fillMaxWidth()
-             )
-
-             ExposedDropdownMenu(
-                 expanded = expanded,
-                 onDismissRequest = { expanded = false },
-             ) {
-                 // Seleccionar todos / Limpiar
-                 DropdownMenuItem(
-                     text = {
-                         Text(if (selected.size == items.size) stringResource(R.string.Limpiar_seleccion) else stringResource(R.string.Sel_todos))
-                     },
-                     onClick = {
-                         val selectAll = selected.size != items.size
-                         onSelectAll(selectAll)
-                     }
-                 )
-
-                 HorizontalDivider()
-
-                 // Items con checkbox
-                 items.forEach { item ->
-                     val checked = item in selected
-                     DropdownMenuItem(
-                         text = {
-                             Row(verticalAlignment = Alignment.CenterVertically) {
-                                 Checkbox(checked = checked, onCheckedChange = null)
-                                 Spacer(Modifier.width(8.dp))
-                                 Text(itemLabel(item))
-                             }
-                         },
-                         onClick = { onToggle(item) } // dejamos abierto para multiselección
-                     )
-                 }
-             }
-         }
-     }
 
 
 
