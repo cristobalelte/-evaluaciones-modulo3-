@@ -1,7 +1,9 @@
 package com.example.ama.ui.components
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -15,6 +17,7 @@ import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.BottomAppBarDefaults
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -34,49 +37,65 @@ fun BottomBar() {
     ) {
         Row(
             Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp)
+                .fillMaxSize()
+                .padding(horizontal = 8.dp)
         )
         {
-            Column(
-                modifier = Modifier.weight(1f)
+            IconButton(
+                onClick = { /*TODO*/ },
+                modifier = Modifier.
+                weight(1f)
+
             ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.Help,
-                    contentDescription = "Inicio",
-                    modifier = Modifier.align(Alignment.CenterHorizontally)
-                )
-                Text(
-                    text = "AYUDA",
-                    modifier = Modifier.align(Alignment.CenterHorizontally)
-                )
+                Column() {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.Help,
+                        contentDescription = "Inicio",
+                        modifier = Modifier.
+                        align(Alignment.CenterHorizontally)
+                    )
+
+                    Text(
+                        text = "AYUDA",
+                        modifier = Modifier.
+                        align(Alignment.CenterHorizontally)
+
+                    )
+                }
             }
-            Column(
-                modifier = Modifier.weight(1f)
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.AddCircleOutline,
-                    contentDescription = "Correo",
-                    modifier = Modifier.align(Alignment.CenterHorizontally)
-                )
+
+                IconButton(
+                    onClick = { /*TODO*/ },
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.AddCircleOutline,
+                        contentDescription = "Correo"
+//                        modifier = Modifier.align(Alignment.Vertical)
+                    )
 //                Text(
 //                    text = "Correo",
 //                    modifier = Modifier.align(Alignment.CenterHorizontally)
 //                )
-            }
-            Column(
-                modifier = Modifier.weight(1f)
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.AccountCircle,
-                    contentDescription = "Cuenta",
-                    modifier = Modifier.align(Alignment.CenterHorizontally)
-                )
+                }
+
+                IconButton(
+                    onClick = { /*TODO*/ },
+                    modifier = Modifier.weight(1f)
+
+
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.AccountCircle,
+                        contentDescription = "Cuenta"
+//                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                    )
 //                Text(
 //                    text = "Cuenta",
 //                    modifier = Modifier.align(Alignment.CenterHorizontally)
 //                )
-            }
+                }
+
         }
     }
 }

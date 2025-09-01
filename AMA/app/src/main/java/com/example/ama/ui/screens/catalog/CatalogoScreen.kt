@@ -83,6 +83,7 @@ data class Product(
     val region: String,             // 👈 Región (ej. "RM", "Biobío", etc.)
     val type: ProductType           // 👈 Tipo (TEXTIL/MADERA/CERAMICA/OTRO)
 )
+
 // ------------------------------------------------------------------------------------
 // Pantalla Catálogo
 // - Toggle lista/grilla
@@ -195,7 +196,8 @@ fun CatalogScreen(
         ) {
             // Botón para cambiar lista <-> grilla
             IconButton(
-                onClick = { isGrid = !isGrid }) {
+                onClick = { isGrid = !isGrid }
+            ){
                 Icon(
 //                             painter = painterResource(id = R.mipmap.logo_app),
                     imageVector = if (isGrid) Icons.Outlined.GridView else Icons.Outlined.List,
@@ -244,39 +246,40 @@ fun CatalogScreen(
             } //Fin Row 1
 
 //            Row ultimos 3 iconos:
-                Row( verticalAlignment = Alignment.CenterVertically,
-                   modifier = Modifier.fillMaxWidth()
-                )
-                {
-                    IconButton(
-                        onClick = {}) {
-                        Icon(
-                            painter = painterResource(id = R.mipmap.greda_icon_foreground),
-                            modifier = Modifier.fillMaxSize(),
-                            contentDescription = "Cambiar vista"
-                        )
-                    }
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            )
+            {
+                IconButton(
+                    onClick = {}) {
+                    Icon(
+                        painter = painterResource(id = R.mipmap.greda_icon_foreground),
+                        modifier = Modifier.fillMaxSize(),
+                        contentDescription = "Cambiar vista"
+                    )
+                }
 
 
-                    IconButton(
-                        onClick = {}) {
-                        Icon(
-                            painter = painterResource(id = R.mipmap.hilo_icon_foreground),
-                            modifier = Modifier.fillMaxSize(),
-                            contentDescription = "Cambiar vista"
-                        )
-                    }
+                IconButton(
+                    onClick = {}) {
+                    Icon(
+                        painter = painterResource(id = R.mipmap.hilo_icon_foreground),
+                        modifier = Modifier.fillMaxSize(),
+                        contentDescription = "Cambiar vista"
+                    )
+                }
 
-                    IconButton(
-                        onClick = {}) {
-                        Icon(
-                            painter = painterResource(id = R.mipmap.pintura_icon_foreground),
-                            modifier = Modifier.fillMaxSize(),
-                            contentDescription = "Cambiar vista"
-                        )
-                    }
+                IconButton(
+                    onClick = {}) {
+                    Icon(
+                        painter = painterResource(id = R.mipmap.pintura_icon_foreground),
+                        modifier = Modifier.fillMaxSize(),
+                        contentDescription = "Cambiar vista"
+                    )
+                }
 
-                } //Fin Row 2
+            } //Fin Row 2
 
 //        ) {
 //            // Botón para cambiar lista <-> grilla
@@ -400,270 +403,270 @@ fun CatalogScreen(
 //            }
 //        }
 //    }
-            } //Cierre Column scope
-        }
+        } //Cierre Column scope
+    }
 
 // Tarjeta "grande" para vista de lista
 
-        @Composable
-        fun ProductItem(
-            product: Product,
-            onAddToCart: (Product) -> Unit,
-            onViewDetail: (Product) -> Unit
+    @Composable
+    fun ProductItem(
+        product: Product,
+        onAddToCart: (Product) -> Unit,
+        onViewDetail: (Product) -> Unit
+    ) {
+        val currency = remember { NumberFormat.getCurrencyInstance(Locale("es", "CL")) }
+
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { onViewDetail(product) },
+            elevation = CardDefaults.cardElevation(4.dp)
         ) {
-            val currency = remember { NumberFormat.getCurrencyInstance(Locale("es", "CL")) }
+            Column(modifier = Modifier.padding(12.dp)) {
+                AsyncImage(
+                    model = product.imageUrl,
+                    contentDescription = product.name,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(180.dp),
+                    contentScale = ContentScale.Crop
+                )
 
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { onViewDetail(product) },
-                elevation = CardDefaults.cardElevation(4.dp)
-            ) {
-                Column(modifier = Modifier.padding(12.dp)) {
-                    AsyncImage(
-                        model = product.imageUrl,
-                        contentDescription = product.name,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(180.dp),
-                        contentScale = ContentScale.Crop
-                    )
+                Spacer(Modifier.height(8.dp))
 
-                    Spacer(Modifier.height(8.dp))
+                Text(
+                    text = product.name,
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                    fontSize = 20.sp
+                )
+                Text(
+                    text = product.author,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    fontSize = 15.sp
+                )
 
-                    Text(
-                        text = product.name,
-                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis,
-                        fontSize = 20.sp
-                    )
-                    Text(
-                        text = product.author,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        fontSize = 15.sp
-                    )
+                Text(
+                    text = currency.format(product.price),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.primary,
+                    fontSize = 15.sp
+                )
 
-                    Text(
-                        text = currency.format(product.price),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.primary,
-                        fontSize = 15.sp
-                    )
+                Spacer(Modifier.height(8.dp))
 
-                    Spacer(Modifier.height(8.dp))
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        Button(
-                            onClick = { onAddToCart(product) },
-                            //Cambio de shape btn agregar al carrito:
-                            shape = MaterialTheme.shapes.medium,
-                            modifier = Modifier.weight(1f)
-                        ) {
-                            Text(text = stringResource(id = R.string.add_to_cart), fontSize = 20.sp)
-                        }
-                        OutlinedButton(
-                            onClick = { onViewDetail(product) },
-                            modifier = Modifier.weight(1f)
-                        ) {
-                            Text(text = stringResource(id = R.string.view_detail), fontSize = 20.sp)
-                        }
-                    }
-                }
-            }
-        }
-
-
-        // Tarjeta "compacta"
-        @Composable
-        fun ProductCard(
-            product: Product,
-            onAddToCart: (Product) -> Unit,
-            onViewDetail: (Product) -> Unit
-        ) {
-            val currency = remember { NumberFormat.getCurrencyInstance(Locale("es", "CL")) }
-
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                elevation = CardDefaults.cardElevation(4.dp),
-                onClick = { onViewDetail(product) }
-            ) {
-                Column(Modifier.padding(8.dp)) {
-                    AsyncImage(
-                        model = product.imageUrl,
-                        contentDescription = product.name,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .aspectRatio(1f),
-                        contentScale = ContentScale.Crop
-                    )
-                    Spacer(Modifier.height(8.dp))
-                    Text(
-                        text = product.name,
-                        style = MaterialTheme.typography.titleSmall,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis,
-                        fontSize = 20.sp
-                    )
-                    Text(
-                        text = product.author,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        fontSize = 15.sp
-                    )
-                    Text(
-                        text = currency.format(product.price),
-                        style = MaterialTheme.typography.titleSmall,
-                        color = MaterialTheme.colorScheme.primary,
-                        fontSize = 15.sp
-                    )
-                    Spacer(Modifier.height(6.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
                     Button(
                         onClick = { onAddToCart(product) },
-                        modifier = Modifier.fillMaxWidth()
+                        //Cambio de shape btn agregar al carrito:
+                        shape = MaterialTheme.shapes.medium,
+                        modifier = Modifier.weight(1f)
                     ) {
                         Text(text = stringResource(id = R.string.add_to_cart), fontSize = 20.sp)
                     }
-                }
-            }
-        }
-
-
-        // ------------------------------------------------------------------------------------
-// Preview básico (solo UI)
-// ------------------------------------------------------------------------------------
-        @Composable
-        fun CatalogScreenPreview() {
-            val sample = listOf(
-                Product(
-                    "1",
-                    stringResource(R.string.Bufanda_amano),
-                    15000.0,
-                    "",
-                    "Juana Pérez",
-                    true,
-                    3,
-                    "RM",
-                    ProductType.TEXTIL
-                ),
-                Product(
-                    "2",
-                    stringResource(R.string.Ceramica_amano),
-                    25000.0,
-                    "",
-                    "Cristóbal Elte",
-                    true,
-                    1,
-                    "Valparaíso",
-                    ProductType.CERAMICA
-                )
-            )
-            val snackbar = remember { SnackbarHostState() }
-            MaterialTheme {
-                CatalogScreen(
-                    products = sample,
-                    cartCount = 2,
-                    snackbarHostState = snackbar,
-                    onAddToCart = {},
-                    onViewDetail = {},
-                    isGrid = true,
-                    onToggleLayout = {},
-                    listState = LazyListState(0, 0),
-                    gridState = LazyGridState(),
-                    onlyAvailable = true,
-                    onToggleOnlyAvailable = {},
-                    query = "",
-                    onQueryChange = {},
-                    availableRegions = listOf("Araucanía", "Biobío", "RM", "Valparaíso"),
-                    selectedRegions = emptySet(),
-                    onToggleRegion = {},
-                    availableTypes = ProductType.entries,
-                    selectedTypes = emptySet(),
-                    onToggleType = {},
-                    onOpenCart = {}
-                )
-            }
-        }
-
-        @OptIn(ExperimentalMaterial3Api::class)
-        @Composable
-        fun <T> MultiSelectDropdown(
-            modifier: Modifier = Modifier,
-            label: String,
-            items: List<T>,
-            selected: Set<T>,
-            onToggle: (T) -> Unit,
-            onSelectAll: (Boolean) -> Unit,        // true = seleccionar todos, false = limpiar
-            itemLabel: (T) -> String = { it.toString() },
-
-            ) {
-            var expanded by remember { mutableStateOf(false) }
-
-            ExposedDropdownMenuBox(
-                expanded = expanded,
-                onExpandedChange = { expanded = !expanded },
-                modifier = modifier
-            ) {
-                OutlinedTextField(
-                    readOnly = true,
-                    value = when {
-                        selected.isEmpty() -> "Ninguno"
-                        selected.size == items.size -> "Todos"
-                        else -> selected.joinToString(", ") { itemLabel(it) }
-                    },
-                    onValueChange = {},
-                    label = { Text(label) },
-                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
-                    modifier = Modifier
-                        .menuAnchor()
-                        .fillMaxWidth()
-                )
-
-                ExposedDropdownMenu(
-                    expanded = expanded,
-                    onDismissRequest = { expanded = false },
-                ) {
-                    // Seleccionar todos / Limpiar
-                    DropdownMenuItem(
-                        text = {
-                            Text(
-                                if (selected.size == items.size) stringResource(R.string.Limpiar_seleccion) else stringResource(
-                                    R.string.Sel_todos
-                                )
-                            )
-                        },
-                        onClick = {
-                            val selectAll = selected.size != items.size
-                            onSelectAll(selectAll)
-                        }
-                    )
-
-                    HorizontalDivider()
-
-                    // Items con checkbox
-                    items.forEach { item ->
-                        val checked = item in selected
-                        DropdownMenuItem(
-                            text = {
-                                Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Checkbox(checked = checked, onCheckedChange = null)
-                                    Spacer(Modifier.width(8.dp))
-                                    Text(itemLabel(item))
-                                }
-                            },
-                            onClick = { onToggle(item) } // dejamos abierto para multiselección
-                        )
+                    OutlinedButton(
+                        onClick = { onViewDetail(product) },
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text(text = stringResource(id = R.string.view_detail), fontSize = 20.sp)
                     }
                 }
             }
         }
     }
+
+
+    // Tarjeta "compacta"
+    @Composable
+    fun ProductCard(
+        product: Product,
+        onAddToCart: (Product) -> Unit,
+        onViewDetail: (Product) -> Unit
+    ) {
+        val currency = remember { NumberFormat.getCurrencyInstance(Locale("es", "CL")) }
+
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            elevation = CardDefaults.cardElevation(4.dp),
+            onClick = { onViewDetail(product) }
+        ) {
+            Column(Modifier.padding(8.dp)) {
+                AsyncImage(
+                    model = product.imageUrl,
+                    contentDescription = product.name,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(1f),
+                    contentScale = ContentScale.Crop
+                )
+                Spacer(Modifier.height(8.dp))
+                Text(
+                    text = product.name,
+                    style = MaterialTheme.typography.titleSmall,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                    fontSize = 20.sp
+                )
+                Text(
+                    text = product.author,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    fontSize = 15.sp
+                )
+                Text(
+                    text = currency.format(product.price),
+                    style = MaterialTheme.typography.titleSmall,
+                    color = MaterialTheme.colorScheme.primary,
+                    fontSize = 15.sp
+                )
+                Spacer(Modifier.height(6.dp))
+                Button(
+                    onClick = { onAddToCart(product) },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(text = stringResource(id = R.string.add_to_cart), fontSize = 20.sp)
+                }
+            }
+        }
+    }
+
+
+    // ------------------------------------------------------------------------------------
+// Preview básico (solo UI)
+// ------------------------------------------------------------------------------------
+    @Composable
+    fun CatalogScreenPreview() {
+        val sample = listOf(
+            Product(
+                "1",
+                stringResource(R.string.Bufanda_amano),
+                15000.0,
+                "",
+                "Juana Pérez",
+                true,
+                3,
+                "RM",
+                ProductType.TEXTIL
+            ),
+            Product(
+                "2",
+                stringResource(R.string.Ceramica_amano),
+                25000.0,
+                "",
+                "Cristóbal Elte",
+                true,
+                1,
+                "Valparaíso",
+                ProductType.CERAMICA
+            )
+        )
+        val snackbar = remember { SnackbarHostState() }
+        MaterialTheme {
+            CatalogScreen(
+                products = sample,
+                cartCount = 2,
+                snackbarHostState = snackbar,
+                onAddToCart = {},
+                onViewDetail = {},
+                isGrid = true,
+                onToggleLayout = {},
+                listState = LazyListState(0, 0),
+                gridState = LazyGridState(),
+                onlyAvailable = true,
+                onToggleOnlyAvailable = {},
+                query = "",
+                onQueryChange = {},
+                availableRegions = listOf("Araucanía", "Biobío", "RM", "Valparaíso"),
+                selectedRegions = emptySet(),
+                onToggleRegion = {},
+                availableTypes = ProductType.entries,
+                selectedTypes = emptySet(),
+                onToggleType = {},
+                onOpenCart = {}
+            )
+        }
+    }
+
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Composable
+    fun <T> MultiSelectDropdown(
+        modifier: Modifier = Modifier,
+        label: String,
+        items: List<T>,
+        selected: Set<T>,
+        onToggle: (T) -> Unit,
+        onSelectAll: (Boolean) -> Unit,        // true = seleccionar todos, false = limpiar
+        itemLabel: (T) -> String = { it.toString() },
+
+        ) {
+        var expanded by remember { mutableStateOf(false) }
+
+        ExposedDropdownMenuBox(
+            expanded = expanded,
+            onExpandedChange = { expanded = !expanded },
+            modifier = modifier
+        ) {
+            OutlinedTextField(
+                readOnly = true,
+                value = when {
+                    selected.isEmpty() -> "Ninguno"
+                    selected.size == items.size -> "Todos"
+                    else -> selected.joinToString(", ") { itemLabel(it) }
+                },
+                onValueChange = {},
+                label = { Text(label) },
+                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
+                modifier = Modifier
+                    .menuAnchor()
+                    .fillMaxWidth()
+            )
+
+            ExposedDropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false },
+            ) {
+                // Seleccionar todos / Limpiar
+                DropdownMenuItem(
+                    text = {
+                        Text(
+                            if (selected.size == items.size) stringResource(R.string.Limpiar_seleccion) else stringResource(
+                                R.string.Sel_todos
+                            )
+                        )
+                    },
+                    onClick = {
+                        val selectAll = selected.size != items.size
+                        onSelectAll(selectAll)
+                    }
+                )
+
+                HorizontalDivider()
+
+                // Items con checkbox
+                items.forEach { item ->
+                    val checked = item in selected
+                    DropdownMenuItem(
+                        text = {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Checkbox(checked = checked, onCheckedChange = null)
+                                Spacer(Modifier.width(8.dp))
+                                Text(itemLabel(item))
+                            }
+                        },
+                        onClick = { onToggle(item) } // dejamos abierto para multiselección
+                    )
+                }
+            }
+        }
+    }
+}
 
 
 
