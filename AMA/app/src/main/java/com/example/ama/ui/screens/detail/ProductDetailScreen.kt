@@ -31,7 +31,7 @@ fun ProductDetailScreen(
     product: Product,
     onBack: () -> Unit,
     onAddToCart: (Product) -> Unit,
-    // opcionales (para HU: intermediario/descripcion si luego los agregan)
+
     publishedBy: String? = null,
     description: String? = null
 ) {
@@ -56,8 +56,7 @@ fun ProductDetailScreen(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // Imagen principal (tu modelo usa imageUrl simple)
-            // si no hay URL, usa el drawable local
+
             val img: Any = product.imageUrl.takeIf { it.isNotBlank() }
                 ?: R.drawable.placeholder_image
 
@@ -82,7 +81,7 @@ fun ProductDetailScreen(
                 fontSize = 20.sp
             )
 
-            // Autor real vs publicado por (si te pasan publishedBy)
+
             val autorTexto =
                 if (!publishedBy.isNullOrBlank() && publishedBy != product.author) {
                     "Publicado por: $publishedBy\nAutor/a real: ${product.author}"
@@ -91,7 +90,7 @@ fun ProductDetailScreen(
                 }
             Text(text = autorTexto, style = MaterialTheme.typography.bodyMedium, fontSize = 15.sp)
 
-            // Descripción (si te la pasan; si no, un texto amigable)
+
             Text(
                 text = description ?: stringResource(R.string.app_description),
                 style = MaterialTheme.typography.bodyMedium,

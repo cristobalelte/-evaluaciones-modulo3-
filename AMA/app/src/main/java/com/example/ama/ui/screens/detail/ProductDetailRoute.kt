@@ -17,8 +17,7 @@ fun ProductDetailRoute(
     onBack: () -> Unit,
     vm: CatalogViewModel
 ) {
-    // ❌ NO crear otro viewModel() aquí.
-    // ✅ Tomar el producto del vm que llega por parámetro
+
     val product = remember(productId) { vm.getById(productId) }
 
     val snackbar = remember { SnackbarHostState() }
@@ -38,8 +37,7 @@ fun ProductDetailRoute(
                 snackbar.showSnackbar("Agregado al carrito")
             }
         },
-        // si tu ProductDetailScreen admite snackbarHostState, pásalo:
-        // snackbarHostState = snackbar
+
     )
 }
 
