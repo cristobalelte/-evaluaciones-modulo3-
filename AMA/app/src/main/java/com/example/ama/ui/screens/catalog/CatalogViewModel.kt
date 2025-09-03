@@ -1,80 +1,101 @@
 package com.example.ama.ui.screens.catalog
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.ama.data.CartRepository
+import com.example.ama.data.CatalogRepository
+import com.example.ama.data.db.CartRow
 import com.example.ama.ui.components.Product
 import com.example.ama.ui.components.ProductType
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.text.Normalizer
+import java.util.UUID
 import kotlin.math.min
 
 class CatalogViewModel : ViewModel() {
 
-    // ---- Datos mock con región y tipo ----
-    private val all: List<Product> = listOf(
-        Product("1","Bufanda de lana tejida a mano",15000.0,"","Juana Pérez",  true,3, region="RM",         type=ProductType.TEXTIL),
-        Product("2","Juego de cerámica pintado a mano",25000.0,"","Cristóbal Elte", true,1, region="Valparaíso", type=ProductType.CERAMICA),
-        Product("3","Canasto mimbre",18000.0,"","Fernando Rojas", false,5, region="Biobío",     type=ProductType.MADERA),
-        Product("4","Chaleco tejido",22000.0,"","Rosa Muñoz", true,0, region="Araucanía",  type=ProductType.TEXTIL),
-    )
+    private var all: List<Product> = emptyList()
 
-
-    // Carrito
+    // --- carrito (estado que ya usabas en la UI) ---
     data class CartItem(val product: Product, val qty: Int = 1)
-
     private val _cartItems = MutableStateFlow<List<CartItem>>(emptyList())
     val cartItems: StateFlow<List<CartItem>> = _cartItems
 
-    private val _cartCount = MutableStateFlow(0) // total de unidades
+    private val _cartCount = MutableStateFlow(0)
     val cartCount: StateFlow<Int> = _cartCount
 
     private fun recomputeCount() {
         _cartCount.value = _cartItems.value.sumOf { it.qty }
     }
 
-    fun addToCart(p: Product) {
-        val list = _cartItems.value.toMutableList()
-        val i = list.indexOfFirst { it.product.id == p.id }
-        if (i >= 0) {
-            list[i] = list[i].copy(qty = list[i].qty + 1)
-        } else {
-            list += CartItem(p, 1)
+    // repo del carrito
+    private var cartRepo: CartRepository? = null
+    private var catalogRepo: com.example.ama.data.CatalogRepository? = null
+
+    fun attachCatalog(context: android.content.Context) {
+        if (catalogRepo == null) catalogRepo = com.example.ama.data.CatalogRepository(context)
+    }
+    fun addProduct(
+        name: String,
+        price: Double,
+        author: String,
+        region: String,
+        type: ProductType,
+        stock: Int,
+        imageSrc: android.net.Uri? // uri que elegiste en la pantalla
+    ) = viewModelScope.launch(Dispatchers.IO) {
+        val repo = catalogRepo ?: return@launch
+        val imageUrl = imageSrc?.let { repo.persistImage(it) } ?: ""
+
+        val newProduct = com.example.ama.ui.components.Product(
+            id = UUID.randomUUID().toString(),
+            name = name,
+            price = price,
+            imageUrl = imageUrl,
+            author = author,
+            isActive = true,
+            stock = stock,
+            region = region,
+            type = type
+        )
+
+        repo.add(newProduct)           // escribe en JSON
+        // Actualiza memoria y UI:
+        all = all + newProduct
+        withContext(Dispatchers.Main) { refresh() }
+    }
+
+    fun attachCart(context: Context) {
+        if (cartRepo != null) return
+        cartRepo = CartRepository(context)
+
+        viewModelScope.launch {
+            cartRepo!!.rows.collectLatest { rows ->
+                _cartItems.value = rows.mapNotNull { row -> mapRow(row) }
+                recomputeCount()
+            }
         }
-        _cartItems.value = list
-        recomputeCount()
     }
 
-    fun incQty(id: String) {
-        _cartItems.value = _cartItems.value.map {
-            if (it.product.id == id) it.copy(qty = it.qty + 1) else it
-        }
-        recomputeCount()
+    private fun mapRow(row: CartRow): CartItem? {
+        val p = all.firstOrNull { it.id == row.productId } ?: return null
+        return CartItem(p, row.qty)
     }
 
-    fun decQty(id: String) {
-        val list = _cartItems.value.toMutableList()
-        val i = list.indexOfFirst { it.product.id == id }
-        if (i >= 0) {
-            val newQty = list[i].qty - 1
-            if (newQty <= 0) list.removeAt(i) else list[i] = list[i].copy(qty = newQty)
-            _cartItems.value = list
-            recomputeCount()
-        }
-    }
+    fun addToCart(p: Product) = viewModelScope.launch { cartRepo?.add(p.id) }
+    fun incQty(id: String)     = viewModelScope.launch { cartRepo?.inc(id) }
+    fun decQty(id: String)     = viewModelScope.launch { cartRepo?.dec(id) }
+    fun removeFromCart(id: String) = viewModelScope.launch { cartRepo?.remove(id) }
+    fun clearCart()            = viewModelScope.launch { cartRepo?.clear() }
+    fun cartTotal(): Double    = _cartItems.value.sumOf { it.product.price * it.qty }
 
-    fun removeFromCart(id: String) {
-        _cartItems.value = _cartItems.value.filterNot { it.product.id == id }
-        recomputeCount()
-    }
-
-    fun clearCart() {
-        _cartItems.value = emptyList()
-        recomputeCount()
-    }
-
-    fun cartTotal(): Double = _cartItems.value.sumOf { it.product.price * it.qty }
-
-    // Filtros / búsqueda
+    // --- filtros/búsqueda (igual que antes) ---
     private val _onlyAvailable = MutableStateFlow(true)
     val onlyAvailable: StateFlow<Boolean> = _onlyAvailable
 
@@ -88,32 +109,12 @@ class CatalogViewModel : ViewModel() {
     val types: StateFlow<Set<ProductType>> = _types
 
     fun setQuery(q: String) { _query.value = q; refresh() }
+    fun toggleRegion(r: String) { _regions.value = _regions.value.toMutableSet().also { if (!it.add(r)) it.remove(r) }; refresh() }
+    fun toggleType(t: ProductType) { _types.value = _types.value.toMutableSet().also { if (!it.add(t)) it.remove(t) }; refresh() }
+    fun clearFilters() { _regions.value = emptySet(); _types.value = emptySet(); _query.value = ""; _onlyAvailable.value = true; refresh() }
+    fun setOnlyAvailable(v: Boolean) { _onlyAvailable.value = v; refresh() }
 
-    fun toggleRegion(r: String) {
-        _regions.value = _regions.value.toMutableSet().also { if (!it.add(r)) it.remove(r) }
-        refresh()
-    }
-
-    fun toggleType(t: ProductType) {
-        _types.value = _types.value.toMutableSet().also { if (!it.add(t)) it.remove(t) }
-        refresh()
-    }
-
-    fun clearFilters() {
-        _regions.value = emptySet()
-        _types.value = emptySet()
-        _query.value = ""
-        _onlyAvailable.value = true
-        refresh()
-    }
-
-    fun setOnlyAvailable(v: Boolean) {
-        _onlyAvailable.value = v
-        refresh()
-    }
-
-
-    // Paginación + productos
+    // --- paginación / productos ---
     private val pageSize = 12
     private var nextIndex = 0
 
@@ -151,40 +152,35 @@ class CatalogViewModel : ViewModel() {
 
     fun getById(id: String): Product? = all.firstOrNull { it.id == id }
 
-    // Datos para UI filtros
-    val availableRegions: List<String> = all.map { it.region }.distinct().sorted()
+    // Regiones y tipos derivan de 'all'; se recalculan al cargar JSON.
+    val availableRegions: List<String> get() = all.map { it.region }.distinct().sorted()
     val availableTypes: List<ProductType> = ProductType.values().toList()
 
-    // Utilidades búsqueda (tolerante a errores)
+    // --- JSON local ---
+    fun loadFromDisk(context: Context) {
+        val repo = CatalogRepository(context)
+        all = repo.load()
+        refresh()
+    }
+
+    // utilidades búsqueda (tus helpers)
     private fun matchesQuery(p: Product, q: String): Boolean {
         if (q.isBlank()) return true
         val nq = norm(q)
         val fields = listOf(p.name, p.author).map(::norm)
         return fields.any { it.contains(nq) || editDistance(it, nq) <= typoThreshold(nq) }
     }
-
-    private fun typoThreshold(q: String): Int = when {
-        q.length <= 4 -> 1
-        q.length <= 8 -> 2
-        else -> 3
-    }
-
-    private fun norm(s: String): String =
-        Normalizer.normalize(s.lowercase(), Normalizer.Form.NFD)
-            .replace("\\p{InCombiningDiacriticalMarks}+".toRegex(), "")
-
-    private fun editDistance(a: String, b: String): Int {
-        val m = a.length; val n = b.length
-        if (m == 0) return n; if (n == 0) return m
-        val dp = IntArray(n + 1) { it }
-        for (i in 1..m) {
-            var prev = dp[0]
-            dp[0] = i
-            for (j in 1..n) {
-                val tmp = dp[j]
-                val cost = if (a[i - 1] == b[j - 1]) 0 else 1
-                dp[j] = min(min(dp[j] + 1, dp[j - 1] + 1), prev + cost)
-                prev = tmp
+    private fun typoThreshold(q: String) = when { q.length <= 4 -> 1; q.length <= 8 -> 2; else -> 3 }
+    private fun norm(s: String) = Normalizer.normalize(s.lowercase(), Normalizer.Form.NFD)
+        .replace("\\p{InCombiningDiacriticalMarks}+".toRegex(), "")
+    private fun editDistance(a: String, b: String): Int { /* …igual que tenías… */
+        val m=a.length; val n=b.length; if(m==0)return n; if(n==0)return m
+        val dp = IntArray(n+1){it}
+        for(i in 1..m){
+            var prev = dp[0]; dp[0]=i
+            for(j in 1..n){
+                val tmp=dp[j]; val cost = if(a[i-1]==b[j-1])0 else 1
+                dp[j] = min(min(dp[j]+1, dp[j-1]+1), prev+cost); prev=tmp
             }
         }
         return dp[n]

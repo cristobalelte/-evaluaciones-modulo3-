@@ -79,7 +79,7 @@ fun CatalogScreen(
             CenterAlignedTopAppBar(
                 title = { Text("Catálogo") },
 
-                // ✅ Siempre un lambda composable; dentro pintamos condicionalmente
+
                 navigationIcon = {
                     if (onBack != null) {
                         IconButton(onClick = onBack) {

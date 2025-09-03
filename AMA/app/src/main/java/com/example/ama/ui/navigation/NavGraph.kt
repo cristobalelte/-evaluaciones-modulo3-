@@ -18,10 +18,12 @@ import com.example.ama.ui.screens.carrito.CartRoute
 import com.example.ama.ui.screens.catalog.CatalogRoute
 import com.example.ama.ui.screens.catalog.CatalogViewModel
 import com.example.ama.ui.screens.detail.ProductDetailRoute
+import com.example.ama.ui.screens.settings.SettingsScreen
+import com.example.ama.ui.theme.ThemeOption
 
 
 @Composable
-fun AppNavigation(skipLogin: Boolean = true) {
+fun AppNavigation(skipLogin: Boolean = true, onChangeTheme: (ThemeOption) -> Unit = {}, themeOpt: ThemeOption = ThemeOption.SYSTEM) {
     val navController = rememberNavController()
     val vm: CatalogViewModel = viewModel()
 
@@ -48,13 +50,17 @@ fun AppNavigation(skipLogin: Boolean = true) {
                 cartCount = cartCount,
                 onOpenCart = { navController.navigate(Routes.CART) },
                 onSearch = { /* ... */ },
-                onCategoryClick = { type -> navController.navigate("catalog?type=${type.name}") },
-                onOpenPublish = { navController.navigate(Routes.PUBLISH) }   // 👈 aquí navegas
+                onCategoryClick = { type ->
+                    navController.navigate("catalog?type=${type.name}")
+                },
+                onOpenPublish = { navController.navigate(Routes.PUBLISH) },
+                onOpenSettings = { navController.navigate(Routes.SETTINGS) } //
             )
         }
 
         composable(Routes.PUBLISH) {
             AddProductRoute(
+                vm = vm,
                 onBack = { navController.popBackStack() }
             )
         }
@@ -110,6 +116,13 @@ fun AppNavigation(skipLogin: Boolean = true) {
             CartRoute(
                 onBack = { navController.popBackStack() },
                 vm = vm
+            )
+        }
+        composable(Routes.SETTINGS) {
+            SettingsScreen(
+                themeOpt = themeOpt,
+                onChangeTheme = onChangeTheme,
+                onBack = { navController.popBackStack() }
             )
         }
     }

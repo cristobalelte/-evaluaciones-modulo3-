@@ -1,5 +1,6 @@
 package com.example.ama.ui.screens.catalog
 
+import android.content.Context
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.SnackbarHostState
@@ -11,6 +12,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
 import com.example.ama.ui.components.ProductType
 
@@ -24,6 +26,13 @@ fun CatalogRoute(
     initialType: ProductType? = null,
     onBack: (() -> Unit)? = null,
 ) {
+    val ctx = LocalContext.current
+    val vm = remember { CatalogViewModel() }
+    LaunchedEffect(Unit) {
+        vm.loadFromDisk(ctx)}
+    LaunchedEffect(Unit) {
+        vm.attachCart(ctx)
+    }
     val products       by vm.products.collectAsStateWithLifecycle()
     val cartCount      by vm.cartCount.collectAsStateWithLifecycle()
     val onlyAvail      by vm.onlyAvailable.collectAsStateWithLifecycle()
