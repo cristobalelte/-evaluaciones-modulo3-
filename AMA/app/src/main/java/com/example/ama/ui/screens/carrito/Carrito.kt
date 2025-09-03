@@ -18,6 +18,8 @@ import coil.compose.AsyncImage
 import com.example.ama.ui.screens.catalog.CatalogViewModel
 import java.text.NumberFormat
 import java.util.*
+import com.example.ama.ui.screens.catalog.CatalogScreen
+import com.example.ama.ui.components.Product
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

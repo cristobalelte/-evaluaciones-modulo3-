@@ -1,34 +1,22 @@
 package com.example.ama.ui.components
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Help
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.AddCircleOutline
-import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Help
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.BottomAppBarDefaults
-import androidx.compose.material3.ColorScheme
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
-// Componente que muestra la barra inferior (solo ejemplo, no es parte de la app)
 @Composable
-fun BottomBar() {
+fun BottomBar(
+    onHelpClick: () -> Unit = {},
+    onPublishClick: () -> Unit = {},
+    onProfileClick: () -> Unit = {}
+) {
     BottomAppBar(
         containerColor = MaterialTheme.colorScheme.onPrimary,
         contentColor = MaterialTheme.colorScheme.primary,
@@ -36,66 +24,26 @@ fun BottomBar() {
         windowInsets = BottomAppBarDefaults.windowInsets
     ) {
         Row(
-            Modifier
-                .fillMaxSize()
-                .padding(horizontal = 8.dp)
-        )
-        {
-            IconButton(
-                onClick = { /*TODO*/ },
-                modifier = Modifier.
-                weight(1f)
-
-            ) {
-                Column() {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.Help,
-                        contentDescription = "Inicio",
-                        modifier = Modifier.
-                        align(Alignment.CenterHorizontally)
-                    )
-
-                    Text(
-                        text = "AYUDA",
-                        modifier = Modifier.
-                        align(Alignment.CenterHorizontally)
-
-                    )
+            Modifier.fillMaxSize().padding(horizontal = 8.dp)
+        ) {
+            IconButton(onClick = onHelpClick, modifier = Modifier.weight(1f)) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Icon(Icons.AutoMirrored.Filled.Help, contentDescription = "Ayuda")
+                    Text("AYUDA")
                 }
             }
-
-                IconButton(
-                    onClick = { /*TODO*/ },
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.AddCircleOutline,
-                        contentDescription = "Correo"
-//                        modifier = Modifier.align(Alignment.Vertical)
-                    )
-//                Text(
-//                    text = "Correo",
-//                    modifier = Modifier.align(Alignment.CenterHorizontally)
-//                )
+            IconButton(onClick = onPublishClick, modifier = Modifier.weight(1f)) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Icon(Icons.Filled.AddCircleOutline, contentDescription = "Publicar")
+                    Text("Publicar")
                 }
-
-                IconButton(
-                    onClick = { /*TODO*/ },
-                    modifier = Modifier.weight(1f)
-
-
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.AccountCircle,
-                        contentDescription = "Cuenta"
-//                        modifier = Modifier.align(Alignment.CenterHorizontally)
-                    )
-//                Text(
-//                    text = "Cuenta",
-//                    modifier = Modifier.align(Alignment.CenterHorizontally)
-//                )
+            }
+            IconButton(onClick = onProfileClick, modifier = Modifier.weight(1f)) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Icon(Icons.Filled.AccountCircle, contentDescription = "Perfil")
+                    Text("Perfil")
                 }
-
+            }
         }
     }
 }

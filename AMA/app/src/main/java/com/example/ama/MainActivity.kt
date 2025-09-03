@@ -16,25 +16,33 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
-        val splashScreen = installSplashScreen()
-        var showSplashScreen = true
-        splashScreen.setKeepOnScreenCondition { showSplashScreen }
+
+        val splash = installSplashScreen()
+        var keepSplash = true
+        splash.setKeepOnScreenCondition { keepSplash }
 
         lifecycleScope.launch {
-            delay(2000)
-            showSplashScreen = false
+            delay(1500)
+            keepSplash = false
         }
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            AMATheme {
-                val navController = rememberNavController()
-                val vm: CatalogViewModel = viewModel()
 
+        super.onCreate(savedInstanceState)
+
+
+        enableEdgeToEdge()
+
+        setContent {
+            AMATheme(
+                darkTheme = false,
+                dynamicColor = false
+            ) {
                 AppNavigation(
+                    skipLogin = true
                 )
             }
         }
     }
 }
+

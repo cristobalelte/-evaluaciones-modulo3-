@@ -1,6 +1,8 @@
 package com.example.ama.ui.screens.catalog
 
 import androidx.lifecycle.ViewModel
+import com.example.ama.ui.components.Product
+import com.example.ama.ui.components.ProductType
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import java.text.Normalizer

@@ -15,14 +15,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.example.ama.ui.screens.catalog.Product
 import java.text.NumberFormat
 import java.util.Locale
 import com.example.ama.R
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
-import com.example.ama.ui.screens.catalog.ProductType
+import com.example.ama.ui.components.Product
+import com.example.ama.ui.components.ProductType
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -105,6 +105,9 @@ fun ProductDetailScreen(
                     ProductType.MADERA -> stringResource(R.string.Madera_prod)
                     ProductType.CERAMICA -> stringResource(R.string.Ceramica_prod)
                     ProductType.OTRO -> stringResource(R.string.Otro_prod)
+                    ProductType.GREDA -> TODO()
+                    ProductType.HILO -> TODO()
+                    ProductType.PINTURA -> TODO()
                 },
                 fontSize = 20.sp,
                 style = MaterialTheme.typography.bodyMedium

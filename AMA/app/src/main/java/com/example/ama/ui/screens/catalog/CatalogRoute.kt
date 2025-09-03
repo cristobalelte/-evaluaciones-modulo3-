@@ -12,6 +12,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.NavController
+import com.example.ama.ui.components.ProductType
 
 
 @Composable
@@ -19,7 +20,9 @@ fun CatalogRoute(
     vm: CatalogViewModel,
     navController: NavController,
     onViewDetail: (String) -> Unit,
-    onOpenCart: () -> Unit
+    onOpenCart: () -> Unit,
+    initialType: ProductType? = null,
+    onBack: (() -> Unit)? = null,
 ) {
     val products       by vm.products.collectAsStateWithLifecycle()
     val cartCount      by vm.cartCount.collectAsStateWithLifecycle()
@@ -51,6 +54,8 @@ fun CatalogRoute(
         onToggleLayout = { isGrid = it },
         listState = listState,
         gridState = gridState,
+        initialType = initialType,
+        onBack = onBack,
 
         // switch “Solo disponibles”
         onlyAvailable = onlyAvail,
@@ -63,7 +68,6 @@ fun CatalogRoute(
         availableRegions = vm.availableRegions,
         selectedRegions = selectedRegs,
         onToggleRegion = { r -> vm.toggleRegion(r) },
-
         availableTypes = vm.availableTypes,      // << te faltaba
         selectedTypes = selectedTypes,           // << te faltaba
         onToggleType = { t -> vm.toggleType(t) } // << te faltaba

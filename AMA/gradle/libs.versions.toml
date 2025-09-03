@@ -12,6 +12,10 @@ navigationComposeAndroid = "2.9.3"
 uiTextGoogleFonts = "1.9.0"
 splashscreen = "1.0.1"
 navigationCompose = "2.9.3"
+foundationLayout = "1.9.0"
+uiGraphics = "1.9.0"
+uiUnit = "1.9.0"
+foundation = "1.9.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -35,6 +39,10 @@ androidx-ui-text-google-fonts = { group = "androidx.compose.ui", name = "ui-text
 #androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 #androidx-splashscreen = { group = "androidx.core", name = "splashscreen", version.ref = "splashScreen" }
 androidx-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "splashscreen" }
+androidx-foundation-layout = { group = "androidx.compose.foundation", name = "foundation-layout", version.ref = "foundationLayout" }
+ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics", version.ref = "uiGraphics" }
+androidx-ui-unit = { group = "androidx.compose.ui", name = "ui-unit", version.ref = "uiUnit" }
+androidx-foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "foundation" }
 #core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "core-splashscreen" }
 
 

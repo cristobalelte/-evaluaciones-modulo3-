@@ -6,8 +6,9 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import com.example.ama.ui.components.Product
 import com.example.ama.ui.screens.catalog.CatalogViewModel
-import com.example.ama.ui.screens.catalog.Product
+import com.example.ama.ui.screens.catalog.CatalogRoute
 import kotlinx.coroutines.launch
 
 @Composable
