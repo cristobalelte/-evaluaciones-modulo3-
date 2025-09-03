@@ -20,13 +20,33 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.ama.ui.components.ProductType
 
+// --- Regiones de Chile ---
+private val REGIONES_CHILE = listOf(
+    "Arica y Parinacota",
+    "Tarapacá",
+    "Antofagasta",
+    "Atacama",
+    "Coquimbo",
+    "Valparaíso",
+    "Metropolitana de Santiago",
+    "O’Higgins",
+    "Maule",
+    "Ñuble",
+    "Biobío",
+    "La Araucanía",
+    "Los Ríos",
+    "Los Lagos",
+    "Aysén",
+    "Magallanes y de la Antártica Chilena"
+)
+
 data class NewProduct(
     val name: String,
     val price: Double,
     val type: ProductType,
     val region: String,
     val stock: Int,
-    val imageUri: Uri?,          // 👈 ahora guardamos el URI, no un String URL
+    val imageUri: Uri?,          // guardamos el URI local de la imagen
     val author: String,
     val description: String,
 )
@@ -46,11 +66,14 @@ fun AddProductScreen(
     var description by remember { mutableStateOf("") }
 
     var type by remember { mutableStateOf(ProductType.TEXTIL) }
-    var expanded by remember { mutableStateOf(false) }
+    var typeExpanded by remember { mutableStateOf(false) }
+
+    // dropdown de región
+    var regionExpanded by remember { mutableStateOf(false) }
 
     var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
 
-    // Photo Picker (Android 13+ y dispositivos compatibles) + fallback GetContent
+    // Photo Picker (Android 13+) + fallback GetContent
     val context = LocalContext.current
     val supportsPhotoPicker = ActivityResultContracts.PickVisualMedia.isPhotoPickerAvailable(context)
 
@@ -72,7 +95,9 @@ fun AddProductScreen(
         }
     }
 
-    val isValid = name.isNotBlank() && priceText.toDoubleOrNull() != null
+    val isValid = name.isNotBlank() &&
+            priceText.toDoubleOrNull() != null &&
+            region.isNotBlank()
 
     Scaffold(
         topBar = {
@@ -126,7 +151,10 @@ fun AddProductScreen(
             )
 
             // Tipo de producto
-            ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = !expanded }) {
+            ExposedDropdownMenuBox(
+                expanded = typeExpanded,
+                onExpandedChange = { typeExpanded = !typeExpanded }
+            ) {
                 OutlinedTextField(
                     readOnly = true,
                     value = when (type) {
@@ -140,23 +168,51 @@ fun AddProductScreen(
                     },
                     onValueChange = {},
                     label = { Text("Tipo") },
-                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
+                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(typeExpanded) },
                     modifier = Modifier.menuAnchor().fillMaxWidth()
                 )
-                ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+                ExposedDropdownMenu(
+                    expanded = typeExpanded,
+                    onDismissRequest = { typeExpanded = false }
+                ) {
                     ProductType.entries.forEach { t ->
                         DropdownMenuItem(
                             text = { Text(t.name.lowercase().replaceFirstChar { it.titlecase() }) },
-                            onClick = { type = t; expanded = false }
+                            onClick = { type = t; typeExpanded = false }
                         )
                     }
                 }
             }
 
-            OutlinedTextField(
-                value = region, onValueChange = { region = it },
-                label = { Text("Región") }, modifier = Modifier.fillMaxWidth()
-            )
+            // Región (dropdown con regiones de Chile)
+            ExposedDropdownMenuBox(
+                expanded = regionExpanded,
+                onExpandedChange = { regionExpanded = !regionExpanded }
+            ) {
+                OutlinedTextField(
+                    readOnly = true,
+                    value = region,
+                    onValueChange = {},
+                    label = { Text("Región") },
+                    placeholder = { Text("Selecciona…") },
+                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(regionExpanded) },
+                    modifier = Modifier.menuAnchor().fillMaxWidth()
+                )
+                ExposedDropdownMenu(
+                    expanded = regionExpanded,
+                    onDismissRequest = { regionExpanded = false }
+                ) {
+                    REGIONES_CHILE.forEach { r ->
+                        DropdownMenuItem(
+                            text = { Text(r) },
+                            onClick = {
+                                region = r
+                                regionExpanded = false
+                            }
+                        )
+                    }
+                }
+            }
 
             OutlinedTextField(
                 value = stockText, onValueChange = { stockText = it },
@@ -173,7 +229,9 @@ fun AddProductScreen(
             OutlinedTextField(
                 value = description, onValueChange = { description = it },
                 label = { Text("Descripción") },
-                modifier = Modifier.fillMaxWidth().heightIn(min = 100.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(min = 100.dp)
             )
 
             Button(
@@ -184,7 +242,7 @@ fun AddProductScreen(
                         type = type,
                         region = region.trim(),
                         stock = stockText.toIntOrNull() ?: 1,
-                        imageUri = selectedImageUri,    // 👈 pasamos el URI elegido
+                        imageUri = selectedImageUri,
                         author = author.trim(),
                         description = description.trim()
                     )
@@ -196,4 +254,5 @@ fun AddProductScreen(
         }
     }
 }
+
 
