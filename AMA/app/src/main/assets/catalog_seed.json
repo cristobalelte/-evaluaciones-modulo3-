@@ -1,0 +1,68 @@
+[
+  {
+    "id": "1",
+    "name": "Bufanda de lana tejida a mano",
+    "price": 15000.0,
+    "imageUrl": "",
+    "author": "Juana Pérez",
+    "isActive": true,
+    "stock": 3,
+    "region": "RM",
+    "type": "TEXTIL"
+  },
+  {
+    "id": "2",
+    "name": "Juego de cerámica pintado a mano",
+    "price": 25000.0,
+    "imageUrl": "",
+    "author": "Cristóbal Elte",
+    "isActive": true,
+    "stock": 1,
+    "region": "Valparaíso",
+    "type": "CERAMICA"
+  },
+  {
+    "id": "3",
+    "name": "Canasto de mimbre",
+    "price": 18000.0,
+    "imageUrl": "",
+    "author": "Fernando Rojas",
+    "isActive": false,
+    "stock": 5,
+    "region": "Biobío",
+    "type": "MADERA"
+  },
+  {
+    "id": "4",
+    "name": "Chaleco tejido",
+    "price": 22000.0,
+    "imageUrl": "",
+    "author": "Rosa Muñoz",
+    "isActive": true,
+    "stock": 0,
+    "region": "Araucanía",
+    "type": "TEXTIL"
+  },
+  {
+    "id": "5",
+    "name": "Hilo teñido natural",
+    "price": 7000.0,
+    "imageUrl": "",
+    "author": "Ana Torres",
+    "isActive": true,
+    "stock": 12,
+    "region": "RM",
+    "type": "HILO"
+  },
+  {
+    "id": "6",
+    "name": "Paisaje al óleo",
+    "price": 35000.0,
+    "imageUrl": "",
+    "author": "Luis Pérez",
+    "isActive": true,
+    "stock": 2,
+    "region": "Maule",
+    "type": "PINTURA"
+  }
+]
