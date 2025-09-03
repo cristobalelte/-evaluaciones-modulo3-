@@ -5,6 +5,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.ShoppingCart
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -20,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import com.example.ama.R
 import com.example.ama.ui.components.BottomBar
 import com.example.ama.ui.components.ProductType
+import com.example.ama.ui.navigation.Routes
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -29,6 +31,7 @@ fun HomeScreen(
     onSearch: (String) -> Unit,
     onCategoryClick: (ProductType) -> Unit,
     onOpenPublish: () -> Unit,
+    onOpenSettings: () -> Unit,
 ) {
     var query by remember { mutableStateOf("") }
 
@@ -41,6 +44,16 @@ fun HomeScreen(
                         contentDescription = "Arte Mayor"
                     )
                 },
+                // 👈 Botón de Configuración a la izquierda
+                navigationIcon = {
+                    IconButton(onClick = onOpenSettings) {
+                        Icon(
+                            imageVector = Icons.Outlined.Settings,
+                            contentDescription = "Configuración"
+                        )
+                    }
+                },
+                // 👉 Solo carrito a la derecha
                 actions = {
                     IconButton(onClick = onOpenCart) {
                         BadgedBox(badge = { if (cartCount > 0) Badge { Text("$cartCount") } }) {
