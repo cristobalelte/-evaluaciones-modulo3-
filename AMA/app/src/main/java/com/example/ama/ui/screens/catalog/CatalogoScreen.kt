@@ -1,15 +1,13 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package com.example.ama.ui.screens.catalog
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.grid.rememberLazyGridState
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.outlined.GridView
@@ -18,6 +16,7 @@ import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.ShoppingCart
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
@@ -29,7 +28,10 @@ import com.example.ama.ui.components.ProductType
 import java.text.NumberFormat
 import java.util.Locale
 
-@OptIn(ExperimentalMaterial3Api::class)
+// Evita conflictos: alias a "items" de lista y grilla
+import androidx.compose.foundation.lazy.items as listItems
+import androidx.compose.foundation.lazy.grid.items as gridItems
+
 @Composable
 fun CatalogScreen(
     products: List<Product>,
@@ -38,51 +40,63 @@ fun CatalogScreen(
     onAddToCart: (Product) -> Unit,
     onViewDetail: (Product) -> Unit,
     onOpenCart: () -> Unit,
+
+    // --- layout / navegación ---
+    isGrid: Boolean,
+    onToggleLayout: (Boolean) -> Unit,
+    listState: LazyListState,
+    gridState: LazyGridState,
+    initialType: ProductType? = null,
     onBack: (() -> Unit)? = null,
 
-    // estados locales (si no usas ViewModel)
-    isGrid: Boolean = false,
-    onToggleLayout: (Boolean) -> Unit = {},
-    listState: LazyListState = rememberLazyListState(),
-    gridState: LazyGridState = rememberLazyGridState(),
-    onlyAvailable: Boolean = false,
-    onToggleOnlyAvailable: (Boolean) -> Unit = {},
-    query: String = "",
-    onQueryChange: (String) -> Unit = {},
-    availableRegions: List<String> = emptyList(),
-    selectedRegions: Set<String> = emptySet(),
-    onToggleRegion: (String) -> Unit = {},
-    availableTypes: List<ProductType> = ProductType.values().toList(),
-    selectedTypes: Set<ProductType> = emptySet(),
-    onToggleType: (ProductType) -> Unit = {},
-    initialType: ProductType? = null,
-) {
-    var localQuery by remember { mutableStateOf(query) }
-    var localOnlyAvailable by remember { mutableStateOf(onlyAvailable) }
-    var localIsGrid by remember { mutableStateOf(isGrid) }
+    // --- solo disponibles ---
+    onlyAvailable: Boolean,
+    onToggleOnlyAvailable: (Boolean) -> Unit,
 
-    val filtered = remember(products, localQuery, localOnlyAvailable, initialType) {
-        products.asSequence()
-            .filter { initialType == null || it.type == initialType }
-            .filter { !localOnlyAvailable || it.stock > 0 }
-            .filter {
-                val q = localQuery.trim()
-                q.isBlank() ||
-                        it.name.contains(q, ignoreCase = true) ||
-                        it.author.contains(q, ignoreCase = true)
-            }
-            .toList()
+    // --- búsqueda ---
+    query: String,
+    onQueryChange: (String) -> Unit,
+
+    // --- filtros (se aplican aunque no dibujemos chips) ---
+    availableRegions: List<String>,
+    selectedRegions: Set<String>,
+    onToggleRegion: (String) -> Unit,
+
+    availableTypes: List<ProductType>,
+    selectedTypes: Set<ProductType>,
+    onToggleType: (ProductType) -> Unit,
+) {
+    // Estado local persistente
+    var localQuery by rememberSaveable { mutableStateOf(query) }
+    var localOnlyAvailable by rememberSaveable { mutableStateOf(onlyAvailable) }
+    var localIsGrid by rememberSaveable { mutableStateOf(isGrid) }
+
+    // Mantén sincronizado si el padre cambia
+    LaunchedEffect(query) { localQuery = query }
+    LaunchedEffect(onlyAvailable) { localOnlyAvailable = onlyAvailable }
+    LaunchedEffect(isGrid) { localIsGrid = isGrid }
+
+    // Filtrado memoizado
+    val filtered: List<Product> = remember(
+        products, localQuery, localOnlyAvailable, initialType, selectedRegions, selectedTypes
+    ) {
+        val q = localQuery.trim()
+        products.filter { p ->
+            (initialType == null || p.type == initialType) &&
+                    (!localOnlyAvailable || (p.isActive && p.stock > 0)) &&
+                    (q.isBlank() || p.name.contains(q, true) || p.author.contains(q, true)) &&
+                    (selectedRegions.isEmpty() || p.region in selectedRegions) &&
+                    (selectedTypes.isEmpty() || p.type in selectedTypes)
+        }
     }
 
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
                 title = { Text("Catálogo") },
-
-
                 navigationIcon = {
-                    if (onBack != null) {
-                        IconButton(onClick = onBack) {
+                    onBack?.let {
+                        IconButton(onClick = it) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                                 contentDescription = "Volver"
@@ -90,9 +104,7 @@ fun CatalogScreen(
                         }
                     }
                 },
-
                 actions = {
-                    // Toggle lista <-> grilla
                     IconButton(onClick = {
                         localIsGrid = !localIsGrid
                         onToggleLayout(localIsGrid)
@@ -102,15 +114,11 @@ fun CatalogScreen(
                             contentDescription = "Cambiar vista"
                         )
                     }
-
-                    // Carrito con badge
                     IconButton(onClick = onOpenCart) {
                         BadgedBox(badge = { if (cartCount > 0) Badge { Text("$cartCount") } }) {
                             Icon(Icons.Outlined.ShoppingCart, contentDescription = "Carrito")
                         }
                     }
-
-                    // Switch “Solo disponibles”
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text("Solo disp.")
                         Spacer(Modifier.width(6.dp))
@@ -172,7 +180,7 @@ fun CatalogScreen(
                         modifier = Modifier.fillMaxSize(),
                         contentPadding = PaddingValues(bottom = 12.dp)
                     ) {
-                        items(filtered, key = { it.id }) { p ->
+                        gridItems(filtered, key = { it.id }) { p ->
                             ProductCard(p, onAddToCart, onViewDetail)
                         }
                     }
@@ -183,7 +191,7 @@ fun CatalogScreen(
                         modifier = Modifier.fillMaxSize(),
                         contentPadding = PaddingValues(bottom = 12.dp)
                     ) {
-                        items(filtered, key = { it.id }) { p ->
+                        listItems(filtered, key = { it.id }) { p ->
                             ProductItem(p, onAddToCart, onViewDetail)
                         }
                     }
@@ -278,7 +286,6 @@ private fun ProductCard(
         }
     }
 }
-
 
 
 

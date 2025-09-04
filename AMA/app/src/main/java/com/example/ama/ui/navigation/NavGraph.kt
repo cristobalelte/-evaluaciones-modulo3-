@@ -2,8 +2,11 @@ package com.example.ama.ui.navigation
 
 import com.example.ama.ui.screens.home.HomeScreen
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -23,12 +26,25 @@ import com.example.ama.ui.theme.ThemeOption
 
 
 @Composable
-fun AppNavigation(skipLogin: Boolean = true, onChangeTheme: (ThemeOption) -> Unit = {}, themeOpt: ThemeOption = ThemeOption.SYSTEM) {
+fun AppNavigation(
+    skipLogin: Boolean = true,
+    onChangeTheme: (ThemeOption) -> Unit = {},
+    themeOpt: ThemeOption
+) {
     val navController = rememberNavController()
+    val ctx = LocalContext.current
+
+    // Un único VM compartido para el grafo
     val vm: CatalogViewModel = viewModel()
 
-    // 👇 colecta los StateFlow que necesites como valores
-    val cartCount by vm.cartCount.collectAsState(initial = 0)
+    // Cargar catálogo (JSON) y adjuntar carrito (Room) al iniciar
+    LaunchedEffect(Unit) {
+        vm.loadFromDisk(ctx)
+        vm.attachCart(ctx)
+    }
+
+    // Estado para el badge del carrito
+    val cartCount by vm.cartCount.collectAsStateWithLifecycle(initialValue = 0)
 
     NavHost(
         navController = navController,
@@ -49,12 +65,12 @@ fun AppNavigation(skipLogin: Boolean = true, onChangeTheme: (ThemeOption) -> Uni
             HomeScreen(
                 cartCount = cartCount,
                 onOpenCart = { navController.navigate(Routes.CART) },
-                onSearch = { /* ... */ },
+                onSearch = { /* TODO */ },
                 onCategoryClick = { type ->
                     navController.navigate("catalog?type=${type.name}")
                 },
                 onOpenPublish = { navController.navigate(Routes.PUBLISH) },
-                onOpenSettings = { navController.navigate(Routes.SETTINGS) } //
+                onOpenSettings = { navController.navigate(Routes.SETTINGS) }
             )
         }
 
@@ -65,7 +81,6 @@ fun AppNavigation(skipLogin: Boolean = true, onChangeTheme: (ThemeOption) -> Uni
             )
         }
 
-
         composable(Routes.CATALOG) {
             CatalogRoute(
                 vm = vm,
@@ -73,19 +88,17 @@ fun AppNavigation(skipLogin: Boolean = true, onChangeTheme: (ThemeOption) -> Uni
                 onViewDetail = { id -> navController.navigate("detail/$id") },
                 onOpenCart = { navController.navigate(Routes.CART) },
                 initialType = null,
-                onBack       = { navController.popBackStack() }
+                onBack = { navController.popBackStack() }
             )
         }
 
         composable(
             route = Routes.CATALOG_ARG,
-            arguments = listOf(
-                navArgument("type") {
-                    type = NavType.StringType
-                    nullable = true
-                    defaultValue = null
-                }
-            )
+            arguments = listOf(navArgument("type") {
+                type = NavType.StringType
+                nullable = true
+                defaultValue = null
+            })
         ) { backStackEntry ->
             val initialType = backStackEntry.arguments?.getString("type")
                 ?.let { runCatching { ProductType.valueOf(it) }.getOrNull() }
@@ -94,9 +107,9 @@ fun AppNavigation(skipLogin: Boolean = true, onChangeTheme: (ThemeOption) -> Uni
                 vm = vm,
                 navController = navController,
                 onViewDetail = { id -> navController.navigate("detail/$id") },
-                onOpenCart   = { navController.navigate("cart") },
-                initialType  = initialType,
-                onBack       = { navController.popBackStack() }
+                onOpenCart = { navController.navigate(Routes.CART) },
+                initialType = initialType,
+                onBack = { navController.popBackStack() }
             )
         }
 
@@ -114,10 +127,11 @@ fun AppNavigation(skipLogin: Boolean = true, onChangeTheme: (ThemeOption) -> Uni
 
         composable(Routes.CART) {
             CartRoute(
-                onBack = { navController.popBackStack() },
-                vm = vm
+                vm = vm,
+                onBack = { navController.popBackStack() }
             )
         }
+
         composable(Routes.SETTINGS) {
             SettingsScreen(
                 themeOpt = themeOpt,
@@ -127,3 +141,4 @@ fun AppNavigation(skipLogin: Boolean = true, onChangeTheme: (ThemeOption) -> Uni
         }
     }
 }
+

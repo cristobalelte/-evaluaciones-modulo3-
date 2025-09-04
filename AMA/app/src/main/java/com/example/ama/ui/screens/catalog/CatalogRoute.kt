@@ -1,21 +1,14 @@
 package com.example.ama.ui.screens.catalog
 
-import android.content.Context
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.*
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import kotlinx.coroutines.launch
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
+import androidx.compose.ui.platform.LocalContext
 import com.example.ama.ui.components.ProductType
-
+import kotlinx.coroutines.launch
 
 @Composable
 fun CatalogRoute(
@@ -27,38 +20,42 @@ fun CatalogRoute(
     onBack: (() -> Unit)? = null,
 ) {
     val ctx = LocalContext.current
-    val vm = remember { CatalogViewModel() }
+
+    // Carga catálogo + adjunta carrito una sola vez
     LaunchedEffect(Unit) {
-        vm.loadFromDisk(ctx)}
-    LaunchedEffect(Unit) {
+        vm.loadFromDisk(ctx)
         vm.attachCart(ctx)
     }
-    val products       by vm.products.collectAsStateWithLifecycle()
-    val cartCount      by vm.cartCount.collectAsStateWithLifecycle()
-    val onlyAvail      by vm.onlyAvailable.collectAsStateWithLifecycle()
-    val query          by vm.query.collectAsStateWithLifecycle()
-    val selectedRegs   by vm.regions.collectAsStateWithLifecycle()
-    val selectedTypes  by vm.types.collectAsStateWithLifecycle()
 
-    val snackbar = remember { SnackbarHostState() }
+    // State de VM
+    val products      by vm.products.collectAsStateWithLifecycle()
+    val cartCount     by vm.cartCount.collectAsStateWithLifecycle()
+    val onlyAvail     by vm.onlyAvailable.collectAsStateWithLifecycle()
+    val query         by vm.query.collectAsStateWithLifecycle()
+    val selectedRegs  by vm.regions.collectAsStateWithLifecycle()
+    val selectedTypes by vm.types.collectAsStateWithLifecycle()
+
+    val snackbarHost = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
-    // layout y estados de scroll
+    // Layout
     var isGrid by remember { mutableStateOf(true) }
     val listState = rememberLazyListState()
     val gridState = rememberLazyGridState()
 
-    LaunchedEffect(Unit) { vm.refresh() }
-
     CatalogScreen(
-        // datos y acciones básicas
         products = products,
         cartCount = cartCount,
-        snackbarHostState = snackbar,
-        onAddToCart = { p -> scope.launch { vm.addToCart(p); snackbar.showSnackbar("Agregado") } },
+        snackbarHostState = snackbarHost,
+        onAddToCart = { p ->
+            scope.launch {
+                vm.addToCart(p)
+                snackbarHost.showSnackbar("Agregado")
+            }
+        },
         onViewDetail = { p -> onViewDetail(p.id) },
-        onOpenCart = { navController.navigate("cart")  },
-        // layout
+        onOpenCart = { navController.navigate("cart") },
+
         isGrid = isGrid,
         onToggleLayout = { isGrid = it },
         listState = listState,
@@ -66,19 +63,21 @@ fun CatalogRoute(
         initialType = initialType,
         onBack = onBack,
 
-        // switch “Solo disponibles”
+        // “Solo disponibles”
         onlyAvailable = onlyAvail,
-        onToggleOnlyAvailable = { vm.setOnlyAvailable(it) },
+        onToggleOnlyAvailable = vm::setOnlyAvailable,
 
-        // 🔎 búsqueda + filtros
+        // búsqueda
         query = query,
-        onQueryChange = { vm.setQuery(it) },
+        onQueryChange = vm::setQuery,
 
+        // filtros
         availableRegions = vm.availableRegions,
         selectedRegions = selectedRegs,
-        onToggleRegion = { r -> vm.toggleRegion(r) },
-        availableTypes = vm.availableTypes,      // << te faltaba
-        selectedTypes = selectedTypes,           // << te faltaba
-        onToggleType = { t -> vm.toggleType(t) } // << te faltaba
+        onToggleRegion = vm::toggleRegion,
+
+        availableTypes = vm.availableTypes,
+        selectedTypes = selectedTypes,
+        onToggleType = vm::toggleType,
     )
 }

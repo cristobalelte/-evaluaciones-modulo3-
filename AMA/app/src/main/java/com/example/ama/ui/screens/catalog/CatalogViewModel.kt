@@ -1,6 +1,7 @@
 package com.example.ama.ui.screens.catalog
 
 import android.content.Context
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ama.data.CartRepository
@@ -20,12 +21,20 @@ import kotlin.math.min
 
 class CatalogViewModel : ViewModel() {
 
+    // --- Productos cargados desde JSON ---
     private var all: List<Product> = emptyList()
 
-    // --- carrito (estado que ya usabas en la UI) ---
+    // --- Estado del carrito expuesto a la UI ---
     data class CartItem(val product: Product, val qty: Int = 1)
+
     private val _cartItems = MutableStateFlow<List<CartItem>>(emptyList())
     val cartItems: StateFlow<List<CartItem>> = _cartItems
+    // --- Datos para UI de filtros (públicos) ---
+    val availableRegions: List<String>
+        get() = all.map { it.region }.distinct().sorted()
+
+    val availableTypes: List<ProductType>
+        get() = ProductType.values().toList()
 
     private val _cartCount = MutableStateFlow(0)
     val cartCount: StateFlow<Int> = _cartCount
@@ -34,13 +43,19 @@ class CatalogViewModel : ViewModel() {
         _cartCount.value = _cartItems.value.sumOf { it.qty }
     }
 
-    // repo del carrito
+    // --- Repositorios ---
     private var cartRepo: CartRepository? = null
-    private var catalogRepo: com.example.ama.data.CatalogRepository? = null
+    private var catalogRepo: CatalogRepository? = null
 
-    fun attachCatalog(context: android.content.Context) {
-        if (catalogRepo == null) catalogRepo = com.example.ama.data.CatalogRepository(context)
+    // guardamos la última lista de filas de Room para remapear cuando cambie 'all'
+    private var lastRows: List<CartRow> = emptyList()
+
+    // Inicializa repo de catálogo (para addProduct)
+    fun attachCatalog(context: Context) {
+        if (catalogRepo == null) catalogRepo = CatalogRepository(context)
     }
+
+    // Agrega producto nuevo y persiste en JSON
     fun addProduct(
         name: String,
         price: Double,
@@ -48,12 +63,12 @@ class CatalogViewModel : ViewModel() {
         region: String,
         type: ProductType,
         stock: Int,
-        imageSrc: android.net.Uri? // uri que elegiste en la pantalla
+        imageSrc: Uri?
     ) = viewModelScope.launch(Dispatchers.IO) {
         val repo = catalogRepo ?: return@launch
         val imageUrl = imageSrc?.let { repo.persistImage(it) } ?: ""
 
-        val newProduct = com.example.ama.ui.components.Product(
+        val newProduct = Product(
             id = UUID.randomUUID().toString(),
             name = name,
             price = price,
@@ -65,37 +80,51 @@ class CatalogViewModel : ViewModel() {
             type = type
         )
 
-        repo.add(newProduct)           // escribe en JSON
-        // Actualiza memoria y UI:
+        repo.add(newProduct)
         all = all + newProduct
-        withContext(Dispatchers.Main) { refresh() }
+        withContext(Dispatchers.Main) {
+            refresh()
+            remapRows()
+        }
     }
+
 
     fun attachCart(context: Context) {
         if (cartRepo != null) return
         cartRepo = CartRepository(context)
-
         viewModelScope.launch {
             cartRepo!!.rows.collectLatest { rows ->
-                _cartItems.value = rows.mapNotNull { row -> mapRow(row) }
-                recomputeCount()
+                lastRows = rows
+                remapRows()
             }
         }
     }
 
-    private fun mapRow(row: CartRow): CartItem? {
-        val p = all.firstOrNull { it.id == row.productId } ?: return null
-        return CartItem(p, row.qty)
+    // Carga productos desde JSON y vuelve a mapear filas del carrito
+    fun loadFromDisk(context: Context) {
+        val repo = CatalogRepository(context)
+        all = repo.load()
+        refresh()
+        remapRows()
     }
 
-    fun addToCart(p: Product) = viewModelScope.launch { cartRepo?.add(p.id) }
-    fun incQty(id: String)     = viewModelScope.launch { cartRepo?.inc(id) }
-    fun decQty(id: String)     = viewModelScope.launch { cartRepo?.dec(id) }
-    fun removeFromCart(id: String) = viewModelScope.launch { cartRepo?.remove(id) }
-    fun clearCart()            = viewModelScope.launch { cartRepo?.clear() }
-    fun cartTotal(): Double    = _cartItems.value.sumOf { it.product.price * it.qty }
+    // Remapea CartRow -> CartItem cuando cambian filas o productos
+    private fun remapRows() {
+        _cartItems.value = lastRows.mapNotNull { row ->
+            all.firstOrNull { it.id == row.productId }?.let { p -> CartItem(p, row.qty) }
+        }
+        recomputeCount()
+    }
 
-    // --- filtros/búsqueda (igual que antes) ---
+    // Operaciones de carrito (siempre a través de Room)
+    fun addToCart(p: Product)         = viewModelScope.launch { cartRepo?.add(p.id) }
+    fun incQty(id: String)            = viewModelScope.launch { cartRepo?.inc(id) }
+    fun decQty(id: String)            = viewModelScope.launch { cartRepo?.dec(id) }
+    fun removeFromCart(id: String)    = viewModelScope.launch { cartRepo?.remove(id) }
+    fun clearCart()                   = viewModelScope.launch { cartRepo?.clear() }
+    fun cartTotal(): Double           = _cartItems.value.sumOf { it.product.price * it.qty }
+
+    // ----------------- Filtros / búsqueda -----------------
     private val _onlyAvailable = MutableStateFlow(true)
     val onlyAvailable: StateFlow<Boolean> = _onlyAvailable
 
@@ -114,7 +143,7 @@ class CatalogViewModel : ViewModel() {
     fun clearFilters() { _regions.value = emptySet(); _types.value = emptySet(); _query.value = ""; _onlyAvailable.value = true; refresh() }
     fun setOnlyAvailable(v: Boolean) { _onlyAvailable.value = v; refresh() }
 
-    // --- paginación / productos ---
+    // ----------------- Paginación / listado -----------------
     private val pageSize = 12
     private var nextIndex = 0
 
@@ -152,18 +181,7 @@ class CatalogViewModel : ViewModel() {
 
     fun getById(id: String): Product? = all.firstOrNull { it.id == id }
 
-    // Regiones y tipos derivan de 'all'; se recalculan al cargar JSON.
-    val availableRegions: List<String> get() = all.map { it.region }.distinct().sorted()
-    val availableTypes: List<ProductType> = ProductType.values().toList()
-
-    // --- JSON local ---
-    fun loadFromDisk(context: Context) {
-        val repo = CatalogRepository(context)
-        all = repo.load()
-        refresh()
-    }
-
-    // utilidades búsqueda (tus helpers)
+    // ----------------- Helpers de búsqueda -----------------
     private fun matchesQuery(p: Product, q: String): Boolean {
         if (q.isBlank()) return true
         val nq = norm(q)
@@ -173,7 +191,7 @@ class CatalogViewModel : ViewModel() {
     private fun typoThreshold(q: String) = when { q.length <= 4 -> 1; q.length <= 8 -> 2; else -> 3 }
     private fun norm(s: String) = Normalizer.normalize(s.lowercase(), Normalizer.Form.NFD)
         .replace("\\p{InCombiningDiacriticalMarks}+".toRegex(), "")
-    private fun editDistance(a: String, b: String): Int { /* …igual que tenías… */
+    private fun editDistance(a: String, b: String): Int {
         val m=a.length; val n=b.length; if(m==0)return n; if(n==0)return m
         val dp = IntArray(n+1){it}
         for(i in 1..m){
@@ -186,4 +204,5 @@ class CatalogViewModel : ViewModel() {
         return dp[n]
     }
 }
+
 

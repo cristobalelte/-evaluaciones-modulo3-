@@ -1,6 +1,5 @@
+// app/src/main/java/com/example/ama/ui/screens/detail/ProductDetailScreen.kt
 package com.example.ama.ui.screens.detail
-
-
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
@@ -12,18 +11,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
-import java.text.NumberFormat
-import java.util.Locale
-import com.example.ama.R
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
+import com.example.ama.R
 import com.example.ama.ui.components.Product
 import com.example.ama.ui.components.ProductType
-
+import java.text.NumberFormat
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -31,11 +28,23 @@ fun ProductDetailScreen(
     product: Product,
     onBack: () -> Unit,
     onAddToCart: (Product) -> Unit,
-
     publishedBy: String? = null,
     description: String? = null
 ) {
     val currency = remember { NumberFormat.getCurrencyInstance(Locale("es", "CL")) }
+
+    // Mapea el tipo de forma segura (sin TODO())
+    val typeText = remember(product.type) {
+        when (product.type) {
+            ProductType.TEXTIL   -> "Textil"
+            ProductType.MADERA   -> "Madera"
+            ProductType.CERAMICA -> "Cerámica"
+            ProductType.GREDA    -> "Greda"
+            ProductType.HILO     -> "Hilo"
+            ProductType.PINTURA  -> "Pintura"
+            ProductType.OTRO     -> "Otro"
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -43,7 +52,10 @@ fun ProductDetailScreen(
                 title = { Text(product.name, maxLines = 1) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.Filled.ArrowBack, contentDescription = stringResource(R.string.pop_back))
+                        Icon(
+                            imageVector = Icons.Filled.ArrowBack,
+                            contentDescription = stringResource(R.string.pop_back)
+                        )
                     }
                 }
             )
@@ -56,14 +68,12 @@ fun ProductDetailScreen(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-
+            // Usa placeholder si no hay URL
             val img: Any = product.imageUrl.takeIf { it.isNotBlank() }
                 ?: R.drawable.placeholder_image
 
-
-
             AsyncImage(
-                model = img,                                  // ← ahora acepta String o Int
+                model = img,
                 contentDescription = product.name,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -81,7 +91,7 @@ fun ProductDetailScreen(
                 fontSize = 20.sp
             )
 
-
+            // Autor / publicado por
             val autorTexto =
                 if (!publishedBy.isNullOrBlank() && publishedBy != product.author) {
                     "Publicado por: $publishedBy\nAutor/a real: ${product.author}"
@@ -90,27 +100,16 @@ fun ProductDetailScreen(
                 }
             Text(text = autorTexto, style = MaterialTheme.typography.bodyMedium, fontSize = 15.sp)
 
-
+            // Descripción
             Text(
                 text = description ?: stringResource(R.string.app_description),
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.Normal,
                 fontSize = 20.sp
             )
+
             Text("Región: ${product.region}", style = MaterialTheme.typography.bodyMedium, fontSize = 15.sp)
-            Text(
-                "Tipo: " + when(product.type) {
-                    ProductType.TEXTIL -> stringResource(R.string.Textil_prod)
-                    ProductType.MADERA -> stringResource(R.string.Madera_prod)
-                    ProductType.CERAMICA -> stringResource(R.string.Ceramica_prod)
-                    ProductType.OTRO -> stringResource(R.string.Otro_prod)
-                    ProductType.GREDA -> TODO()
-                    ProductType.HILO -> TODO()
-                    ProductType.PINTURA -> TODO()
-                },
-                fontSize = 20.sp,
-                style = MaterialTheme.typography.bodyMedium
-            )
+            Text("Tipo: $typeText", style = MaterialTheme.typography.bodyMedium, fontSize = 20.sp)
 
             Spacer(Modifier.weight(1f))
 
@@ -121,11 +120,11 @@ fun ProductDetailScreen(
             ) {
                 Icon(Icons.Outlined.ShoppingCart, contentDescription = null)
                 Spacer(Modifier.width(8.dp))
-                Text(stringResource(R.string.add_to_cart),
-                    fontSize = 20.sp)
+                Text(stringResource(R.string.add_to_cart), fontSize = 20.sp)
             }
         }
     }
 }
+
 
 
