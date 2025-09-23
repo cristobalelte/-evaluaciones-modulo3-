@@ -18,6 +18,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.ama.R
 import com.example.ama.ui.components.BottomBar
 import com.example.ama.ui.components.ProductType
@@ -26,6 +27,7 @@ import com.example.ama.ui.navigation.Routes
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
+    navController: NavController, //SOLO PARA BOTON DE PRUEBA
     cartCount: Int,
     onOpenCart: () -> Unit,
     onSearch: (String) -> Unit,
@@ -80,6 +82,17 @@ fun HomeScreen(
                 singleLine = true,
                 trailingIcon = { TextButton(onClick = { onSearch(query) }) { Text("Buscar") } }
             )
+//            Boton para probar la navegacion a ProductTypeScreen:
+            Button(
+                onClick = {
+                    navController.navigate("productType")
+                 },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            ) {
+                Text("Boton de prueba: Tipo de producto")
+            }
 
             CategoryGrid(
                 items = listOf(

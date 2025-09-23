@@ -151,7 +151,7 @@ fun CatalogScreen(
                     onQueryChange(it)
                 },
                 modifier = Modifier.fillMaxWidth(),
-                placeholder = { Text("Buscar artesanía…") },
+                placeholder = { Text("¿Que artesania buscas?") },
                 singleLine = true,
                 leadingIcon = { Icon(Icons.Outlined.Search, contentDescription = null) },
                 trailingIcon = {

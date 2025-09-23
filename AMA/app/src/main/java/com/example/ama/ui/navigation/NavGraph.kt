@@ -16,6 +16,8 @@ import androidx.navigation.navArgument
 import com.example.ama.ui.Login.LoginScreen
 import com.example.ama.ui.components.ProductType
 import com.example.ama.ui.screens.AddProductScreen.AddProductRoute
+import com.example.ama.ui.screens.HomeScreen.ProductSubCatScreen
+import com.example.ama.ui.screens.HomeScreen.ProductTypeScreen
 
 import com.example.ama.ui.screens.carrito.CartRoute
 import com.example.ama.ui.screens.catalog.CatalogRoute
@@ -70,7 +72,8 @@ fun AppNavigation(
                     navController.navigate("catalog?type=${type.name}")
                 },
                 onOpenPublish = { navController.navigate(Routes.PUBLISH) },
-                onOpenSettings = { navController.navigate(Routes.SETTINGS) }
+                onOpenSettings = { navController.navigate(Routes.SETTINGS) },
+                navController = navController //SOLO PARA BOTON DE PRUEBA
             )
         }
 
@@ -137,6 +140,30 @@ fun AppNavigation(
                 themeOpt = themeOpt,
                 onChangeTheme = onChangeTheme,
                 onBack = { navController.popBackStack() }
+            )
+        }
+
+//Composable nueva de prueba: ProductTypeScreen.kt
+        composable("productType") {
+            ProductTypeScreen(
+                navController = navController,
+                cartCount = cartCount,
+                onOpenCart = { navController.navigate(Routes.CART) },
+                onOpenPublish = { navController.navigate(Routes.PUBLISH) },
+                onOpenSettings = { navController.navigate(Routes.SETTINGS) },
+                onSearch = { /* TODO */ }
+            )
+        }
+
+        composable("subCategory") {
+            ProductSubCatScreen(
+                navController = navController,
+                cartCount = cartCount,
+                onOpenCart = { navController.navigate(Routes.CART) },
+                onOpenPublish = { navController.navigate(Routes.PUBLISH) },
+                onOpenSettings = { navController.navigate(Routes.SETTINGS) },
+                onSearch = { /* TODO */ }
+
             )
         }
     }
