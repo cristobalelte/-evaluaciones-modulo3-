@@ -16,10 +16,12 @@ import androidx.navigation.navArgument
 import com.example.ama.ui.Login.LoginScreen
 import com.example.ama.ui.components.ProductType
 import com.example.ama.ui.screens.AddProductScreen.AddProductRoute
+import com.example.ama.ui.screens.HomeScreen.ProductRegionScreen
 import com.example.ama.ui.screens.HomeScreen.ProductSubCatScreen
 import com.example.ama.ui.screens.HomeScreen.ProductTypeScreen
 
 import com.example.ama.ui.screens.carrito.CartRoute
+import com.example.ama.ui.screens.carrito.DatosEnvio
 import com.example.ama.ui.screens.catalog.CatalogRoute
 import com.example.ama.ui.screens.catalog.CatalogViewModel
 import com.example.ama.ui.screens.detail.ProductDetailRoute
@@ -164,6 +166,27 @@ fun AppNavigation(
                 onOpenSettings = { navController.navigate(Routes.SETTINGS) },
                 onSearch = { /* TODO */ }
 
+            )
+        }
+
+        composable("regionScreen") {
+            ProductRegionScreen(
+                navController = navController,
+                cartCount = cartCount,
+                onOpenCart = { navController.navigate(Routes.CART) },
+                onOpenPublish = { navController.navigate(Routes.PUBLISH) },
+                onOpenSettings = { navController.navigate(Routes.SETTINGS) },
+                onSearch = { /* TODO */ }
+            )
+
+        }
+
+        composable("datosEnvio") {
+            DatosEnvio(
+                cartCount = cartCount,
+                onOpenCart = { navController.navigate(Routes.CART) },
+                onOpenPublish = { navController.navigate(Routes.PUBLISH) },
+                onOpenSettings = { navController.navigate(Routes.SETTINGS) }
             )
         }
     }

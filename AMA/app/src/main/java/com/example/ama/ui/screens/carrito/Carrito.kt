@@ -4,6 +4,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import com.example.ama.R
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.Delete
@@ -14,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.ama.ui.screens.catalog.CatalogViewModel
 import java.text.NumberFormat
@@ -24,6 +27,7 @@ import com.example.ama.ui.components.Product
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CartScreen(
+    navController: NavController,
     items: List<CatalogViewModel.CartItem>,
     total: Double,
     onBack: () -> Unit,
@@ -55,6 +59,7 @@ fun CartScreen(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .verticalScroll(rememberScrollState())
                     .padding(16.dp)
             ) {
                 Row(
@@ -63,6 +68,18 @@ fun CartScreen(
                 ) {
                     Text("Total", style = MaterialTheme.typography.titleMedium)
                     Text(money.format(total), style = MaterialTheme.typography.titleMedium)
+                }
+                Spacer(Modifier.height(8.dp))
+                Button(
+                    onClick = {
+                        navController.navigate("datosEnvio")
+                    },
+                    enabled = items.isNotEmpty(),
+                    //Cambio de shape btn proceder al pago:
+                    shape = MaterialTheme.shapes.medium,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("CONTINUAR COMPRA")
                 }
                 Spacer(Modifier.height(8.dp))
                 Button(

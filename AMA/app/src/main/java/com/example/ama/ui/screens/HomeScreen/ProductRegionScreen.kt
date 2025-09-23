@@ -42,10 +42,10 @@ import androidx.navigation.NavController
 import com.example.ama.R
 import com.example.ama.ui.components.BottomBar
 
-//Ruta = "subCategory"
+//Ruta = "regionScreen"
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProductSubCatScreen(
+fun ProductRegionScreen(
     navController: NavController,
     cartCount: Int,
     onOpenCart: () -> Unit,
@@ -109,7 +109,7 @@ fun ProductSubCatScreen(
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.headlineMedium,
                 color = MaterialTheme.colorScheme.primary,
-                text = "Mantas"
+                text = "Region"
             )
         }
 
@@ -126,6 +126,86 @@ fun ProductSubCatScreen(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
 //            Row 1 de 3 botones:
+            /* Row(
+                 modifier = Modifier
+                     .padding(4.dp)
+                     .fillMaxWidth()
+                     .weight(1f)
+                     .horizontalScroll(rememberScrollState()),
+                 horizontalArrangement = Arrangement.SpaceEvenly
+             ) {
+                 Button(
+                     onClick = {
+                         navController.navigate("productType")
+                     },
+                     colors = ButtonDefaults.buttonColors(
+                         containerColor = MaterialTheme.colorScheme.secondary,
+                         contentColor = MaterialTheme.colorScheme.onSecondary
+                     ),
+                     modifier = Modifier
+                         .fillMaxWidth()
+                         .padding(2.dp)
+                         .weight(1f)
+                 ) {
+                     Text(
+                         textAlign = TextAlign.Center,
+                         style = MaterialTheme.typography.bodySmall,
+                         text =  "Ordenar y.."
+                     )
+                 }
+
+                 Button(
+                     onClick = {
+                         navController.navigate("productType")
+                         val text = "Abriendo Filtro"
+                         val duration: Int = Toast.LENGTH_SHORT
+                         Toast.makeText(navController.context, text, duration).show()
+                     },
+                     colors = ButtonDefaults.buttonColors(
+                         containerColor = MaterialTheme.colorScheme.secondary,
+                         contentColor = MaterialTheme.colorScheme.onSecondary
+                     ),
+                     modifier = Modifier
+                         .fillMaxWidth()
+                         .padding(2.dp)
+                         .weight(1f)
+
+
+                 ) {
+                     Text(
+                         textAlign = TextAlign.Center,
+                         style = MaterialTheme.typography.bodySmall,
+                         text = "Region"
+                     )
+                 }
+
+                 Button(
+                     onClick = {
+                         navController.navigate("productType")
+                         val text = "Abriendo Filtro"
+                         val duration: Int = Toast.LENGTH_SHORT
+                         Toast.makeText(navController.context, text, duration).show()
+                     },
+                     colors = ButtonDefaults.buttonColors(
+                         containerColor = MaterialTheme.colorScheme.secondary,
+                         contentColor = MaterialTheme.colorScheme.onSecondary
+                     ),
+                     modifier = Modifier
+                         .fillMaxWidth()
+                         .padding(2.dp)
+                         .weight(1f)
+                 ) {
+                     Text(
+                         textAlign = TextAlign.Center,
+                         style = MaterialTheme.typography.bodySmall,
+                         text = "Precio"
+                     )
+                 }
+
+
+             } //Cierre Row 1*/
+
+//            Row 1 de 3 botones:
             Row(
                 modifier = Modifier
                     .padding(4.dp)
@@ -137,59 +217,10 @@ fun ProductSubCatScreen(
                 Button(
                     onClick = {
                         navController.navigate("productType")
-                    },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.secondary,
-                        contentColor = MaterialTheme.colorScheme.onSecondary
-                    ),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(2.dp)
-                        .weight(1f)
-                ) {
-                    Text(
-                        textAlign = TextAlign.Center,
-                        style = MaterialTheme.typography.bodySmall,
-                        text =  "Ordenar y.."
-                    )
-                }
-
-                Button(
-                    onClick = {
-                        navController.navigate("regionScreen")
                         val text = "Abriendo Filtro"
                         val duration: Int = Toast.LENGTH_SHORT
                         Toast.makeText(navController.context, text, duration).show()
                     },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.secondary,
-                        contentColor = MaterialTheme.colorScheme.onSecondary
-                    ),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(2.dp)
-                        .weight(1f)
-
-
-                ) {
-                    Text(
-                        textAlign = TextAlign.Center,
-                        style = MaterialTheme.typography.bodySmall,
-                        text = "Region"
-                    )
-                }
-
-                Button(
-                    onClick = {
-                        navController.navigate("productType")
-                        val text = "Abriendo Filtro"
-                        val duration: Int = Toast.LENGTH_SHORT
-                        Toast.makeText(navController.context, text, duration).show()
-                    },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.secondary,
-                        contentColor = MaterialTheme.colorScheme.onSecondary
-                    ),
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(2.dp)
@@ -198,34 +229,7 @@ fun ProductSubCatScreen(
                     Text(
                         textAlign = TextAlign.Center,
                         style = MaterialTheme.typography.bodySmall,
-                        text = "Precio"
-                    )
-                }
-
-
-            } //Cierre Row 1
-
-//            Row 2 de 2 botones:
-            Row(
-                modifier = Modifier
-                    .padding(4.dp)
-                    .fillMaxWidth()
-                    .weight(1f)
-                    .horizontalScroll(rememberScrollState()),
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
-                Button(
-                    onClick = {
-                        navController.navigate("productType")
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(2.dp)
-                        .weight(1f)
-                ) {
-                    Text( textAlign = TextAlign.Center,
-                        style = MaterialTheme.typography.bodySmall,
-                        text = "TAMAÑO"
+                        text = "ARICA Y PARINACOTA"
                     )
                 }
 
@@ -244,28 +248,32 @@ fun ProductSubCatScreen(
                     Text(
                         textAlign = TextAlign.Center,
                         style = MaterialTheme.typography.bodySmall,
-                        text = "COLOR"
+                        text = "TARAPACA"
+                    )
+                }
+
+                Button(
+                    onClick = {
+                        navController.navigate("productType")
+                        val text = "Abriendo Filtro"
+                        val duration: Int = Toast.LENGTH_SHORT
+                        Toast.makeText(navController.context, text, duration).show()
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(2.dp)
+                        .weight(1f)
+                ) {
+                    Text(
+                        textAlign = TextAlign.Center,
+                        style = MaterialTheme.typography.bodySmall,
+                        text = "ANTOFAGASTA"
                     )
                 }
 
             } //Cierre Row 2
-//        } //Cierre Col 2
 
-//            Spacer(
-//                Modifier.height(8.dp)
-//            )
-
-
-//          6 tarjetas de categorias del prod elegido:
-//        Column(
-//            modifier = Modifier
-//                .padding(padding)
-//                .padding(16.dp)
-//                .verticalScroll(rememberScrollState())
-//                .fillMaxSize(),
-//            verticalArrangement = Arrangement.spacedBy(16.dp)
-//        ) {
-//            Row 3: 2 elementos:
+//            Row 2: 3 elementos:
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -290,7 +298,7 @@ fun ProductSubCatScreen(
                     Text(
                         textAlign = TextAlign.Center,
                         style = MaterialTheme.typography.bodySmall,
-                        text = "Guantes"
+                        text = "ATACAMA"
                     )
                 }
 
@@ -311,13 +319,33 @@ fun ProductSubCatScreen(
                     Text(
                         textAlign = TextAlign.Center,
                         style = MaterialTheme.typography.bodySmall,
-                        text = "Chalecos"
+                        text = "COQUIMBO"
                     )
                 }
 
-            } //Cierre Row 1
 
-//            Row 4 de 2 elementos:
+                Button(
+                    onClick = {
+                        navController.navigate("chalecos")
+                        val text = "Abriendo Filtro"
+                        val duration: Int = Toast.LENGTH_SHORT
+                        Toast.makeText(navController.context, text, duration).show()
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(2.dp)
+                        .weight(1f)
+                ) {
+                    Text(
+                        textAlign = TextAlign.Center,
+                        style = MaterialTheme.typography.bodySmall,
+                        text = "VALPARAISO"
+                    )
+                }
+
+            } //Cierre Row 3
+
+//            Row 3 de 3 elementos:
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -338,9 +366,10 @@ fun ProductSubCatScreen(
                         .padding(2.dp)
                         .weight(1f)
                 ) {
-                    Text( textAlign = TextAlign.Center,
+                    Text(
+                        textAlign = TextAlign.Center,
                         style = MaterialTheme.typography.bodySmall,
-                        text = "Gorros"
+                        text = "RM"
                     )
                 }
 
@@ -357,15 +386,36 @@ fun ProductSubCatScreen(
                         .padding(2.dp)
                         .weight(1f)
                 ) {
-                    Text( textAlign = TextAlign.Center,
+                    Text(
+                        textAlign = TextAlign.Center,
                         style = MaterialTheme.typography.bodySmall,
-                        text = "Calcetines"
+                        text = "O'HIGGINS"
                     )
                 }
 
-            } //Cierre Row 2
 
-//            Row 5 de 2 elementos:
+                Button(
+                    onClick = {
+                        navController.navigate("calcetines")
+                        val text = "Abriendo Filtro"
+                        val duration: Int = Toast.LENGTH_SHORT
+                        Toast.makeText(navController.context, text, duration).show()
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(2.dp)
+                        .weight(1f)
+                ) {
+                    Text(
+                        textAlign = TextAlign.Center,
+                        style = MaterialTheme.typography.bodySmall,
+                        text = "MAULE"
+                    )
+                }
+
+            } //Cierre Row 3
+
+//            Row 4 de 3 elementos:
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -386,9 +436,10 @@ fun ProductSubCatScreen(
                         .padding(2.dp)
                         .weight(1f)
                 ) {
-                    Text( textAlign = TextAlign.Center,
+                    Text(
+                        textAlign = TextAlign.Center,
                         style = MaterialTheme.typography.bodySmall,
-                        text = "Ponchos"
+                        text = "ÑUBLE"
                     )
                 }
 
@@ -405,16 +456,127 @@ fun ProductSubCatScreen(
                         .padding(2.dp)
                         .weight(1f)
                 ) {
-                    Text( textAlign = TextAlign.Center,
+                    Text(
+                        textAlign = TextAlign.Center,
                         style = MaterialTheme.typography.bodySmall,
-                        text = "Mantas"
+                        text = "BIOBIO"
                     )
                 }
 
+
+                Button(
+                    onClick = {
+                        navController.navigate("mantas")
+                        val text = "Abriendo Filtro"
+                        val duration: Int = Toast.LENGTH_SHORT
+                        Toast.makeText(navController.context, text, duration).show()
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(2.dp)
+                        .weight(1f)
+                ) {
+                    Text(
+                        textAlign = TextAlign.Center,
+                        style = MaterialTheme.typography.bodySmall,
+                        text = "LOS LAGOS"
+                    )
+                }
+
+            } //Cierre Row 4
+
+//            ROw 5 de 2 elementos:
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .horizontalScroll(rememberScrollState())
+                    .padding(4.dp)
+                    .weight(1f),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                Button(
+                    onClick = {
+                        navController.navigate("ponchos")
+                        val text = "Abriendo Filtro"
+                        val duration: Int = Toast.LENGTH_SHORT
+                        Toast.makeText(navController.context, text, duration).show()
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(2.dp)
+                        .weight(1f)
+                ) {
+                    Text(
+                        textAlign = TextAlign.Center,
+                        style = MaterialTheme.typography.bodySmall,
+                        text = "AYSEN"
+                    )
+                }
+
+
+                Button(
+                    onClick = {
+                        navController.navigate("mantas")
+                        val text = "Abriendo Filtro"
+                        val duration: Int = Toast.LENGTH_SHORT
+                        Toast.makeText(navController.context, text, duration).show()
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(2.dp)
+                        .weight(1f)
+                ) {
+                    Text(
+                        textAlign = TextAlign.Center,
+                        style = MaterialTheme.typography.bodySmall,
+                        text = "MAGALLANES"
+                    )
+                }
+
+            } //Cierre Row 5
+
+//            Boton ir a los resultados y Volver:
+            Button(
+                onClick = {
+                    navController.navigate("subCategory")
+                    val text = "Abriendo Filtro"
+                    val duration: Int = Toast.LENGTH_SHORT
+                    Toast.makeText(navController.context, text, duration).show()
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(2.dp)
+                    .weight(1f)
+            ) {
+                Text(
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.bodySmall,
+                    text = "IR A LOS RESULTADOS"
+                )
             }
+
+            Button(
+                onClick = {
+                    navController.navigate("mantas")
+                    val text = "Abriendo Filtro"
+                    val duration: Int = Toast.LENGTH_SHORT
+                    Toast.makeText(navController.context, text, duration).show()
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(2.dp)
+                    .weight(1f)
+            ) {
+                Text(
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.bodySmall,
+                    text = "VOLVER"
+                )
+            }
+
+
 
         }
 
     }
 }
-

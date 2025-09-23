@@ -155,7 +155,7 @@ fun ProductTypeScreen(
 
                 Button(
                     onClick = {
-                        navController.navigate("productType")
+                        navController.navigate("regionScreen")
                         val text = "Abriendo Filtro"
                         val duration: Int = Toast.LENGTH_SHORT
                         Toast.makeText(navController.context, text, duration).show()
