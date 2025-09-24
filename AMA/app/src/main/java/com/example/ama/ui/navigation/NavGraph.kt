@@ -144,6 +144,7 @@ fun AppNavigation(
                 onBack = { navController.popBackStack() }
             )
         }
+        
 
 //Composable nueva de prueba: ProductTypeScreen.kt
         composable("productType") {

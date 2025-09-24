@@ -1,5 +1,6 @@
 package com.example.ama.ui.navigation
 
+import com.example.ama.ui.components.ProductType
 
 
 object Routes {
@@ -8,11 +9,34 @@ object Routes {
     const val CART = "cart"
     const val PUBLISH = "publish"
     const val CATALOG = "catalog"
-    const val SETTINGS = "settings"   // ← nueva
+    const val SETTINGS = "settings"
     const val DETAIL = "detail/{id}"
-    const val CATALOG_ARG = "catalog?type={type}"
+    const val CATALOG_ARG = "catalog?type={type}&sub={sub}"
+    const val SUBCATEGORY = "subcategory?category={category}"
 }
 
+enum class Subcategory {
+    GUANTES, CHALECOS, GORROS, CALCETINES, PONCHOS, MANTAS, AMIGURUMIS, OTROS
+}
 
+fun Subcategory.label(): String = when (this) {
+    Subcategory.GUANTES -> "Guantes"
+    Subcategory.CHALECOS -> "Chalecos"
+    Subcategory.GORROS -> "Gorros"
+    Subcategory.CALCETINES -> "Calcetines"
+    Subcategory.PONCHOS -> "Ponchos"
+    Subcategory.MANTAS -> "Mantas"
+    Subcategory.AMIGURUMIS -> "Amigurumis"
+    Subcategory.OTROS -> "Otros"
+}
+
+val SUBCATS: Map<ProductType, List<Subcategory>> = mapOf(
+    ProductType.TEXTIL to listOf(
+        Subcategory.GUANTES, Subcategory.CHALECOS, Subcategory.GORROS,
+        Subcategory.CALCETINES, Subcategory.PONCHOS, Subcategory.MANTAS,
+        Subcategory.AMIGURUMIS, Subcategory.OTROS
+    )
+    // agrega las de MADERA, CERAMICA, etc. cuando las tengas
+)
 
 

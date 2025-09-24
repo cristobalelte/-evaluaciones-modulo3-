@@ -2,6 +2,9 @@ package com.example.ama.ui.components
 
 
 import kotlinx.serialization.Serializable
+import java.text.NumberFormat
+import java.util.Currency
+import java.util.Locale
 
 @Serializable
 enum class ProductType { TEXTIL, MADERA, CERAMICA, GREDA, HILO, PINTURA, OTRO }
@@ -19,4 +22,10 @@ data class Product(
     val stock: Int,
     val region: String,
     val type: ProductType
+
 )
+val Product.priceFormatted: String
+    get() = NumberFormat.getCurrencyInstance(Locale("es", "CL")).apply {
+        maximumFractionDigits = 0           // CLP sin decimales
+        currency = Currency.getInstance("CLP")
+    }.format(price)
