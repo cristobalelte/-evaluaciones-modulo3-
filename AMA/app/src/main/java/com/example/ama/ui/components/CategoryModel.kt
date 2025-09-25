@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 enum class Subcategory {
-    // TEXTIL
+    // LANA
     GUANTES, CHALECOS, GORROS, CALCETINES, PONCHOS, MANTAS, AMIGURUMIS, TEXTIL_OTROS,
 
     // MADERA
@@ -32,7 +32,7 @@ enum class Subcategory {
 }
 
 fun Subcategory.label(): String = when (this) {
-    // TEXTIL
+    // LANA
     Subcategory.GUANTES -> "Guantes"
     Subcategory.CHALECOS -> "Chalecos"
     Subcategory.GORROS -> "Gorros"
@@ -104,7 +104,7 @@ fun Subcategory.label(): String = when (this) {
 
 val SUBCATS: Map<ProductType, List<Subcategory>> = mapOf(
     // TEXTIL (Lana)
-    ProductType.TEXTIL to listOf(
+    ProductType.LANA to listOf(
         Subcategory.GUANTES, Subcategory.CHALECOS, Subcategory.GORROS, Subcategory.CALCETINES,
         Subcategory.PONCHOS, Subcategory.MANTAS, Subcategory.AMIGURUMIS, Subcategory.TEXTIL_OTROS
     ),

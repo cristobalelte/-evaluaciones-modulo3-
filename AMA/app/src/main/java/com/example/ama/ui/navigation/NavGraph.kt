@@ -1,5 +1,6 @@
 package com.example.ama.ui.navigation
 
+import android.net.Uri
 import com.example.ama.ui.screens.home.HomeScreen
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -17,7 +18,6 @@ import com.example.ama.ui.Login.LoginScreen
 import com.example.ama.ui.components.ProductType
 import com.example.ama.ui.screens.AddProductScreen.AddProductRoute
 import com.example.ama.ui.screens.HomeScreen.ProductRegionScreen
-import com.example.ama.ui.screens.HomeScreen.ProductSubCatScreen
 import com.example.ama.ui.screens.HomeScreen.ProductTypeScreen
 
 import com.example.ama.ui.screens.carrito.CartRoute
@@ -26,6 +26,7 @@ import com.example.ama.ui.screens.catalog.CatalogRoute
 import com.example.ama.ui.screens.catalog.CatalogViewModel
 import com.example.ama.ui.screens.detail.ProductDetailRoute
 import com.example.ama.ui.screens.settings.SettingsScreen
+import com.example.ama.ui.screens.subcategory.ProductSubCatScreen
 import com.example.ama.ui.theme.ThemeOption
 
 
@@ -71,7 +72,7 @@ fun AppNavigation(
                 onOpenCart = { navController.navigate(Routes.CART) },
                 onSearch = { /* TODO */ },
                 onCategoryClick = { type ->
-                    navController.navigate("catalog?type=${type.name}")
+                    navController.navigate("subcategory?category=${Uri.encode(type.name)}")
                 },
                 onOpenPublish = { navController.navigate(Routes.PUBLISH) },
                 onOpenSettings = { navController.navigate(Routes.SETTINGS) },
@@ -158,17 +159,25 @@ fun AppNavigation(
             )
         }
 
-        composable("subCategory") {
+        composable(
+            route = Routes.SUBCATEGORY, // "subcategory?category={category}"
+            arguments = listOf(navArgument("category"){ type = NavType.StringType })
+        ) { backStack ->
+            val categoryStr = backStack.arguments?.getString("category") ?: ""
+            val category = runCatching { ProductType.valueOf(categoryStr) }
+                .getOrElse { ProductType.LANA } // fallback seguro
+
             ProductSubCatScreen(
                 navController = navController,
+                category = category,
                 cartCount = cartCount,
-                onOpenCart = { navController.navigate(Routes.CART) },
-                onOpenPublish = { navController.navigate(Routes.PUBLISH) },
-                onOpenSettings = { navController.navigate(Routes.SETTINGS) },
-                onSearch = { /* TODO */ }
-
+                onOpenCart = { navController.navigate(Routes.CART) },        // ✅ lambda en este scope
+                onOpenPublish = { navController.navigate(Routes.PUBLISH) },  // ✅ lambda en este scope
+                onBack = { navController.popBackStack() },
+                onSearch = { /* opcional: reenviar búsqueda */ }
             )
         }
+
 
         composable("regionScreen") {
             ProductRegionScreen(

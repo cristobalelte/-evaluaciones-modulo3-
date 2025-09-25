@@ -75,14 +75,14 @@ class CatalogRepository(private val context: Context) {
         internalFile.writeText(json.encodeToString(dtos))
     }
 
-    /** Agrega un producto y persiste */
+
     suspend fun add(product: com.example.ama.ui.components.Product) = withContext(Dispatchers.IO) {
         val current = load()                 // lee lo que hay
         val next = current + product
         saveAll(next)                        // escribe el JSON actualizado
     }
 
-    /** Copia la imagen seleccionada a almacenamiento interno y devuelve un path "file://..." */
+
     suspend fun persistImage(src: Uri): String = withContext(Dispatchers.IO) {
         val imagesDir = File(context.filesDir, "images").apply { mkdirs() }
         val outFile = File(imagesDir, "${UUID.randomUUID()}.jpg")

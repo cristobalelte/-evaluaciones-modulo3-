@@ -20,6 +20,7 @@ ksp = "2.0.21-1.0.25"
 runtime = "1.9.0"
 room = "2.6.1"
 uiText = "1.9.1"
+uiGraphicsVersion = "1.9.2"
 
 [libraries]
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
@@ -52,6 +53,7 @@ androidx-ui-unit = { group = "androidx.compose.ui", name = "ui-unit", version.re
 androidx-foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "foundation" }
 androidx-runtime = { group = "androidx.compose.runtime", name = "runtime", version.ref = "runtime" }
 androidx-ui-text = { group = "androidx.compose.ui", name = "ui-text", version.ref = "uiText" }
+androidx-compose-ui-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics", version.ref = "uiGraphicsVersion" }
 #core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "core-splashscreen" }
 
 

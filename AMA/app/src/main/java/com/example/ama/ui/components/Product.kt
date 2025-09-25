@@ -7,7 +7,7 @@ import java.util.Currency
 import java.util.Locale
 
 @Serializable
-enum class ProductType { TEXTIL, MADERA, CERAMICA, GREDA, HILO, PINTURA, OTRO }
+enum class ProductType { LANA, MADERA, CERAMICA, GREDA, HILO, PINTURA, OTRO }
 
 // Product.kt
 

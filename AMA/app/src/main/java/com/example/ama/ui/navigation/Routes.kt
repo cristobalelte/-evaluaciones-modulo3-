@@ -31,7 +31,7 @@ fun Subcategory.label(): String = when (this) {
 }
 
 val SUBCATS: Map<ProductType, List<Subcategory>> = mapOf(
-    ProductType.TEXTIL to listOf(
+    ProductType.LANA to listOf(
         Subcategory.GUANTES, Subcategory.CHALECOS, Subcategory.GORROS,
         Subcategory.CALCETINES, Subcategory.PONCHOS, Subcategory.MANTAS,
         Subcategory.AMIGURUMIS, Subcategory.OTROS

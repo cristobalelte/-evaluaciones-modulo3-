@@ -144,7 +144,8 @@ fun HomeScreen(
             item {
                 CategoryCarousel(
                     items = categories,
-                    onClick = { onCategoryClick(it.type) }
+                    onClick = { onCategoryClick(it.type) },
+
                 )
             }
 
@@ -452,7 +453,7 @@ private fun SeasonalBanner(@DrawableRes resId: Int) {
 // ------------------------------ DATA DE MUESTRA ------------------------------
 
 private fun defaultCategories() = listOf(
-    CategoryItem("Lana",     R.drawable.lana_icon,     ProductType.TEXTIL),
+    CategoryItem("Lana",     R.drawable.lana_icon,     ProductType.LANA),
     CategoryItem("Madera",   R.drawable.madera_icon,   ProductType.MADERA),
     CategoryItem("Cerámica", R.drawable.ceramica_icon, ProductType.CERAMICA),
     CategoryItem("Greda",    R.drawable.greda_icon,    ProductType.GREDA),

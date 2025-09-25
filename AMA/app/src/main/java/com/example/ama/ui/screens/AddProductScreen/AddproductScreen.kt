@@ -65,7 +65,7 @@ fun AddProductScreen(
     var author by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
 
-    var type by remember { mutableStateOf(ProductType.TEXTIL) }
+    var type by remember { mutableStateOf(ProductType.LANA) }
     var typeExpanded by remember { mutableStateOf(false) }
 
     // dropdown de región
@@ -158,7 +158,7 @@ fun AddProductScreen(
                 OutlinedTextField(
                     readOnly = true,
                     value = when (type) {
-                        ProductType.TEXTIL -> "Textil"
+                        ProductType.LANA -> "Textil"
                         ProductType.MADERA -> "Madera"
                         ProductType.CERAMICA -> "Cerámica"
                         ProductType.GREDA -> "Greda"

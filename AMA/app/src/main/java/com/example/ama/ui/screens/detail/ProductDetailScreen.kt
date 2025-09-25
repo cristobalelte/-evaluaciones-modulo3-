@@ -33,10 +33,10 @@ fun ProductDetailScreen(
 ) {
     val currency = remember { NumberFormat.getCurrencyInstance(Locale("es", "CL")) }
 
-    // Mapea el tipo de forma segura (sin TODO())
+
     val typeText = remember(product.type) {
         when (product.type) {
-            ProductType.TEXTIL   -> "Textil"
+            ProductType.LANA   -> "Textil"
             ProductType.MADERA   -> "Madera"
             ProductType.CERAMICA -> "Cerámica"
             ProductType.GREDA    -> "Greda"
