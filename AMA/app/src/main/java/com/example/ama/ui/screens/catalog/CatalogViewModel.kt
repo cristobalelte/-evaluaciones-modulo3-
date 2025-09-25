@@ -9,6 +9,7 @@ import com.example.ama.data.CatalogRepository
 import com.example.ama.data.db.CartRow
 import com.example.ama.ui.components.Product
 import com.example.ama.ui.components.ProductType
+import com.example.ama.ui.components.Subcategory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -63,7 +64,9 @@ class CatalogViewModel : ViewModel() {
         region: String,
         type: ProductType,
         stock: Int,
-        imageSrc: Uri?
+        imageSrc: Uri?,
+        description: String,
+        subcategory: Subcategory,
     ) = viewModelScope.launch(Dispatchers.IO) {
         val repo = catalogRepo ?: return@launch
         val imageUrl = imageSrc?.let { repo.persistImage(it) } ?: ""
@@ -77,7 +80,10 @@ class CatalogViewModel : ViewModel() {
             isActive = true,
             stock = stock,
             region = region,
-            type = type
+            type = type,
+            description = description,
+            subcategory = subcategory,
+            createdAt = System.currentTimeMillis(),
         )
 
         repo.add(newProduct)

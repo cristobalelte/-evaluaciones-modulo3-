@@ -11,6 +11,7 @@ import com.example.ama.ui.screens.catalog.CatalogViewModel
 import com.example.ama.ui.screens.publish.AddProductScreen
 import kotlinx.coroutines.launch
 
+
 @Composable
 fun AddProductRoute(
     vm: CatalogViewModel,
@@ -31,16 +32,17 @@ fun AddProductRoute(
         snackbarHostState = snack,
         onBack = onBack,
         onPublish = { np ->
-            // Guardamos y volvemos
             scope.launch {
                 vm.addProduct(
-                    name   = np.name,
-                    price  = np.price,
+                    name = np.name,
+                    price = np.price,
                     author = np.author,
                     region = np.region,
-                    type   = np.type,
-                    stock  = np.stock,
-                    imageSrc = np.imageUri   // 👈 URI del picker (se copia a interno)
+                    type = np.type,
+                    stock = np.stock,
+                    subcategory = np.subcategory,
+                    description = np.description,
+                    imageSrc = np.imageUri
                 )
                 snack.showSnackbar("Producto publicado")
                 onBack()

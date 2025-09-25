@@ -57,7 +57,8 @@ class CatalogRepository(private val context: Context) {
                 isActive = dto.isActive,
                 stock = dto.stock,
                 region = dto.region,
-                type = typeEnum
+                type = typeEnum,
+                description = ""
             )
         }
     }

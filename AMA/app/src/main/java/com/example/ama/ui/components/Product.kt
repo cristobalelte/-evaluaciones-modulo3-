@@ -21,8 +21,10 @@ data class Product(
     val isActive: Boolean,
     val stock: Int,
     val region: String,
-    val type: ProductType
-
+    val type: ProductType,
+    val subcategory: Subcategory = Subcategory.OTROS,
+    val createdAt: Long = System.currentTimeMillis(),
+    val description: String = "",
 )
 val Product.priceFormatted: String
     get() = NumberFormat.getCurrencyInstance(Locale("es", "CL")).apply {

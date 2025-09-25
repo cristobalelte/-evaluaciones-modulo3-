@@ -51,6 +51,7 @@ dependencies {
     implementation(libs.androidx.runtime)
     implementation(libs.androidx.ui.text)
     implementation(libs.androidx.compose.ui.ui.graphics)
+    implementation(libs.foundation)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

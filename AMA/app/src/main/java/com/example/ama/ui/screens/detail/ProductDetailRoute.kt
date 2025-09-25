@@ -4,6 +4,8 @@ package com.example.ama.ui.screens.detail
 
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import com.example.ama.ui.components.Product
@@ -15,9 +17,12 @@ import kotlinx.coroutines.launch
 fun ProductDetailRoute(
     productId: String,
     onBack: () -> Unit,
-    vm: CatalogViewModel
+    vm: CatalogViewModel,
+    onAddToCart: (Product) -> Unit,
+    onOpenCart: () -> Unit,
 ) {
 
+    val cartCount by vm.cartCount.collectAsState(initial = 0)
     val product = remember(productId) { vm.getById(productId) }
 
     val snackbar = remember { SnackbarHostState() }
@@ -29,15 +34,16 @@ fun ProductDetailRoute(
     }
 
     ProductDetailScreen(
-        product = product as Product,
+        product = product,
         onBack = onBack,
-        onAddToCart = {
+        onAddToCart = { p ->
             scope.launch {
-                vm.addToCart(product)
+                vm.addToCart(p)
                 snackbar.showSnackbar("Agregado al carrito")
             }
         },
-
+        cartCount = cartCount,
+        onOpenCart = onOpenCart
     )
 }
 

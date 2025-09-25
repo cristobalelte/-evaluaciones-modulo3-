@@ -1,14 +1,24 @@
 // app/src/main/java/com/example/ama/ui/screens/detail/ProductDetailScreen.kt
 package com.example.ama.ui.screens.detail
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.outlined.ChevronLeft
+import androidx.compose.material.icons.outlined.ChevronRight
+import androidx.compose.material.icons.outlined.FavoriteBorder
+import androidx.compose.material.icons.outlined.GridView
+import androidx.compose.material.icons.outlined.List
 import androidx.compose.material.icons.outlined.ShoppingCart
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -19,6 +29,7 @@ import coil.compose.AsyncImage
 import com.example.ama.R
 import com.example.ama.ui.components.Product
 import com.example.ama.ui.components.ProductType
+import com.example.ama.ui.components.label
 import java.text.NumberFormat
 import java.util.Locale
 
@@ -29,37 +40,64 @@ fun ProductDetailScreen(
     onBack: () -> Unit,
     onAddToCart: (Product) -> Unit,
     publishedBy: String? = null,
-    description: String? = null
+    description: String? = null,
+    cartCount: Int,
+    onOpenCart: () -> Unit,
 ) {
     val currency = remember { NumberFormat.getCurrencyInstance(Locale("es", "CL")) }
 
-
     val typeText = remember(product.type) {
         when (product.type) {
-            ProductType.LANA   -> "Textil"
-            ProductType.MADERA   -> "Madera"
-            ProductType.CERAMICA -> "Cerámica"
-            ProductType.GREDA    -> "Greda"
-            ProductType.HILO     -> "Hilo"
-            ProductType.PINTURA  -> "Pintura"
-            ProductType.OTRO     -> "Otro"
+            ProductType.LANA  -> "Lana"
+            ProductType.MADERA  -> "Madera"
+            ProductType.CERAMICA-> "Cerámica"
+            ProductType.GREDA   -> "Greda"
+            ProductType.HILO    -> "Hilo"
+            ProductType.PINTURA -> "Pintura"
+            ProductType.OTRO    -> "Otro"
         }
     }
 
+
+    val images = remember(product.imageUrl) {
+        val single = product.imageUrl.takeIf { it.isNotBlank() } ?: ""
+        listOf(single).filter { it.isNotBlank() }
+    }
+    var index by remember { mutableIntStateOf(0) }
+
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(product.name, maxLines = 1) },
+            CenterAlignedTopAppBar(
+                title = {
+                    Image(
+                        painter = painterResource(R.drawable.logo_artemayor_horizontal),
+                        contentDescription = "Arte Mayor",
+                        modifier = Modifier.height(40.dp)
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(
-                            imageVector = Icons.Filled.ArrowBack,
-                            contentDescription = stringResource(R.string.pop_back)
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Volver"
                         )
+                    }
+                },
+                actions = {
+                    IconButton(onClick = onOpenCart) {
+                        BadgedBox(badge = {
+                            if (cartCount > 0) Badge { Text("$cartCount") }
+                        }) {
+                            Icon(
+                                imageVector = Icons.Outlined.ShoppingCart,
+                                contentDescription = "Carrito"
+                            )
+                        }
                     }
                 }
             )
         }
+,
     ) { padding ->
         Column(
             modifier = Modifier
@@ -68,22 +106,77 @@ fun ProductDetailScreen(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // Usa placeholder si no hay URL
-            val img: Any = product.imageUrl.takeIf { it.isNotBlank() }
-                ?: R.drawable.placeholder_image
 
-            AsyncImage(
-                model = img,
-                contentDescription = product.name,
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .aspectRatio(16f / 9f),
-                contentScale = ContentScale.Crop,
-                placeholder = painterResource(R.drawable.placeholder_image),
-                error = painterResource(R.drawable.placeholder_image)
+                    .clip(RoundedCornerShape(16.dp))
+            ) {
+                val model: Any =
+                    images.getOrNull(index) ?: R.drawable.placeholder_image
+
+                AsyncImage(
+                    model = model,
+                    contentDescription = product.name,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(1.1f),
+                    contentScale = ContentScale.Crop,
+                    placeholder = painterResource(R.drawable.placeholder_image),
+                    error = painterResource(R.drawable.placeholder_image)
+                )
+
+                if (images.size > 1) {
+                    IconButton(
+                        onClick = { index = (index - 1 + images.size) % images.size },
+                        modifier = Modifier
+                            .align(Alignment.CenterStart)
+                            .padding(8.dp)
+                            .clip(CircleShape)
+                            .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.85f))
+                    ) {
+                        Icon(Icons.Outlined.ChevronLeft, contentDescription = "Anterior")
+                    }
+                    IconButton(
+                        onClick = { index = (index + 1) % images.size },
+                        modifier = Modifier
+                            .align(Alignment.CenterEnd)
+                            .padding(8.dp)
+                            .clip(CircleShape)
+                            .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.85f))
+                    ) {
+                        Icon(Icons.Outlined.ChevronRight, contentDescription = "Siguiente")
+                    }
+                }
+
+
+                Surface(
+                    shape = CircleShape,
+                    color = MaterialTheme.colorScheme.surface.copy(alpha = 0.85f),
+                    tonalElevation = 1.dp,
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .padding(10.dp)
+                ) {
+                    IconButton(onClick = { /* TODO: favorito */ }) {
+                        Icon(Icons.Outlined.FavoriteBorder, contentDescription = "Favorito")
+                    }
+                }
+            }
+
+
+            Text(
+                text = "Autor/a: ${product.author}",
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
-            // Precio
+            // Título + precio
+            Text(
+                text = product.name,
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.SemiBold
+            )
             Text(
                 text = currency.format(product.price),
                 style = MaterialTheme.typography.titleLarge,
@@ -91,36 +184,50 @@ fun ProductDetailScreen(
                 fontSize = 20.sp
             )
 
-            // Autor / publicado por
-            val autorTexto =
-                if (!publishedBy.isNullOrBlank() && publishedBy != product.author) {
-                    "Publicado por: $publishedBy\nAutor/a real: ${product.author}"
-                } else {
-                    "Autor/a: ${product.author}"
-                }
-            Text(text = autorTexto, style = MaterialTheme.typography.bodyMedium, fontSize = 15.sp)
-
-            // Descripción
+            val descToShow = (description ?: product.description).ifBlank { "Sin descripción" }
             Text(
-                text = description ?: stringResource(R.string.app_description),
+                text = descToShow,
                 style = MaterialTheme.typography.bodyMedium,
-                fontWeight = FontWeight.Normal,
-                fontSize = 20.sp
+                color = MaterialTheme.colorScheme.onSurface,
             )
 
-            Text("Región: ${product.region}", style = MaterialTheme.typography.bodyMedium, fontSize = 15.sp)
-            Text("Tipo: $typeText", style = MaterialTheme.typography.bodyMedium, fontSize = 20.sp)
+            // Metadatos
+            Text(
+                "Región: ${product.region}",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Text(
+                "Tipo: $typeText",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Text(
+                "Stock: ${product.stock}",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+
+            Text(
+                text = "Subcategoría: ${product.subcategory.label()}",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+
 
             Spacer(Modifier.weight(1f))
 
-            // Botón agregar al carrito
+
             Button(
                 onClick = { onAddToCart(product) },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(48.dp),
+                shape = RoundedCornerShape(24.dp)
             ) {
                 Icon(Icons.Outlined.ShoppingCart, contentDescription = null)
                 Spacer(Modifier.width(8.dp))
-                Text(stringResource(R.string.add_to_cart), fontSize = 20.sp)
+                Text(stringResource(R.string.add_to_cart), fontSize = 18.sp)
             }
         }
     }

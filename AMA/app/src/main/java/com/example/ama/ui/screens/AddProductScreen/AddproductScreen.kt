@@ -19,34 +19,22 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.ama.ui.components.ProductType
+import com.example.ama.ui.components.REGIONES_CHILE
+import com.example.ama.ui.components.Subcategory
+import com.example.ama.ui.components.SUBCATS
+import com.example.ama.ui.components.label
 
-// --- Regiones de Chile ---
-private val REGIONES_CHILE = listOf(
-    "Arica y Parinacota",
-    "Tarapacá",
-    "Antofagasta",
-    "Atacama",
-    "Coquimbo",
-    "Valparaíso",
-    "Metropolitana de Santiago",
-    "O’Higgins",
-    "Maule",
-    "Ñuble",
-    "Biobío",
-    "La Araucanía",
-    "Los Ríos",
-    "Los Lagos",
-    "Aysén",
-    "Magallanes y de la Antártica Chilena"
-)
+// Si tienes tu constante en otro archivo, deja el import correspondiente
+// val REGIONES_CHILE = listOf("Arica y Parinacota", ...)
 
 data class NewProduct(
     val name: String,
     val price: Double,
     val type: ProductType,
+    val subcategory: Subcategory,
     val region: String,
     val stock: Int,
-    val imageUri: Uri?,          // guardamos el URI local de la imagen
+    val imageUri: Uri?,
     val author: String,
     val description: String,
 )
@@ -65,15 +53,23 @@ fun AddProductScreen(
     var author by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
 
+    // Tipo
     var type by remember { mutableStateOf(ProductType.LANA) }
     var typeExpanded by remember { mutableStateOf(false) }
 
-    // dropdown de región
+    // Subcategoría (depende del tipo)
+    var subcat by remember { mutableStateOf<Subcategory?>(null) }
+    var subcatExpanded by remember { mutableStateOf(false) }
+    val availableSubcats by remember(type) { mutableStateOf(SUBCATS[type] ?: emptyList()) }
+
+    // Si cambia el tipo, limpia subcategoría
+    LaunchedEffect(type) { subcat = null }
+
+    // Región
     var regionExpanded by remember { mutableStateOf(false) }
 
+    // Imagen
     var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
-
-    // Photo Picker (Android 13+) + fallback GetContent
     val context = LocalContext.current
     val supportsPhotoPicker = ActivityResultContracts.PickVisualMedia.isPhotoPickerAvailable(context)
 
@@ -97,7 +93,8 @@ fun AddProductScreen(
 
     val isValid = name.isNotBlank() &&
             priceText.toDoubleOrNull() != null &&
-            region.isNotBlank()
+            region.isNotBlank() &&
+            subcat != null //
 
     Scaffold(
         topBar = {
@@ -150,7 +147,7 @@ fun AddProductScreen(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            // Tipo de producto
+            // Tipo
             ExposedDropdownMenuBox(
                 expanded = typeExpanded,
                 onExpandedChange = { typeExpanded = !typeExpanded }
@@ -158,7 +155,7 @@ fun AddProductScreen(
                 OutlinedTextField(
                     readOnly = true,
                     value = when (type) {
-                        ProductType.LANA -> "Textil"
+                        ProductType.LANA -> "Lana"
                         ProductType.MADERA -> "Madera"
                         ProductType.CERAMICA -> "Cerámica"
                         ProductType.GREDA -> "Greda"
@@ -178,13 +175,47 @@ fun AddProductScreen(
                     ProductType.entries.forEach { t ->
                         DropdownMenuItem(
                             text = { Text(t.name.lowercase().replaceFirstChar { it.titlecase() }) },
-                            onClick = { type = t; typeExpanded = false }
+                            onClick = {
+                                type = t
+                                typeExpanded = false
+                            }
                         )
                     }
                 }
             }
 
-            // Región (dropdown con regiones de Chile)
+            // Subcategoría (depende del Tipo)
+            ExposedDropdownMenuBox(
+                expanded = subcatExpanded,
+                onExpandedChange = { subcatExpanded = !subcatExpanded }
+            ) {
+                OutlinedTextField(
+                    readOnly = true,
+                    value = subcat?.label() ?: "",
+                    onValueChange = {},
+                    label = { Text("Subcategoría") },
+                    placeholder = { Text(if (availableSubcats.isEmpty()) "No disponible" else "Selecciona…") },
+                    enabled = availableSubcats.isNotEmpty(),
+                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(subcatExpanded) },
+                    modifier = Modifier.menuAnchor().fillMaxWidth()
+                )
+                ExposedDropdownMenu(
+                    expanded = subcatExpanded && availableSubcats.isNotEmpty(),
+                    onDismissRequest = { subcatExpanded = false }
+                ) {
+                    availableSubcats.forEach { s ->
+                        DropdownMenuItem(
+                            text = { Text(s.label()) },
+                            onClick = {
+                                subcat = s
+                                subcatExpanded = false
+                            }
+                        )
+                    }
+                }
+            }
+
+            // Región
             ExposedDropdownMenuBox(
                 expanded = regionExpanded,
                 onExpandedChange = { regionExpanded = !regionExpanded }
@@ -240,6 +271,7 @@ fun AddProductScreen(
                         name = name.trim(),
                         price = priceText.toDoubleOrNull() ?: 0.0,
                         type = type,
+                        subcategory = subcat ?: Subcategory.OTROS,
                         region = region.trim(),
                         stock = stockText.toIntOrNull() ?: 1,
                         imageUri = selectedImageUri,

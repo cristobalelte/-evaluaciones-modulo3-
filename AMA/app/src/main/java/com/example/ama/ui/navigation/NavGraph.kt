@@ -25,6 +25,7 @@ import com.example.ama.ui.screens.carrito.DatosEnvio
 import com.example.ama.ui.screens.catalog.CatalogRoute
 import com.example.ama.ui.screens.catalog.CatalogViewModel
 import com.example.ama.ui.screens.detail.ProductDetailRoute
+import com.example.ama.ui.screens.detail.ProductDetailScreen
 import com.example.ama.ui.screens.settings.SettingsScreen
 import com.example.ama.ui.screens.subcategory.ProductSubCatScreen
 import com.example.ama.ui.theme.ThemeOption
@@ -122,14 +123,20 @@ fun AppNavigation(
         composable(
             route = Routes.DETAIL,
             arguments = listOf(navArgument("id") { type = NavType.StringType })
-        ) { backStackEntry ->
-            val id = backStackEntry.arguments?.getString("id") ?: return@composable
-            ProductDetailRoute(
-                vm = vm,
-                productId = id,
-                onBack = { navController.popBackStack() }
+        ) { backStack ->
+            val id = backStack.arguments?.getString("id") ?: return@composable
+            val product = vm.getById(id) ?: run { navController.popBackStack(); return@composable }
+            val cartCount by vm.cartCount.collectAsState(initial = 0)
+
+            ProductDetailScreen(
+                product = product,
+                onBack = { navController.popBackStack() },
+                onAddToCart = { vm.addToCart(it) },
+                cartCount = cartCount,
+                onOpenCart = { navController.navigate(Routes.CART) }
             )
         }
+
 
         composable(Routes.CART) {
             CartRoute(
