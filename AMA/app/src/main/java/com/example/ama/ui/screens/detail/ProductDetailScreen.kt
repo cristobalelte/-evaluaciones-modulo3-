@@ -4,8 +4,10 @@ package com.example.ama.ui.screens.detail
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.outlined.ChevronLeft
@@ -102,6 +104,7 @@ fun ProductDetailScreen(
         Column(
             modifier = Modifier
                 .padding(padding)
+                .verticalScroll( rememberScrollState() )
                 .fillMaxSize()
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
