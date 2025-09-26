@@ -17,6 +17,7 @@ import androidx.navigation.navArgument
 import com.example.ama.ui.Login.LoginScreen
 import com.example.ama.ui.components.ProductType
 import com.example.ama.ui.screens.AddProductScreen.AddProductRoute
+import com.example.ama.ui.screens.HomeScreen.ProductDelivery
 import com.example.ama.ui.screens.HomeScreen.ProductRegionScreen
 import com.example.ama.ui.screens.HomeScreen.ProductTypeScreen
 
@@ -200,6 +201,16 @@ fun AppNavigation(
 
         composable("datosEnvio") {
             DataEnvio(
+                navController = navController,
+                cartCount = cartCount,
+                onOpenCart = { navController.navigate(Routes.CART) },
+                onOpenPublish = { navController.navigate(Routes.PUBLISH) },
+                onOpenSettings = { navController.navigate(Routes.SETTINGS) }
+            )
+        }
+
+        composable("opcionEntrega") {
+            ProductDelivery(
                 navController = navController,
                 cartCount = cartCount,
                 onOpenCart = { navController.navigate(Routes.CART) },

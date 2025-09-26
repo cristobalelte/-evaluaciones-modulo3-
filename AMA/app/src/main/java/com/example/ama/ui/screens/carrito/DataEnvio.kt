@@ -179,7 +179,7 @@ fun DataEnvio(
 
             Button(
                 onClick = {
-                    navController.navigate("datosEnvio")
+                    navController.navigate("opcionEntrega")
                     val text = "Abriendo Filtro"
                     val duration: Int = Toast.LENGTH_SHORT
                     Toast.makeText(navController.context, text, duration).show()
