@@ -43,7 +43,7 @@ import com.example.ama.ui.components.BottomBar
 import com.example.ama.ui.components.Product
 import com.example.ama.ui.components.ProductType
 import com.example.ama.ui.components.priceFormatted
-
+import com.example.ama.ui.screens.HomeScreen.ImagenesEnumeration
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -103,7 +103,7 @@ fun HomeScreen(
             // Buscador
             item {
                 val cafeOscuro = Color(0xFF6B3F2C) // barra
-                val cafePill   = Color(0xFF87513A) // pill (un tono más claro)
+                val cafePill = Color(0xFF87513A) // pill (un tono más claro)
 
                 OutlinedTextField(
                     value = query,
@@ -146,7 +146,7 @@ fun HomeScreen(
                     items = categories,
                     onClick = { onCategoryClick(it.type) },
 
-                )
+                    )
             }
 
             // CONOCE A NUESTROS ARTESANOS/AS (banners laterales)
@@ -182,7 +182,7 @@ fun HomeScreen(
         }
     }
 }
-
+//Cierre fun HomeScreen
 
 
 data class CategoryItem(
@@ -196,7 +196,6 @@ data class ArtisanBanner(
     val title: String,
     @DrawableRes val imageRes: Int
 )
-
 
 
 @Composable
@@ -306,7 +305,6 @@ private fun CategoryCarousel(
 }
 
 
-
 @Composable
 private fun ArtisanBannerRow(
     banners: List<ArtisanBanner>,
@@ -331,7 +329,22 @@ private fun ArtisanBannerRow(
             ) {
                 Box {
                     Image(
-                        painter = painterResource(b.imageRes),
+//                        painter = painterResource(b.imageRes),
+                        if (b.title == ImagenesEnumeration.ArtesanosDelSur.nombre) {
+
+                            painterResource(ImagenesEnumeration.ArtesanosDelSur.imgLoc)
+                        }
+                        else if (b.title == ImagenesEnumeration.TejedorasDeChiloe.nombre) {
+
+                            painterResource(ImagenesEnumeration.TejedorasDeChiloe.imgLoc)
+                        }
+                        else if (b.title == ImagenesEnumeration.MadererosDelMaule.nombre) {
+                            painterResource(ImagenesEnumeration.MadererosDelMaule.imgLoc)
+
+                        } else {
+                            painterResource(b.imageRes)
+
+                        },
                         contentDescription = b.title,
                         modifier = Modifier.fillMaxSize(),
                         contentScale = ContentScale.Crop
@@ -453,16 +466,16 @@ private fun SeasonalBanner(@DrawableRes resId: Int) {
 // ------------------------------ DATA DE MUESTRA ------------------------------
 
 private fun defaultCategories() = listOf(
-    CategoryItem("Lana",     R.drawable.lana_icon,     ProductType.LANA),
-    CategoryItem("Madera",   R.drawable.madera_icon,   ProductType.MADERA),
+    CategoryItem("Lana", R.drawable.lana_icon, ProductType.LANA),
+    CategoryItem("Madera", R.drawable.madera_icon, ProductType.MADERA),
     CategoryItem("Cerámica", R.drawable.ceramica_icon, ProductType.CERAMICA),
-    CategoryItem("Greda",    R.drawable.greda_icon,    ProductType.GREDA),
-    CategoryItem("Hilo",     R.drawable.hilo_icon,     ProductType.HILO),
-    CategoryItem("Pintura",  R.drawable.pintura_icon,  ProductType.PINTURA),
+    CategoryItem("Greda", R.drawable.greda_icon, ProductType.GREDA),
+    CategoryItem("Hilo", R.drawable.hilo_icon, ProductType.HILO),
+    CategoryItem("Pintura", R.drawable.pintura_icon, ProductType.PINTURA),
 )
 
 private fun sampleArtisanBanners() = listOf(
-    ArtisanBanner("a1", "Artesanos del Sur",  R.drawable.logo_artemayor_horizontal),
+    ArtisanBanner("a1", "Artesanos del Sur", R.drawable.logo_artemayor_horizontal),
     ArtisanBanner("a2", "Tejedoras de Chiloé", R.drawable.logo_artemayor_horizontal),
     ArtisanBanner("a3", "Madereros del Maule", R.drawable.logo_artemayor_horizontal),
 )

@@ -179,8 +179,9 @@ fun ProductSubCatScreen(
             }
 
 
-            // Lista de subcategorías (botones anchos)
-            items(subcats.filter { q.isBlank() || it.label().contains(q, true) }) { sub ->
+            // Lista de subcategorías (botones anchos): GUantes, chalecos, etc
+            items(subcats.filter { q.isBlank() || it.label().contains(q, true) })
+            { sub ->
                 Button(
                     onClick = { navController.navigate("catalog?type=${category.name}&sub=${sub.name}") },
                     colors = ButtonDefaults.buttonColors(
