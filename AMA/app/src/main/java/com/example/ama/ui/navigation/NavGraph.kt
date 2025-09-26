@@ -189,17 +189,18 @@ fun AppNavigation(
         composable("regionScreen") {
             ProductRegionScreen(
                 navController = navController,
+                category = ProductType.LANA,
                 cartCount = cartCount,
                 onOpenCart = { navController.navigate(Routes.CART) },
                 onOpenPublish = { navController.navigate(Routes.PUBLISH) },
                 onOpenSettings = { navController.navigate(Routes.SETTINGS) },
                 onSearch = { /* TODO */ }
             )
-
         }
 
         composable("datosEnvio") {
             DataEnvio(
+                navController = navController,
                 cartCount = cartCount,
                 onOpenCart = { navController.navigate(Routes.CART) },
                 onOpenPublish = { navController.navigate(Routes.PUBLISH) },

@@ -171,9 +171,15 @@ fun ProductSubCatScreen(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterHorizontally)
                 ) {
-                    FilterPill("Ordenar\ny filtrar", width = chipW, height = chipH, twoLines = true) { /* TODO */ }
-                    FilterPill("Región",             width = chipW, height = chipH) { /* TODO */ }
-                    FilterPill("Precio",             width = chipW, height = chipH) { /* TODO */ }
+                    FilterPill(
+                        navController = navController,"Ordenar\ny filtrar", width = chipW, height = chipH, twoLines = true)
+                    { /* TODO */ }
+                    FilterPill(
+                        navController = navController, width = chipW, height = chipH, label = "Region")
+                    { /* TODO */ }
+                    FilterPill(
+                        navController = navController,"Precio", width = chipW, height = chipH)
+                    { /* TODO */ }
                 }
                 Spacer(Modifier.height(20.dp))
             }
@@ -206,6 +212,7 @@ fun ProductSubCatScreen(
 }
 @Composable
 private fun FilterPill(
+    navController: NavController,
     label: String,
     width: Dp,
     height: Dp,
@@ -213,7 +220,10 @@ private fun FilterPill(
     onClick: () -> Unit
 ) {
     AssistChip(
-        onClick = onClick,
+        onClick = {
+            navController.navigate("regionScreen")
+
+        },
         label = {
             Text(
                 text = label.uppercase(),

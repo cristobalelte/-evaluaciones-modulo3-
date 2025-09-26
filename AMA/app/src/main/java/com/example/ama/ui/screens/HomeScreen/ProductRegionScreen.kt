@@ -1,21 +1,32 @@
 package com.example.ama.ui.screens.HomeScreen
 
+import android.R.attr.category
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.ArrowDropDown
+import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.ShoppingCart
+import androidx.compose.material3.AssistChip
+import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Button
@@ -26,6 +37,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -34,25 +46,38 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.ama.R
 import com.example.ama.ui.components.BottomBar
+import com.example.ama.ui.components.ProductType
+import com.example.ama.ui.components.SUBCATS
+import com.example.ama.ui.components.label
 
 //Ruta = "regionScreen"
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProductRegionScreen(
     navController: NavController,
+    category: ProductType,
     cartCount: Int,
     onOpenCart: () -> Unit,
     onOpenPublish: () -> Unit,
     onOpenSettings: () -> Unit,
     onSearch: (String) -> Unit
 ) {
+    val cafe = Color(0xFF6B3F2C)
+    val cafeClaro = Color(0xFF87513A)
+    var q by remember { mutableStateOf("") }
+    val subcats = remember(category) { SUBCATS[category] ?: emptyList() }
     var query by remember { mutableStateOf("") }
     Scaffold(
         topBar = {
@@ -84,47 +109,95 @@ fun ProductRegionScreen(
         },
         bottomBar = { BottomBar(onPublishClick = onOpenPublish) }
     ) { padding ->
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .padding(padding)
-                .padding(16.dp)
-                .verticalScroll(rememberScrollState())
                 .fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            OutlinedTextField(
-                value = query,
-                onValueChange = { query = it },
-                modifier = Modifier.fillMaxWidth(),
-                placeholder = { Text("¿Qué artesanía buscas?") },
-                singleLine = true,
-                trailingIcon = { TextButton(onClick = { onSearch(query) }) { Text("Buscar") } }
-            )
+            // Pill de búsqueda
+            item {
+                OutlinedTextField(
+                    value = q,
+                    onValueChange = { q = it },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(52.dp),
+                    singleLine = true,
+                    placeholder = { Text("¿Qué artesanía buscas?") },
+                    leadingIcon = { Icon(Icons.Outlined.Search, null) },
+                    trailingIcon = { TextButton(onClick = { onSearch(q) }) { Text("Buscar") } },
+                    shape = RoundedCornerShape(28.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedContainerColor = cafeClaro,
+                        unfocusedContainerColor = cafeClaro,
+                        focusedBorderColor = Color.Transparent,
+                        unfocusedBorderColor = Color.Transparent,
+                        focusedTextColor = Color.White,
+                        unfocusedTextColor = Color.White,
+                        focusedLeadingIconColor = Color.White,
+                        unfocusedLeadingIconColor = Color.White,
+                        focusedTrailingIconColor = Color.White,
+                        unfocusedTrailingIconColor = Color.White,
+                        focusedPlaceholderColor = Color(0xFFEFEFEF),
+                        unfocusedPlaceholderColor = Color(0xFFEFEFEF),
+                    )
+                )
+            }
 
-            Text(
-                modifier = Modifier
-                    .padding(16.dp)
-                    .fillMaxSize(),
-//                Arrangment = Arrangement.Center,
-                textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.headlineMedium,
-                color = MaterialTheme.colorScheme.primary,
-                text = "Region"
-            )
-        }
+            // Título
+            item {
+                Text(
+                    text = "Region",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 4.dp, bottom = 2.dp),
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.headlineSmall.copy( // antes era titleMedium
+                        fontWeight = FontWeight.SemiBold
+                    ),
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            }
 
-        Spacer(
-            Modifier.height(8.dp)
-        )
 
-        Column(
-            modifier = Modifier
-                .padding(padding)
-                .padding(8.dp)
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
+            // Chips redondeados
+            val chipW = 104.dp
+            val chipH = 32.dp
+
+            item {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(
+                        10.dp,
+                        Alignment.CenterHorizontally
+                    )
+                ) {
+                    FilterPill(
+                        navController = navController,
+                        "Ordenar\ny filtrar",
+                        width = chipW,
+                        height = chipH,
+                        twoLines = true
+                    )
+                    { /* TODO */ }
+                    FilterPill(
+                        navController = navController,
+                        width = chipW,
+                        height = chipH,
+                        label = "Region"
+                    )
+                    { /* TODO */ }
+                    FilterPill(
+                        navController = navController, "Precio", width = chipW, height = chipH
+                    )
+                    { /* TODO */ }
+                }
+                Spacer(Modifier.height(20.dp))
+            }
+
+
 //            Row 1 de 3 botones:
             /* Row(
                  modifier = Modifier
@@ -206,377 +279,445 @@ fun ProductRegionScreen(
              } //Cierre Row 1*/
 
 //            Row 1 de 3 botones:
-            Row(
-                modifier = Modifier
-                    .padding(4.dp)
-                    .fillMaxWidth()
-                    .weight(1f)
-                    .horizontalScroll(rememberScrollState()),
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
-                Button(
-                    onClick = {
-                        navController.navigate("productType")
-                        val text = "Abriendo Filtro"
-                        val duration: Int = Toast.LENGTH_SHORT
-                        Toast.makeText(navController.context, text, duration).show()
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(2.dp)
-                        .weight(1f)
-                ) {
-                    Text(
-                        textAlign = TextAlign.Center,
-                        style = MaterialTheme.typography.bodySmall,
-                        text = "ARICA Y PARINACOTA"
-                    )
-                }
+            /*            Row(
+                            modifier = Modifier
+                                .padding(4.dp)
+                                .fillMaxWidth()
+                                .horizontalScroll(rememberScrollState()),
+                            horizontalArrangement = Arrangement.SpaceEvenly
+                        ) {
+                            Button(
+                                onClick = {
+                                    navController.navigate("productType")
+                                    val text = "Abriendo Filtro"
+                                    val duration: Int = Toast.LENGTH_SHORT
+                                    Toast.makeText(navController.context, text, duration).show()
+                                },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(2.dp)
+                                    .weight(1f)
+                            ) {
+                                Text(
+                                    textAlign = TextAlign.Center,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    text = "ARICA Y PARINACOTA"
+                                )
+                            }
 
-                Button(
-                    onClick = {
-                        navController.navigate("productType")
-                        val text = "Abriendo Filtro"
-                        val duration: Int = Toast.LENGTH_SHORT
-                        Toast.makeText(navController.context, text, duration).show()
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(2.dp)
-                        .weight(1f)
-                ) {
-                    Text(
-                        textAlign = TextAlign.Center,
-                        style = MaterialTheme.typography.bodySmall,
-                        text = "TARAPACA"
-                    )
-                }
+                            Button(
+                                onClick = {
+                                    navController.navigate("productType")
+                                    val text = "Abriendo Filtro"
+                                    val duration: Int = Toast.LENGTH_SHORT
+                                    Toast.makeText(navController.context, text, duration).show()
+                                },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(2.dp)
+                                    .weight(1f)
+                            ) {
+                                Text(
+                                    textAlign = TextAlign.Center,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    text = "TARAPACA"
+                                )
+                            }
 
-                Button(
-                    onClick = {
-                        navController.navigate("productType")
-                        val text = "Abriendo Filtro"
-                        val duration: Int = Toast.LENGTH_SHORT
-                        Toast.makeText(navController.context, text, duration).show()
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(2.dp)
-                        .weight(1f)
-                ) {
-                    Text(
-                        textAlign = TextAlign.Center,
-                        style = MaterialTheme.typography.bodySmall,
-                        text = "ANTOFAGASTA"
-                    )
-                }
+                            Button(
+                                onClick = {
+                                    navController.navigate("productType")
+                                    val text = "Abriendo Filtro"
+                                    val duration: Int = Toast.LENGTH_SHORT
+                                    Toast.makeText(navController.context, text, duration).show()
+                                },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(2.dp)
+                                    .weight(1f)
+                            ) {
+                                Text(
+                                    textAlign = TextAlign.Center,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    text = "ANTOFAGASTA"
+                                )
+                            }
 
-            } //Cierre Row 2
+                        } //Cierre Row 2*/
 
 //            Row 2: 3 elementos:
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .horizontalScroll(rememberScrollState())
-                    .padding(4.dp)
-                    .weight(1f),
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
 
-                Button(
-                    onClick = {
-                        navController.navigate("guantes")
-                        val text = "Abriendo Filtro"
-                        val duration: Int = Toast.LENGTH_SHORT
-                        Toast.makeText(navController.context, text, duration).show()
-                    },
+            item {
+                Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(2.dp)
-                        .weight(1f)
+                        .horizontalScroll(rememberScrollState())
+                        .padding(4.dp),
+                    horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    Text(
-                        textAlign = TextAlign.Center,
-                        style = MaterialTheme.typography.bodySmall,
-                        text = "ATACAMA"
-                    )
-                }
+
+                    Button(
+                        onClick = {
+                            navController.navigate("guantes")
+                            val text = "Abriendo Filtro"
+                            val duration: Int = Toast.LENGTH_SHORT
+                            Toast.makeText(navController.context, text, duration).show()
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(2.dp)
+                            .weight(1f)
+                    ) {
+                        Text(
+                            textAlign = TextAlign.Center,
+                            style = MaterialTheme.typography.bodySmall,
+                            text = "ATACAMA"
+                        )
+                    }
 
 
 
-                Button(
-                    onClick = {
-                        navController.navigate("chalecos")
-                        val text = "Abriendo Filtro"
-                        val duration: Int = Toast.LENGTH_SHORT
-                        Toast.makeText(navController.context, text, duration).show()
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(2.dp)
-                        .weight(1f)
-                ) {
-                    Text(
-                        textAlign = TextAlign.Center,
-                        style = MaterialTheme.typography.bodySmall,
-                        text = "COQUIMBO"
-                    )
-                }
+                    Button(
+                        onClick = {
+                            navController.navigate("chalecos")
+                            val text = "Abriendo Filtro"
+                            val duration: Int = Toast.LENGTH_SHORT
+                            Toast.makeText(navController.context, text, duration).show()
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(2.dp)
+                            .weight(1f)
+                    ) {
+                        Text(
+                            textAlign = TextAlign.Center,
+                            style = MaterialTheme.typography.bodySmall,
+                            text = "COQUIMBO"
+                        )
+                    }
 
 
-                Button(
-                    onClick = {
-                        navController.navigate("chalecos")
-                        val text = "Abriendo Filtro"
-                        val duration: Int = Toast.LENGTH_SHORT
-                        Toast.makeText(navController.context, text, duration).show()
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(2.dp)
-                        .weight(1f)
-                ) {
-                    Text(
-                        textAlign = TextAlign.Center,
-                        style = MaterialTheme.typography.bodySmall,
-                        text = "VALPARAISO"
-                    )
-                }
+                    Button(
+                        onClick = {
+                            navController.navigate("chalecos")
+                            val text = "Abriendo Filtro"
+                            val duration: Int = Toast.LENGTH_SHORT
+                            Toast.makeText(navController.context, text, duration).show()
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(2.dp)
+                            .weight(1f)
+                    ) {
+                        Text(
+                            textAlign = TextAlign.Center,
+                            style = MaterialTheme.typography.bodySmall,
+                            text = "VALPARAISO"
+                        )
+                    }
 
-            } //Cierre Row 3
+                } //Cierre Row 3
+            }
+
+            item {
 
 //            Row 3 de 3 elementos:
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .horizontalScroll(rememberScrollState())
-                    .padding(4.dp)
-                    .weight(1f),
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
-                Button(
-                    onClick = {
-                        navController.navigate("gorros")
-                        val text = "Abriendo Filtro"
-                        val duration: Int = Toast.LENGTH_SHORT
-                        Toast.makeText(navController.context, text, duration).show()
-                    },
+                Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(2.dp)
-                        .weight(1f)
+                        .horizontalScroll(rememberScrollState())
+                        .padding(4.dp),
+                    horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    Text(
-                        textAlign = TextAlign.Center,
-                        style = MaterialTheme.typography.bodySmall,
-                        text = "RM"
-                    )
-                }
+                    Button(
+                        onClick = {
+                            navController.navigate("gorros")
+                            val text = "Abriendo Filtro"
+                            val duration: Int = Toast.LENGTH_SHORT
+                            Toast.makeText(navController.context, text, duration).show()
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(2.dp)
+                            .weight(1f)
+                    ) {
+                        Text(
+                            textAlign = TextAlign.Center,
+                            style = MaterialTheme.typography.bodySmall,
+                            text = "RM"
+                        )
+                    }
 
 
-                Button(
-                    onClick = {
-                        navController.navigate("calcetines")
-                        val text = "Abriendo Filtro"
-                        val duration: Int = Toast.LENGTH_SHORT
-                        Toast.makeText(navController.context, text, duration).show()
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(2.dp)
-                        .weight(1f)
-                ) {
-                    Text(
-                        textAlign = TextAlign.Center,
-                        style = MaterialTheme.typography.bodySmall,
-                        text = "O'HIGGINS"
-                    )
-                }
+                    Button(
+                        onClick = {
+                            navController.navigate("calcetines")
+                            val text = "Abriendo Filtro"
+                            val duration: Int = Toast.LENGTH_SHORT
+                            Toast.makeText(navController.context, text, duration).show()
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(2.dp)
+                            .weight(1f)
+                    ) {
+                        Text(
+                            textAlign = TextAlign.Center,
+                            style = MaterialTheme.typography.bodySmall,
+                            text = "O'HIGGINS"
+                        )
+                    }
 
 
-                Button(
-                    onClick = {
-                        navController.navigate("calcetines")
-                        val text = "Abriendo Filtro"
-                        val duration: Int = Toast.LENGTH_SHORT
-                        Toast.makeText(navController.context, text, duration).show()
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(2.dp)
-                        .weight(1f)
-                ) {
-                    Text(
-                        textAlign = TextAlign.Center,
-                        style = MaterialTheme.typography.bodySmall,
-                        text = "MAULE"
-                    )
-                }
+                    Button(
+                        onClick = {
+                            navController.navigate("calcetines")
+                            val text = "Abriendo Filtro"
+                            val duration: Int = Toast.LENGTH_SHORT
+                            Toast.makeText(navController.context, text, duration).show()
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(2.dp)
+                            .weight(1f)
+                    ) {
+                        Text(
+                            textAlign = TextAlign.Center,
+                            style = MaterialTheme.typography.bodySmall,
+                            text = "MAULE"
+                        )
+                    }
 
-            } //Cierre Row 3
+                } //Cierre Row 3
+            }
 
+            item {
 //            Row 4 de 3 elementos:
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .horizontalScroll(rememberScrollState())
-                    .padding(4.dp)
-                    .weight(1f),
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
-                Button(
-                    onClick = {
-                        navController.navigate("ponchos")
-                        val text = "Abriendo Filtro"
-                        val duration: Int = Toast.LENGTH_SHORT
-                        Toast.makeText(navController.context, text, duration).show()
-                    },
+                Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(2.dp)
-                        .weight(1f)
+                        .horizontalScroll(rememberScrollState())
+                        .padding(4.dp),
+                    horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    Text(
-                        textAlign = TextAlign.Center,
-                        style = MaterialTheme.typography.bodySmall,
-                        text = "ÑUBLE"
-                    )
-                }
+                    Button(
+                        onClick = {
+                            navController.navigate("ponchos")
+                            val text = "Abriendo Filtro"
+                            val duration: Int = Toast.LENGTH_SHORT
+                            Toast.makeText(navController.context, text, duration).show()
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(2.dp)
+                            .weight(1f)
+                    ) {
+                        Text(
+                            textAlign = TextAlign.Center,
+                            style = MaterialTheme.typography.bodySmall,
+                            text = "ÑUBLE"
+                        )
+                    }
 
 
-                Button(
-                    onClick = {
-                        navController.navigate("mantas")
-                        val text = "Abriendo Filtro"
-                        val duration: Int = Toast.LENGTH_SHORT
-                        Toast.makeText(navController.context, text, duration).show()
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(2.dp)
-                        .weight(1f)
-                ) {
-                    Text(
-                        textAlign = TextAlign.Center,
-                        style = MaterialTheme.typography.bodySmall,
-                        text = "BIOBIO"
-                    )
-                }
+                    Button(
+                        onClick = {
+                            navController.navigate("mantas")
+                            val text = "Abriendo Filtro"
+                            val duration: Int = Toast.LENGTH_SHORT
+                            Toast.makeText(navController.context, text, duration).show()
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(2.dp)
+                            .weight(1f)
+                    ) {
+                        Text(
+                            textAlign = TextAlign.Center,
+                            style = MaterialTheme.typography.bodySmall,
+                            text = "BIOBIO"
+                        )
+                    }
 
 
-                Button(
-                    onClick = {
-                        navController.navigate("mantas")
-                        val text = "Abriendo Filtro"
-                        val duration: Int = Toast.LENGTH_SHORT
-                        Toast.makeText(navController.context, text, duration).show()
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(2.dp)
-                        .weight(1f)
-                ) {
-                    Text(
-                        textAlign = TextAlign.Center,
-                        style = MaterialTheme.typography.bodySmall,
-                        text = "LOS LAGOS"
-                    )
-                }
+                    Button(
+                        onClick = {
+                            navController.navigate("mantas")
+                            val text = "Abriendo Filtro"
+                            val duration: Int = Toast.LENGTH_SHORT
+                            Toast.makeText(navController.context, text, duration).show()
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(2.dp)
+                            .weight(1f)
+                    ) {
+                        Text(
+                            textAlign = TextAlign.Center,
+                            style = MaterialTheme.typography.bodySmall,
+                            text = "LOS LAGOS"
+                        )
+                    }
 
-            } //Cierre Row 4
+                } //Cierre Row 4
+            }
 
+            item {
 //            ROw 5 de 2 elementos:
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .horizontalScroll(rememberScrollState())
-                    .padding(4.dp)
-                    .weight(1f),
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
-                Button(
-                    onClick = {
-                        navController.navigate("ponchos")
-                        val text = "Abriendo Filtro"
-                        val duration: Int = Toast.LENGTH_SHORT
-                        Toast.makeText(navController.context, text, duration).show()
-                    },
+                Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(2.dp)
-                        .weight(1f)
+                        .horizontalScroll(rememberScrollState())
+                        .padding(4.dp),
+                    horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    Text(
-                        textAlign = TextAlign.Center,
-                        style = MaterialTheme.typography.bodySmall,
-                        text = "AYSEN"
-                    )
-                }
+                    Button(
+                        onClick = {
+                            navController.navigate("ponchos")
+                            val text = "Abriendo Filtro"
+                            val duration: Int = Toast.LENGTH_SHORT
+                            Toast.makeText(navController.context, text, duration).show()
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(2.dp)
+                            .weight(1f)
+                    ) {
+                        Text(
+                            textAlign = TextAlign.Center,
+                            style = MaterialTheme.typography.bodySmall,
+                            text = "AYSEN"
+                        )
+                    }
 
 
-                Button(
-                    onClick = {
-                        navController.navigate("mantas")
-                        val text = "Abriendo Filtro"
-                        val duration: Int = Toast.LENGTH_SHORT
-                        Toast.makeText(navController.context, text, duration).show()
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(2.dp)
-                        .weight(1f)
-                ) {
-                    Text(
-                        textAlign = TextAlign.Center,
-                        style = MaterialTheme.typography.bodySmall,
-                        text = "MAGALLANES"
-                    )
-                }
+                    Button(
+                        onClick = {
+                            navController.navigate("mantas")
+                            val text = "Abriendo Filtro"
+                            val duration: Int = Toast.LENGTH_SHORT
+                            Toast.makeText(navController.context, text, duration).show()
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(2.dp)
+                            .weight(1f)
+                    ) {
+                        Text(
+                            textAlign = TextAlign.Center,
+                            style = MaterialTheme.typography.bodySmall,
+                            text = "MAGALLANES"
+                        )
+                    }
 
-            } //Cierre Row 5
+                } //Cierre Row 5
+            }
 
+            items(subcats.filter { q.isBlank() || it.label().contains(q, true) })
+            { sub ->
 //            Boton ir a los resultados y Volver:
-            Button(
-                onClick = {
-                    navController.navigate("subCategory")
-                    val text = "Abriendo Filtro"
-                    val duration: Int = Toast.LENGTH_SHORT
-                    Toast.makeText(navController.context, text, duration).show()
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(2.dp)
-                    .weight(1f)
-            ) {
-                Text(
-                    textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.bodySmall,
-                    text = "IR A LOS RESULTADOS"
-                )
-            }
+                Button(
+                    onClick = {
+                        navController.navigate("catalog?type=${category.name}&sub=${sub.name}")
+                        val text = "Abriendo Filtro"
+                        val duration: Int = Toast.LENGTH_SHORT
+                        Toast.makeText(navController.context, text, duration).show()
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(2.dp)
+                ) {
+                    Text(
+                        textAlign = TextAlign.Center,
+                        style = MaterialTheme.typography.bodySmall,
+                        text = "IR A LOS RESULTADOS"
+                    )
+                }
 
-            Button(
-                onClick = {
-                    navController.navigate("mantas")
-                    val text = "Abriendo Filtro"
-                    val duration: Int = Toast.LENGTH_SHORT
-                    Toast.makeText(navController.context, text, duration).show()
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(2.dp)
-                    .weight(1f)
-            ) {
-                Text(
-                    textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.bodySmall,
-                    text = "VOLVER"
-                )
-            }
+                Button(
+                    onClick = {
+                        navController.popBackStack()
+                        val text = "Abriendo Filtro"
+                        val duration: Int = Toast.LENGTH_SHORT
+                        Toast.makeText(navController.context, text, duration).show()
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(2.dp)
+                ) {
+                    Text(
+                        textAlign = TextAlign.Center,
+                        style = MaterialTheme.typography.bodySmall,
+                        text = "VOLVER"
+                    )
+                }
 
+                Button(
+                    onClick = {
+                        navController.navigate("datosEnvio")
+                        val text = "Abriendo Filtro"
+                        val duration: Int = Toast.LENGTH_SHORT
+                        Toast.makeText(navController.context, text, duration).show()
+                    },
+//                    enabled = items.isNotEmpty(),
+                    //Cambio de shape btn proceder al pago:
+                    shape = MaterialTheme.shapes.medium,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        textAlign = TextAlign.Center,
+                        style = MaterialTheme.typography.bodySmall,
+                        text = "CONTINUAR COMPRA"
+                    )
+                }
+
+            }
 
 
         }
-
     }
+}
+
+@Composable
+private fun FilterPill(
+    navController: NavController,
+    label: String,
+    width: Dp,
+    height: Dp,
+    twoLines: Boolean = false,
+    onClick: () -> Unit
+) {
+    AssistChip(
+        onClick = {
+            navController.navigate("regionScreen")
+
+        },
+        label = {
+            Text(
+                text = label.uppercase(),
+                maxLines = if (twoLines) 2 else 1,
+                softWrap = twoLines,
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.labelSmall, // más compacto
+                lineHeight = 12.sp
+            )
+        },
+        trailingIcon = {
+            Icon(
+                imageVector = Icons.Outlined.ArrowDropDown,
+                contentDescription = null,
+                modifier = Modifier.size(14.dp)
+            )
+        },
+        shape = RoundedCornerShape(18.dp),
+        modifier = Modifier
+            .width(width)   // 👈 ancho fijo corto
+            .height(height),// 👈 alto compacto
+        colors = AssistChipDefaults.assistChipColors(
+            containerColor = Color(0xFF87513A),
+            labelColor = Color.White,
+            leadingIconContentColor = Color.White,
+            trailingIconContentColor = Color.White
+        )
+    )
 }

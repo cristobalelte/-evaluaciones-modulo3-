@@ -21,8 +21,6 @@ import coil.compose.AsyncImage
 import com.example.ama.ui.screens.catalog.CatalogViewModel
 import java.text.NumberFormat
 import java.util.*
-import com.example.ama.ui.screens.catalog.CatalogScreen
-import com.example.ama.ui.components.Product
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -74,12 +72,14 @@ fun CartScreen(
                     onClick = {
                         navController.navigate("datosEnvio")
                     },
-                    enabled = items.isNotEmpty(),
+//                    enabled = items.isNotEmpty(),
                     //Cambio de shape btn proceder al pago:
                     shape = MaterialTheme.shapes.medium,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("CONTINUAR COMPRA")
+                    Text(
+                        text = "CONTINUAR COMPRA"
+                    )
                 }
                 Spacer(Modifier.height(8.dp))
                 Button(

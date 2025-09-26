@@ -1,5 +1,6 @@
 package com.example.ama.ui.screens.carrito
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -15,6 +16,7 @@ import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.ShoppingCart
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
+import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -28,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.ama.R
 import com.example.ama.ui.components.BottomBar
 
@@ -35,6 +38,7 @@ import com.example.ama.ui.components.BottomBar
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DataEnvio(
+    navController: NavController,
     cartCount: Int,
     onOpenCart: () -> Unit,
     onOpenPublish: () -> Unit,
@@ -100,7 +104,7 @@ fun DataEnvio(
             )
 
             Spacer(
-                Modifier.height(8.dp)
+                Modifier.height(4.dp)
             )
 
             TextField(
@@ -114,7 +118,7 @@ fun DataEnvio(
                     .fillMaxWidth(),
             )
             Spacer(
-                Modifier.height(8.dp)
+                Modifier.height(4.dp)
             )
 
             TextField(
@@ -128,7 +132,7 @@ fun DataEnvio(
                     .fillMaxWidth(),
             )
             Spacer(
-                Modifier.height(8.dp)
+                Modifier.height(4.dp)
             )
 
             TextField(
@@ -142,7 +146,7 @@ fun DataEnvio(
                     .fillMaxWidth(),
             )
             Spacer(
-                Modifier.height(8.dp)
+                Modifier.height(4.dp)
             )
 
             TextField(
@@ -156,7 +160,7 @@ fun DataEnvio(
                     .fillMaxWidth(),
             )
             Spacer(
-                Modifier.height(8.dp)
+                Modifier.height(4.dp)
             )
 
             TextField(
@@ -169,6 +173,29 @@ fun DataEnvio(
                     .padding(8.dp)
                     .fillMaxWidth(),
             )
+            Spacer(
+                Modifier.height(4.dp)
+            )
+
+            Button(
+                onClick = {
+                    navController.navigate("datosEnvio")
+                    val text = "Abriendo Filtro"
+                    val duration: Int = Toast.LENGTH_SHORT
+                    Toast.makeText(navController.context, text, duration).show()
+                },
+//                    enabled = items.isNotEmpty(),
+                //Cambio de shape btn proceder al pago:
+                shape = MaterialTheme.shapes.medium,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.bodySmall,
+                    text = "GUARDAR Y CONTINUAR"
+                )
+            }
+
 
 
 
