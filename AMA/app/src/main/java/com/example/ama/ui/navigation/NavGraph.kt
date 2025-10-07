@@ -15,6 +15,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.ama.ui.Login.LoginScreen
+import com.example.ama.ui.Register.RegisterScreen
+import com.example.ama.ui.Register.StartScreen
 import com.example.ama.ui.components.ProductType
 import com.example.ama.ui.screens.AddProductScreen.AddProductRoute
 import com.example.ama.ui.screens.HomeScreen.ProductDelivery
@@ -56,8 +58,17 @@ fun AppNavigation(
 
     NavHost(
         navController = navController,
-        startDestination = if (skipLogin) Routes.HOME else Routes.LOGIN
-    ) {
+//        startDestination = if (skipLogin) Routes.HOME else Routes.LOGIN
+        startDestination = "startScreen"
+    )
+    {
+        composable("startScreen") {
+            StartScreen(
+                navController = navController
+            )
+
+        }
+
         composable(Routes.LOGIN) {
             LoginScreen(
                 onLoggedIn = {
@@ -66,6 +77,13 @@ fun AppNavigation(
                         launchSingleTop = true
                     }
                 }
+            )
+        }
+
+
+        composable("registerScreen") {
+            RegisterScreen(
+                navController = navController
             )
         }
 
