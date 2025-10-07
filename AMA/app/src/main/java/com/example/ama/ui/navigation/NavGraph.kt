@@ -15,6 +15,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.ama.ui.Login.LoginScreen
+import com.example.ama.ui.Register.RegScreenDClass
 import com.example.ama.ui.Register.RegisterScreen
 import com.example.ama.ui.Register.StartScreen
 import com.example.ama.ui.components.ProductType
@@ -82,8 +83,11 @@ fun AppNavigation(
 
 
         composable("registerScreen") {
-            RegisterScreen(
-                navController = navController
+            RegScreenDClass(
+                navController = navController,
+                onPublish = { register ->
+                    navController.navigate(Routes.HOME)
+                }
             )
         }
 
