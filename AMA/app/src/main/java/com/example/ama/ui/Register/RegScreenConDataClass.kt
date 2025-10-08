@@ -297,7 +297,7 @@ fun RegScreenDClass(
                             password = password.trim(),
                             confirmPassword = confirmPassword.trim()
                         )
-//                    Agregamos al nuevo usuario al registro:
+//                    Agregamos el nuevo usuario al registro:
                         onPublish(register)
                         Toast.makeText(
                             navController.context,
@@ -312,6 +312,7 @@ fun RegScreenDClass(
                             "Registro fallido",
                             Toast.LENGTH_SHORT
                         ).show()
+                        navController.navigate("startScreen")
 
                     }
 
@@ -353,6 +354,8 @@ var passwordError: String? by mutableStateOf(null)
 private fun validatePassword(value: String){
     passwordError =
         if (value.isBlank()) "La contraseña no puede estar vacía"
+        else if (!Regex("^[A-Za-z0-9+_.-]+@gmail\\.com$").matches(value))
+            "Debe ser un correo Gmail válido (ejemplo@gmail.com)"
         else if (value.length < 8) "La contraseña debe tener al menos 8 caracteres"
         else null
 }
@@ -360,6 +363,6 @@ private fun validatePassword(value: String){
 var confirmPasswordError: String? by mutableStateOf(null)
 private fun validateConfirmPassword(password: String, confirmPassword: String){
     confirmPasswordError =
-    if(password != confirmPassword) ("Las contraseñas no coinciden")
+    if(password != confirmPassword) "Las contraseñas no coinciden"
     else null
 }
