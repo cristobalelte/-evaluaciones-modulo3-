@@ -47,9 +47,9 @@ class MainActivity : ComponentActivity() {
                 ThemeOption.LIGHT  -> false
             }
 
-            AMATheme(darkTheme = dark, dynamicColor = false) {
+            AMATheme(darkTheme = dark) {
                 AppNavigation(
-                    skipLogin = true,
+                    skipLogin = false,
                     themeOpt = themeOpt,
                     onChangeTheme = { opt: ThemeOption ->
                         lifecycleScope.launch { prefs.setTheme(opt) }

@@ -1,5 +1,6 @@
 package com.example.ama.ui.navigation
 
+import android.app.Activity
 import android.net.Uri
 import com.example.ama.ui.screens.home.HomeScreen
 import androidx.compose.runtime.Composable
@@ -68,6 +69,21 @@ fun AppNavigation(
                 navController = navController
             )
 
+        }
+
+        composable(route = Routes.REGISTER) {
+            // Para poder cerrar la Activity si no hay back stack
+            val ctx = LocalContext.current
+            val activity = ctx as? Activity
+
+            RegisterScreen(
+                onBack = {
+                    // Si hay algo en el back stack, vuelve.
+                    // Si no, cierra la Activity.
+                    val popped = navController.navigateUp()
+                    if (!popped) activity?.finish()
+                }
+            )
         }
 
         composable(Routes.LOGIN) {

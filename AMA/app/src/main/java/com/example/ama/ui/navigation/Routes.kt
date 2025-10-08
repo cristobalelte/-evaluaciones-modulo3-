@@ -13,6 +13,8 @@ object Routes {
     const val DETAIL = "detail/{id}"
     const val CATALOG_ARG = "catalog?type={type}&sub={sub}"
     const val SUBCATEGORY = "subcategory?category={category}"
+    const val REGISTER = "register"
+
 }
 
 enum class Subcategory {

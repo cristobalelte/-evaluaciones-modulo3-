@@ -59,7 +59,7 @@ fun CatalogScreen(
     listState: LazyListState,
     gridState: LazyGridState,
     initialType: ProductType? = null,
-    subcategory: Subcategory? = null,          // 👈 NUEVO
+    subcategory: Subcategory? = null,
     onBack: (() -> Unit)? = null,
 
     //  solo disponibles
