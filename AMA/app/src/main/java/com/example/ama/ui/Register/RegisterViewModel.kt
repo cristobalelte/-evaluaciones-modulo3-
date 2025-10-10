@@ -19,12 +19,9 @@ class RegisterViewModel : ViewModel() {
         private set
     fun onPhoneChange(v: String) { phone = v }
 
-    var email by mutableStateOf("")
-        private set
+    var email by mutableStateOf("");       private set
     fun onEmailChange(v: String) {
         email = v
-        validateEmail(v)              // 👈 validación inmediata
-        clearErrorIfValidNow()
     }
 
     var password by mutableStateOf("")
@@ -60,10 +57,10 @@ class RegisterViewModel : ViewModel() {
                 confirmPassword.isNotBlank() &&
                 password == confirmPassword
 
-    private fun validateEmail(value: String) {
+    fun validateEmailNow() {
         emailError =
-            if (value.isBlank()) "El correo no puede estar vacío"
-            else if (!Regex("^[A-Za-z0-9+_.-]+@gmail\\.com$").matches(value))
+            if (email.isBlank()) "El correo no puede estar vacío"
+            else if (!Regex("^[A-Za-z0-9+_.-]+@gmail\\.com$").matches(email))
                 "Debe ser un correo Gmail válido (ejemplo@gmail.com)"
             else null
     }
@@ -83,7 +80,6 @@ class RegisterViewModel : ViewModel() {
             password.isBlank() || confirmPassword.isBlank() -> "Completa ambas contraseñas"
             password != confirmPassword -> "Las contraseñas no coinciden"
             else -> {
-                // Aquí iría tu lógica real de registro (API/DB).
                 // Si todo OK, puedes dejar mensaje vacío o uno de éxito.
                 ""
             }

@@ -34,21 +34,22 @@ val displayFontFamily = FontFamily(
 // Default Material 3 typography values
 val baseline = Typography()
 
+// Usa fuentes del sistema por ahora (evita provider + certs)
 val AppTypography = Typography(
-    displayLarge = baseline.displayLarge.copy(fontFamily = displayFontFamily),
-    displayMedium = baseline.displayMedium.copy(fontFamily = displayFontFamily),
-    displaySmall = baseline.displaySmall.copy(fontFamily = displayFontFamily),
-    headlineLarge = baseline.headlineLarge.copy(fontFamily = displayFontFamily),
-    headlineMedium = baseline.headlineMedium.copy(fontFamily = displayFontFamily),
-    headlineSmall = baseline.headlineSmall.copy(fontFamily = displayFontFamily),
-    titleLarge = baseline.titleLarge.copy(fontFamily = displayFontFamily),
-    titleMedium = baseline.titleMedium.copy(fontFamily = displayFontFamily),
-    titleSmall = baseline.titleSmall.copy(fontFamily = displayFontFamily),
-    bodyLarge = baseline.bodyLarge.copy(fontFamily = bodyFontFamily),
-    bodyMedium = baseline.bodyMedium.copy(fontFamily = bodyFontFamily),
-    bodySmall = baseline.bodySmall.copy(fontFamily = bodyFontFamily),
-    labelLarge = baseline.labelLarge.copy(fontFamily = bodyFontFamily),
-    labelMedium = baseline.labelMedium.copy(fontFamily = bodyFontFamily),
-    labelSmall = baseline.labelSmall.copy(fontFamily = bodyFontFamily),
+    displayLarge  = Typography().displayLarge.copy(fontFamily = FontFamily.SansSerif),
+    displayMedium = Typography().displayMedium.copy(fontFamily = FontFamily.SansSerif),
+    displaySmall  = Typography().displaySmall.copy(fontFamily = FontFamily.SansSerif),
+    headlineLarge = Typography().headlineLarge.copy(fontFamily = FontFamily.SansSerif),
+    headlineMedium= Typography().headlineMedium.copy(fontFamily = FontFamily.SansSerif),
+    headlineSmall = Typography().headlineSmall.copy(fontFamily = FontFamily.SansSerif),
+    titleLarge    = Typography().titleLarge.copy(fontFamily = FontFamily.SansSerif),
+    titleMedium   = Typography().titleMedium.copy(fontFamily = FontFamily.SansSerif),
+    titleSmall    = Typography().titleSmall.copy(fontFamily = FontFamily.SansSerif),
+    bodyLarge     = Typography().bodyLarge.copy(fontFamily = FontFamily.SansSerif),
+    bodyMedium    = Typography().bodyMedium.copy(fontFamily = FontFamily.SansSerif),
+    bodySmall     = Typography().bodySmall.copy(fontFamily = FontFamily.SansSerif),
+    labelLarge    = Typography().labelLarge.copy(fontFamily = FontFamily.SansSerif),
+    labelMedium   = Typography().labelMedium.copy(fontFamily = FontFamily.SansSerif),
+    labelSmall    = Typography().labelSmall.copy(fontFamily = FontFamily.SansSerif),
 )
 

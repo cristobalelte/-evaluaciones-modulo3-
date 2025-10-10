@@ -80,7 +80,6 @@ fun SubcategoryScreen(
                 }
             }
 
-            // Lista de subcategorías (como en tu Figma)
             items(filtered) { sub ->
                 Button(
                     onClick = { onOpenProducts(sub) },

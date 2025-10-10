@@ -102,37 +102,40 @@ fun HomeScreen(
         ) {
             // Buscador
             item {
-                val cafeOscuro = Color(0xFF6B3F2C) // barra
-                val cafePill = Color(0xFF87513A) // pill (un tono más claro)
+                val bg      = MaterialTheme.colorScheme.primaryContainer
+                val content = MaterialTheme.colorScheme.onPrimaryContainer
 
                 OutlinedTextField(
                     value = query,
                     onValueChange = { query = it },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(52.dp),                      // alto tipo "pill"
+                        .height(52.dp),
                     singleLine = true,
                     placeholder = { Text("¿Qué artesanía buscas?") },
                     leadingIcon = { Icon(Icons.Outlined.Search, contentDescription = null) },
                     trailingIcon = {
-                        TextButton(onClick = { onSearch(query) }) { Text("Buscar") }
+                        TextButton(
+                            onClick = { onSearch(query) },
+                            colors = ButtonDefaults.textButtonColors(contentColor = content)
+                        ) { Text("Buscar") }
                     },
-                    shape = RoundedCornerShape(28.dp),       // bordes redondeados
+                    shape = RoundedCornerShape(28.dp),
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedContainerColor = cafePill,    // fondo de la pill
-                        unfocusedContainerColor = cafePill,
-                        disabledContainerColor = cafePill,
+                        focusedContainerColor = bg,
+                        unfocusedContainerColor = bg,
+                        disabledContainerColor = bg,
                         focusedBorderColor = Color.Transparent,
                         unfocusedBorderColor = Color.Transparent,
                         disabledBorderColor = Color.Transparent,
-                        focusedTextColor = Color.White,
-                        unfocusedTextColor = Color.White,
-                        focusedPlaceholderColor = Color(0xFFEFEFEF),
-                        unfocusedPlaceholderColor = Color(0xFFEFEFEF),
-                        focusedLeadingIconColor = Color.White,
-                        unfocusedLeadingIconColor = Color.White,
-                        focusedTrailingIconColor = Color.White,
-                        unfocusedTrailingIconColor = Color.White
+                        focusedTextColor = content,
+                        unfocusedTextColor = content,
+                        focusedPlaceholderColor = content.copy(alpha = 0.7f),
+                        unfocusedPlaceholderColor = content.copy(alpha = 0.7f),
+                        focusedLeadingIconColor = content,
+                        unfocusedLeadingIconColor = content,
+                        focusedTrailingIconColor = content,
+                        unfocusedTrailingIconColor = content
                     ),
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
                     keyboardActions = KeyboardActions(onSearch = { onSearch(query) })

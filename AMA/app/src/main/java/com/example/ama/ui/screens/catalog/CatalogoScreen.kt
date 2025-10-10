@@ -2,6 +2,7 @@
 
 package com.example.ama.ui.screens.catalog
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -9,6 +10,7 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.lazy.grid.items as gridItems
 import androidx.compose.foundation.lazy.items as listItems
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -25,7 +27,10 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -107,8 +112,7 @@ fun CatalogScreen(
     val listToShow = remember(filtered) { filtered.sortedByDescending { it.createdAt } }
 
 // Forzar grilla cuando vengo desde subcategoría (mock de "Mantas")
-    val forceGrid = subcategory != null
-    val showGrid = forceGrid || localIsGrid
+    val showGrid = localIsGrid
 
     val headerTitle = subcategory?.label()
         ?: initialType?.prettyLabel()
@@ -179,6 +183,9 @@ fun CatalogScreen(
 
                     // 1) Buscador tipo “pill”
                     Surface(shape = RoundedCornerShape(28.dp), shadowElevation = 4.dp) {
+                        val pillBg = MaterialTheme.colorScheme.primaryContainer
+                        val pillFg = MaterialTheme.colorScheme.onPrimaryContainer
+
                         OutlinedTextField(
                             value = localQuery,
                             onValueChange = {
@@ -193,18 +200,31 @@ fun CatalogScreen(
                             leadingIcon = { Icon(Icons.Outlined.Search, contentDescription = null) },
                             trailingIcon = {
                                 if (localQuery.isNotBlank()) {
-                                    TextButton(onClick = {
-                                        localQuery = ""
-                                        onQueryChange("")
-                                    }) { Text("Limpiar") }
+                                    TextButton(
+                                        onClick = { localQuery = ""; onQueryChange("") },
+                                        colors = ButtonDefaults.textButtonColors(contentColor = pillFg)
+                                    ) { Text("Limpiar") }
                                 }
                             },
                             shape = RoundedCornerShape(28.dp),
                             colors = OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = Color.Transparent,
-                                unfocusedBorderColor = Color.Transparent
+                                focusedContainerColor   = pillBg,
+                                unfocusedContainerColor = pillBg,
+                                disabledContainerColor  = pillBg,
+                                focusedBorderColor      = Color.Transparent,
+                                unfocusedBorderColor    = Color.Transparent,
+                                disabledBorderColor     = Color.Transparent,
+                                focusedTextColor        = pillFg,
+                                unfocusedTextColor      = pillFg,
+                                focusedPlaceholderColor = pillFg.copy(alpha = .7f),
+                                unfocusedPlaceholderColor = pillFg.copy(alpha = .7f),
+                                focusedLeadingIconColor = pillFg,
+                                unfocusedLeadingIconColor = pillFg,
+                                focusedTrailingIconColor = pillFg,
+                                unfocusedTrailingIconColor = pillFg
                             )
                         )
+
                     }
 
 
@@ -214,6 +234,8 @@ fun CatalogScreen(
                         style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.SemiBold),
                         textAlign = TextAlign.Center,
                         modifier = Modifier.fillMaxWidth(),
+                        color = MaterialTheme.colorScheme.onSurface
+
 
                     )
 
@@ -251,7 +273,7 @@ fun CatalogScreen(
             } else {
                 if (showGrid) {
                     LazyVerticalGrid(
-                        columns = if (forceGrid) GridCells.Fixed(2) else GridCells.Adaptive(minSize = 160.dp),
+                        columns = if (localIsGrid) GridCells.Fixed(2) else GridCells.Adaptive(minSize = 160.dp),
                         state = gridState,
                         verticalArrangement = Arrangement.spacedBy(12.dp),
                         horizontalArrangement = Arrangement.spacedBy(12.dp),
@@ -259,7 +281,7 @@ fun CatalogScreen(
                         contentPadding = PaddingValues(bottom = 12.dp)
                     ) {
                         gridItems(listToShow, key = { it.id }) { p ->
-                            ProductCardGrid(p, onAddToCart, onViewDetail) // 👈 NUEVA card
+                            ProductCardGrid(p, onAddToCart, onViewDetail) //
                         }
                     }
                 } else {
@@ -287,6 +309,9 @@ private fun FilterPill(
     twoLines: Boolean = false,
     onClick: () -> Unit
 ) {
+    val bg = MaterialTheme.colorScheme.primaryContainer
+    val fg = MaterialTheme.colorScheme.onPrimaryContainer
+
     AssistChip(
         onClick = onClick,
         label = {
@@ -311,12 +336,13 @@ private fun FilterPill(
             .width(width)
             .height(height),
         colors = AssistChipDefaults.assistChipColors(
-            containerColor = Color(0xFF87513A),
-            labelColor = Color.White,
-            trailingIconContentColor = Color.White
+            containerColor = bg,
+            labelColor = fg,
+            trailingIconContentColor = fg
         )
     )
 }
+
 
 @Composable
 private fun ProductItem(
@@ -325,12 +351,14 @@ private fun ProductItem(
     onViewDetail: (Product) -> Unit
 ) {
     val currency = remember { NumberFormat.getCurrencyInstance(Locale("es", "CL")) }
+
     Card(
         modifier = Modifier.fillMaxWidth(),
         onClick = { onViewDetail(product) },
         elevation = CardDefaults.cardElevation(4.dp)
     ) {
         Column(Modifier.padding(12.dp)) {
+
             AsyncImage(
                 model = product.imageUrl,
                 contentDescription = product.name,
@@ -338,128 +366,124 @@ private fun ProductItem(
                     .fillMaxWidth()
                     .height(180.dp)
             )
+
             Spacer(Modifier.height(8.dp))
+
             Text(
                 product.name,
                 style = MaterialTheme.typography.titleMedium,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis
             )
+
             Text(
                 product.author,
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
+
             Text(currency.format(product.price), color = MaterialTheme.colorScheme.primary)
+
             Spacer(Modifier.height(8.dp))
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+
+            Row(
+                Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
                 Button(
                     modifier = Modifier.weight(1f),
-                    onClick = { onAddToCart(product) }
+                    onClick = { onAddToCart(product) },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor   = MaterialTheme.colorScheme.onPrimary
+                    ),
+                    shape = RoundedCornerShape(24.dp)
                 ) { Text("Agregar al carrito") }
+
                 OutlinedButton(
                     modifier = Modifier.weight(1f),
-                    onClick = { onViewDetail(product) }
+                    onClick = { onViewDetail(product) },
+                    colors = ButtonDefaults.outlinedButtonColors(
+                        contentColor = MaterialTheme.colorScheme.primary
+                    ),
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
+                    shape = RoundedCornerShape(24.dp)
                 ) { Text("Ver detalle") }
             }
         }
     }
 }
 
+
 @Composable
-private fun ProductCard(
+fun ProductCardGrid(
     product: Product,
     onAddToCart: (Product) -> Unit,
     onViewDetail: (Product) -> Unit
 ) {
     val currency = remember { NumberFormat.getCurrencyInstance(Locale("es", "CL")) }
-    Card(onClick = { onViewDetail(product) }, elevation = CardDefaults.cardElevation(4.dp)) {
-        Column(Modifier.padding(8.dp)) {
-            AsyncImage(
-                model = product.imageUrl,
-                contentDescription = product.name,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(1f)
-            )
-            Spacer(Modifier.height(8.dp))
-            Text(
-                product.name,
-                style = MaterialTheme.typography.titleSmall,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis
-            )
-            Text(
-                product.author,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                maxLines = 1
-            )
-            Text(currency.format(product.price), color = MaterialTheme.colorScheme.primary)
-            Spacer(Modifier.height(6.dp))
-            Button(onClick = { onAddToCart(product) }, modifier = Modifier.fillMaxWidth()) {
-                Text("Agregar al carrito")
-            }
-        }
-    }
-}
-@Composable
-private fun ProductCardGrid(
-    product: Product,
-    onAddToCart: (Product) -> Unit,
-    onViewDetail: (Product) -> Unit
-) {
-    val currency = remember { NumberFormat.getCurrencyInstance(Locale("es","CL")) }
+
     Card(
         onClick = { onViewDetail(product) },
-        shape = RoundedCornerShape(12.dp),
-        elevation = CardDefaults.cardElevation(2.dp)
+        shape = RoundedCornerShape(14.dp),
+        elevation = CardDefaults.cardElevation(2.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant // fondito rosado
+        )
     ) {
-        Box {
-            AsyncImage(
-                model = product.imageUrl,
-                contentDescription = product.name,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(1f)
-            )
-            // Precio como badge superior-izq
-            Surface(
-                shape = RoundedCornerShape(8.dp),
-                color = MaterialTheme.colorScheme.surface.copy(alpha = 0.92f),
-                modifier = Modifier
-                    .padding(8.dp)
-                    .align(Alignment.TopStart)
-            ) {
+        Column {
+            // Imagen con bordes redondeados arriba
+            Box {
+                AsyncImage(
+                    model = product.imageUrl,
+                    contentDescription = product.name,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(140.dp)
+                        .clip(RoundedCornerShape(topStart = 14.dp, topEnd = 14.dp)),
+                    contentScale = ContentScale.Crop
+                )
+
+                // Corazón arriba-derecha dentro de un “chip” redondo
+                Surface(
+                    shape = CircleShape,
+                    color = MaterialTheme.colorScheme.surface.copy(alpha = 0.9f),
+                    tonalElevation = 2.dp,
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = .4f)),
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(8.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.FavoriteBorder,
+                        contentDescription = "Favorito",
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(6.dp)
+                    )
+                }
+            }
+
+            // Texto bajo la imagen
+            Column(Modifier.padding(horizontal = 10.dp, vertical = 8.dp)) {
+                // Precio fuerte (primera línea)
                 Text(
                     text = currency.format(product.price),
-                    style = MaterialTheme.typography.labelLarge,
-                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+
+                // Título (2 líneas máx)
+                Text(
+                    text = product.name,
+                    style = MaterialTheme.typography.bodyMedium,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
             }
-            // Corazón superior-der (placeholder)
-            IconButton(
-                onClick = { /* TODO: favorito */ },
-                modifier = Modifier.align(Alignment.TopEnd)
-            ) {
-                Icon(Icons.Outlined.FavoriteBorder, contentDescription = "Favorito")
-            }
-        }
-        Column(Modifier.padding(8.dp)) {
-            Text(
-                product.name,
-                style = MaterialTheme.typography.bodyMedium,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis
-            )
-            Text(
-                product.author,
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                maxLines = 1
-            )
         }
     }
 }
+
 
 

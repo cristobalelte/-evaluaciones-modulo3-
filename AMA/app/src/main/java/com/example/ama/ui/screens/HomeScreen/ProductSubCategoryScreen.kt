@@ -74,8 +74,7 @@ fun ProductSubCatScreen(
     onBack: () -> Unit,
     onSearch: (String) -> Unit = {}
 ) {
-    val cafe = Color(0xFF6B3F2C)
-    val cafeClaro = Color(0xFF87513A)
+
     var q by remember { mutableStateOf("") }
     val subcats = remember(category) { SUBCATS[category] ?: emptyList() }
 
@@ -117,8 +116,11 @@ fun ProductSubCatScreen(
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            // Pill de búsqueda
+
             item {
+                val pillBg = MaterialTheme.colorScheme.primaryContainer
+                val pillFg = MaterialTheme.colorScheme.onPrimaryContainer
+
                 OutlinedTextField(
                     value = q,
                     onValueChange = { q = it },
@@ -128,21 +130,28 @@ fun ProductSubCatScreen(
                     singleLine = true,
                     placeholder = { Text("¿Qué artesanía buscas?") },
                     leadingIcon = { Icon(Icons.Outlined.Search, null) },
-                    trailingIcon = { TextButton(onClick = { onSearch(q) }) { Text("Buscar") } },
+                    trailingIcon = {
+                        TextButton(
+                            onClick = { onSearch(q) },
+                            colors = ButtonDefaults.textButtonColors(contentColor = pillFg)
+                        ) { Text("Buscar") }
+                    },
                     shape = RoundedCornerShape(28.dp),
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedContainerColor = cafeClaro,
-                        unfocusedContainerColor = cafeClaro,
-                        focusedBorderColor = Color.Transparent,
-                        unfocusedBorderColor = Color.Transparent,
-                        focusedTextColor = Color.White,
-                        unfocusedTextColor = Color.White,
-                        focusedLeadingIconColor = Color.White,
-                        unfocusedLeadingIconColor = Color.White,
-                        focusedTrailingIconColor = Color.White,
-                        unfocusedTrailingIconColor = Color.White,
-                        focusedPlaceholderColor = Color(0xFFEFEFEF),
-                        unfocusedPlaceholderColor = Color(0xFFEFEFEF),
+                        focusedContainerColor   = pillBg,
+                        unfocusedContainerColor = pillBg,
+                        disabledContainerColor  = pillBg,
+                        focusedBorderColor      = Color.Transparent,
+                        unfocusedBorderColor    = Color.Transparent,
+                        disabledBorderColor     = Color.Transparent,
+                        focusedTextColor        = pillFg,
+                        unfocusedTextColor      = pillFg,
+                        focusedLeadingIconColor = pillFg,
+                        unfocusedLeadingIconColor = pillFg,
+                        focusedTrailingIconColor = pillFg,
+                        unfocusedTrailingIconColor = pillFg,
+                        focusedPlaceholderColor = pillFg.copy(alpha = .7f),
+                        unfocusedPlaceholderColor = pillFg.copy(alpha = .7f),
                     )
                 )
             }
@@ -185,27 +194,29 @@ fun ProductSubCatScreen(
             }
 
 
-            // Lista de subcategorías (botones anchos): GUantes, chalecos, etc
-            items(subcats.filter { q.isBlank() || it.label().contains(q, true) })
-            { sub ->
+            // Lista de subcategorías (botones)
+            items(subcats.filter { q.isBlank() || it.label().contains(q, true) }) { sub ->
+                val btnBg = MaterialTheme.colorScheme.primary
+                val btnFg = MaterialTheme.colorScheme.onPrimary
+
                 Button(
-                    onClick = { navController.navigate("catalog?type=${category.name}&sub=${sub.name}") },
+                    onClick = {
+                        navController.navigate("catalog?type=${category.name}&sub=${sub.name}")
+                    },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF6B3F2C),
-                        contentColor = Color.White
+                        containerColor = btnBg,
+                        contentColor   = btnFg,
+                        disabledContainerColor = btnBg.copy(alpha = .4f),
+                        disabledContentColor   = btnFg.copy(alpha = .6f)
                     ),
-                    shape = RectangleShape,
+                    shape = RoundedCornerShape(24.dp),     // pill
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(48.dp)
                 ) {
-                    Text(
-                        sub.label(),
-                        style = MaterialTheme.typography.titleMedium,
-                        maxLines = 1
-                    )
+                    Text(sub.label(), style = MaterialTheme.typography.titleMedium, maxLines = 1)
                 }
-                Spacer(Modifier.height(10.dp))              // separación uniforme
+                Spacer(Modifier.height(10.dp))
             }
         }
     }
@@ -217,12 +228,15 @@ private fun FilterPill(
     width: Dp,
     height: Dp,
     twoLines: Boolean = false,
-    onClick: () -> Unit
+    onClick: () -> Unit = {}
 ) {
+    val pillBg = MaterialTheme.colorScheme.primaryContainer
+    val pillFg = MaterialTheme.colorScheme.onPrimaryContainer
+
     AssistChip(
         onClick = {
             navController.navigate("regionScreen")
-
+            onClick()
         },
         label = {
             Text(
@@ -230,7 +244,7 @@ private fun FilterPill(
                 maxLines = if (twoLines) 2 else 1,
                 softWrap = twoLines,
                 textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.labelSmall, // más compacto
+                style = MaterialTheme.typography.labelSmall,
                 lineHeight = 12.sp
             )
         },
@@ -243,13 +257,14 @@ private fun FilterPill(
         },
         shape = RoundedCornerShape(18.dp),
         modifier = Modifier
-            .width(width)   // 👈 ancho fijo corto
-            .height(height),// 👈 alto compacto
+            .width(width)
+            .height(height),
         colors = AssistChipDefaults.assistChipColors(
-            containerColor = Color(0xFF87513A),
-            labelColor = Color.White,
-            leadingIconContentColor = Color.White,
-            trailingIconContentColor = Color.White
+            containerColor = pillBg,
+            labelColor = pillFg,
+            leadingIconContentColor = pillFg,
+            trailingIconContentColor = pillFg
         )
     )
 }
+

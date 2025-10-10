@@ -67,7 +67,7 @@ fun ProductTypeScreen(
                         contentDescription = "Arte Mayor"
                     )
                 },
-                // 👈 Botón de Configuración a la izquierda
+                //  Botón de Configuración a la izquierda
                 navigationIcon = {
                     IconButton(onClick = onOpenSettings) {
                         Icon(
@@ -76,7 +76,7 @@ fun ProductTypeScreen(
                         )
                     }
                 },
-                // 👉 Solo carrito a la derecha
+                //  Solo carrito a la derecha
                 actions = {
                     IconButton(onClick = onOpenCart) {
                         BadgedBox(badge = { if (cartCount > 0) Badge { Text("$cartCount") } }) {

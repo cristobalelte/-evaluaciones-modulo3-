@@ -3,47 +3,48 @@ package com.example.ama.ui.theme
 import androidx.compose.ui.graphics.Color
 
 /* ---------- Light ---------- */
-val primaryLight            = Color(0xFF8C4E29)
+val primaryLight            = Color(0xFFB31217) // rojo marca
 val onPrimaryLight          = Color(0xFFFFFFFF)
-val primaryContainerLight   = Color(0xFFFFDBCA)
-val onPrimaryContainerLight = Color(0xFF6F3714)
+val primaryContainerLight   = Color(0xFFF9E1E2) // rosado claro (chips/inputs)
+val onPrimaryContainerLight = Color(0xFF7F0E12) // rojo más oscuro para texto
 
-val secondaryLight          = Color(0xFF765848)
+val secondaryLight          = Color(0xFFB31217)
 val onSecondaryLight        = Color(0xFFFFFFFF)
 
-val backgroundLight         = Color(0xFFFFF8F6)
-val onBackgroundLight       = Color(0xFF221A15)
+val backgroundLight         = Color(0xFFFFFBFA) // fondo cálido claro
+val onBackgroundLight       = Color(0xFF3B3B3B)
 
-val surfaceLight            = Color(0xFFFFF8F6)
-val onSurfaceLight          = Color(0xFF221A15)
+val surfaceLight            = Color(0xFFFFFBFA)
+val onSurfaceLight          = Color(0xFF3B3B3B)
 
-val surfaceVariantLight     = Color(0xFFF4DED4)
-val onSurfaceVariantLight   = Color(0xFF52443C)
+val surfaceVariantLight     = Color(0xFFF9E1E2) // relleno de inputs “pill”
+val onSurfaceVariantLight   = Color(0xFF3B3B3B)
 
-val errorLight              = Color(0xFFBA1A1A)
+val errorLight              = Color(0xFFB00020)
 val onErrorLight            = Color(0xFFFFFFFF)
 
-val outlineLight            = Color(0xFF85746B)
+val outlineLight            = Color(0xFFB31217) // borde rojo (focus)
 
 /* ---------- Dark ---------- */
-val primaryDark             = Color(0xFFFFB68E)
-val onPrimaryDark           = Color(0xFF532201)
-val primaryContainerDark    = Color(0xFF6F3714)
-val onPrimaryContainerDark  = Color(0xFFFFDBCA)
+val primaryDark             = Color(0xFFB31217)
+val onPrimaryDark           = Color(0xFFFFFFFF)
+val primaryContainerDark    = Color(0xFF7F0E12) // contenedor/pressed
+val onPrimaryContainerDark  = Color(0xFFFFFFFF)
 
-val secondaryDark           = Color(0xFFE6BEAB)
-val onSecondaryDark         = Color(0xFF432B1D)
+val secondaryDark           = Color(0xFFB31217)
+val onSecondaryDark         = Color(0xFFFFFFFF)
 
-val backgroundDark          = Color(0xFF1A120D)
-val onBackgroundDark        = Color(0xFFF0DFD7)
+val backgroundDark          = Color(0xFF121212)
+val onBackgroundDark        = Color(0xFFFFFFFF)
 
-val surfaceDark             = Color(0xFF1A120D)
-val onSurfaceDark           = Color(0xFFF0DFD7)
+val surfaceDark             = Color(0xFF121212)
+val onSurfaceDark           = Color(0xFFFFFFFF)
 
-val surfaceVariantDark      = Color(0xFF52443C)
-val onSurfaceVariantDark    = Color(0xFFD7C2B9)
+val surfaceVariantDark      = Color(0xFF7F0E12)
+val onSurfaceVariantDark    = Color(0xFFFFFFFF)
 
-val errorDark               = Color(0xFFFFB4AB)
-val onErrorDark             = Color(0xFF690005)
+val errorDark               = Color(0xFFB00020)
+val onErrorDark             = Color(0xFFFFFFFF)
 
-val outlineDark             = Color(0xFF9F8D84)
+val outlineDark             = Color(0xFFB31217)
+

@@ -1,73 +1,60 @@
-package com.example.ama.ui.screens.HomeScreen
+@file:OptIn(ExperimentalMaterial3Api::class)
 
-import android.widget.Toast
+package com.example.ama.ui.screens.checkout
+
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.ShoppingCart
-import androidx.compose.material3.Badge
-import androidx.compose.material3.BadgedBox
-import androidx.compose.material3.Button
-import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.ama.R
 import com.example.ama.ui.components.BottomBar
+import kotlinx.coroutines.flow.StateFlow
 
-//opcionEntrega
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProductDelivery(
-    navController: NavController,
-    cartCount: Int,
+fun DataEnvioScreen(
+
+    cartCount: StateFlow<Int>,
+    onBack: () -> Unit,
     onOpenCart: () -> Unit,
     onOpenPublish: () -> Unit,
-    onOpenSettings: () -> Unit
-){
+    onOpenSettings: () -> Unit = {},
+    onNext: () -> Unit
+) {
+    val count by cartCount.collectAsStateWithLifecycle(initialValue = 0)
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
                     Image(
                         painter = painterResource(R.drawable.logo_artemayor_horizontal),
-                        contentDescription = "Arte Mayor"
+                        contentDescription = "Arte Mayor",
+                        modifier = Modifier.height(28.dp)
                     )
                 },
-                // 👈 Botón de Configuración a la izquierda
                 navigationIcon = {
-                    IconButton(onClick = onOpenSettings) {
-                        Icon(
-                            imageVector = Icons.Outlined.Settings,
-                            contentDescription = "Configuración"
-                        )
+                    IconButton(onClick = onBack) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Volver")
                     }
                 },
-                // 👉 Solo carrito a la derecha
                 actions = {
+                    // (opcional) ajustes
+                    IconButton(onClick = onOpenSettings) {
+                        Icon(Icons.Outlined.Settings, contentDescription = "Configuración")
+                    }
                     IconButton(onClick = onOpenCart) {
-                        BadgedBox(badge = { if (cartCount > 0) Badge { Text("$cartCount") } }) {
+                        BadgedBox( badge = { if (count > 0) Badge { Text("$count") } }) {
                             Icon(Icons.Outlined.ShoppingCart, contentDescription = "Carrito")
                         }
                     }
@@ -75,130 +62,79 @@ fun ProductDelivery(
             )
         },
         bottomBar = { BottomBar(onPublishClick = onOpenPublish) }
-    ) {
-            padding ->
+    ) { padding ->
         LazyColumn(
             modifier = Modifier
                 .padding(padding)
                 .fillMaxSize(),
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-
             item {
                 Text(
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .fillMaxSize(),
-//                Arrangment = Arrangement.Center,
-                    textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.headlineMedium,
+                    text = "Opciones de entrega",
+                    style = MaterialTheme.typography.headlineSmall,
                     color = MaterialTheme.colorScheme.primary,
-                    text = "Opciones de Entrega"
-                )
-
-            }
-
-            item {
-                Text(
                     modifier = Modifier
-                        .padding(16.dp)
-                        .fillMaxSize(),
-//                Arrangment = Arrangement.Center,
-                    textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.primary,
-                    text = "Llega mañana, 15 de septiembre"
-                )
-
-            }
-
-            item {
-                Text(
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .fillMaxSize(),
-//                Arrangment = Arrangement.Center,
-                    textAlign = TextAlign.Left,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.primary,
-                    text = "$1.990"
-                )
-
-            }
-
-            item {
-                Button(
-                    onClick = {
-                        navController.navigate("metodoPago")
-                        val text = "Abriendo Filtro"
-                        val duration: Int = Toast.LENGTH_SHORT
-                        Toast.makeText(navController.context, text, duration).show()
-                    },
-//                    enabled = items.isNotEmpty(),
-                    //Cambio de shape btn proceder al pago:
-                    shape = MaterialTheme.shapes.medium,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(
-                        textAlign = TextAlign.Center,
-                        style = MaterialTheme.typography.bodySmall,
-                        text = "ENVIAR A DOMICILIO"
-                    )
-                }
-            }
-
-            item {
-                Text(
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .fillMaxSize(),
-//                Arrangment = Arrangement.Center,
-                    textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.primary,
-                    text = "Retira desde el 19 de septiembre"
-                )
-
-            }
-
-            item {
-                Text(
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .fillMaxSize(),
-//                Arrangment = Arrangement.Center,
-                    textAlign = TextAlign.Left,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.primary,
-                    text = "Gratis"
+                        .fillMaxWidth()
+                        .padding(top = 4.dp),
+                    textAlign = TextAlign.Center
                 )
             }
 
+            //  Opción: Envío a domicilio
             item {
-                Button(
-                    onClick = {
-                        navController.navigate("metodoPago")
-                        val text = "Abriendo Filtro"
-                        val duration: Int = Toast.LENGTH_SHORT
-                        Toast.makeText(navController.context, text, duration).show()
-                    },
-//                    enabled = items.isNotEmpty(),
-                    //Cambio de shape btn proceder al pago:
-                    shape = MaterialTheme.shapes.medium,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(
-                        textAlign = TextAlign.Center,
-                        style = MaterialTheme.typography.bodySmall,
-                        text = "PUNTO DE RETIRO"
-                    )
-                }
-
+                DeliveryCard(
+                    titulo = "Llega mañana, 15 de septiembre",
+                    precio = "$1.990",
+                    boton = "ENVIAR A DOMICILIO",
+                    onClick = onNext
+                )
             }
 
+            //  Opción: Punto de retiro
+            item {
+                DeliveryCard(
+                    titulo = "Retira desde el 19 de septiembre",
+                    precio = "Gratis",
+                    boton = "PUNTO DE RETIRO",
+                    onClick = onNext
+                )
+            }
+        }
+    }
+}
 
-
+@Composable
+private fun DeliveryCard(
+    titulo: String,
+    precio: String,
+    boton: String,
+    onClick: () -> Unit
+) {
+    Card(
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+        elevation = CardDefaults.cardElevation(0.dp),
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Text(titulo, style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onSurface)
+            Text(precio, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.primary)
+            Spacer(Modifier.height(4.dp))
+            Button(
+                onClick = onClick,
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(24.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor   = MaterialTheme.colorScheme.onPrimary
+                )
+            ) { Text(boton) }
         }
     }
 }

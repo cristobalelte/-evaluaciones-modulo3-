@@ -21,7 +21,7 @@ import com.example.ama.ui.Register.RegisterScreen
 import com.example.ama.ui.Register.StartScreen
 import com.example.ama.ui.components.ProductType
 import com.example.ama.ui.screens.AddProductScreen.AddProductRoute
-import com.example.ama.ui.screens.HomeScreen.ProductDelivery
+
 import com.example.ama.ui.screens.HomeScreen.ProductPay
 import com.example.ama.ui.screens.HomeScreen.ProductRegionScreen
 import com.example.ama.ui.screens.HomeScreen.ProductTypeScreen
@@ -30,7 +30,7 @@ import com.example.ama.ui.screens.carrito.CartRoute
 import com.example.ama.ui.screens.carrito.DataEnvio
 import com.example.ama.ui.screens.catalog.CatalogRoute
 import com.example.ama.ui.screens.catalog.CatalogViewModel
-import com.example.ama.ui.screens.detail.ProductDetailRoute
+import com.example.ama.ui.screens.checkout.DataEnvioScreen
 import com.example.ama.ui.screens.detail.ProductDetailScreen
 import com.example.ama.ui.screens.settings.SettingsScreen
 import com.example.ama.ui.screens.subcategory.ProductSubCatScreen
@@ -72,19 +72,16 @@ fun AppNavigation(
         }
 
         composable(route = Routes.REGISTER) {
-            // Para poder cerrar la Activity si no hay back stack
             val ctx = LocalContext.current
             val activity = ctx as? Activity
-
             RegisterScreen(
                 onBack = {
-                    // Si hay algo en el back stack, vuelve.
-                    // Si no, cierra la Activity.
-                    val popped = navController.navigateUp()
+                    val popped = navController.popBackStack()
                     if (!popped) activity?.finish()
                 }
             )
         }
+
 
         composable(Routes.LOGIN) {
             LoginScreen(
@@ -179,11 +176,21 @@ fun AppNavigation(
 
 
         composable(Routes.CART) {
-            CartRoute(
-                vm = vm,
-                onBack = { navController.popBackStack() }
+            CartRoute(vm = vm, onBack = { navController.popBackStack() })
+        }
+
+        // 👇 registra el destino de Datos de envío
+        composable(Routes.DATOS_ENVIO) {
+            DataEnvioScreen(
+                cartCount = vm.cartCount,
+                onBack = { navController.popBackStack() },
+                onOpenCart = { navController.navigate(Routes.CART) },
+                onOpenPublish = { /* ... */ },
+                onOpenSettings = { /* ... */ },
+                onNext = { navController.navigate(Routes.METODO_PAGO) }
             )
         }
+
 
         composable(Routes.SETTINGS) {
             SettingsScreen(
@@ -248,15 +255,6 @@ fun AppNavigation(
             )
         }
 
-        composable("opcionEntrega") {
-            ProductDelivery(
-                navController = navController,
-                cartCount = cartCount,
-                onOpenCart = { navController.navigate(Routes.CART) },
-                onOpenPublish = { navController.navigate(Routes.PUBLISH) },
-                onOpenSettings = { navController.navigate(Routes.SETTINGS) }
-            )
-        }
 
         composable("metodoPago") {
             ProductPay(
