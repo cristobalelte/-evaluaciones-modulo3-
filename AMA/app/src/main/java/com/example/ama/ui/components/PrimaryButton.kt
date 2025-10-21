@@ -1,6 +1,9 @@
 package com.example.ama.ui.components
 
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -10,24 +13,27 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun PrimaryButton(text: String, onClick: () -> Unit){
-
+fun PrimaryButton(
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+) {
     Button(
         onClick = onClick,
-        modifier = Modifier
-            .padding(16.dp),
+        enabled = enabled,
+        modifier = modifier
+            .fillMaxWidth()
+            .height(48.dp),
+        shape = RoundedCornerShape(24.dp),
         colors = ButtonDefaults.buttonColors(
-            // en Color.kt y al tema en Theme.kt:
             containerColor = MaterialTheme.colorScheme.primary,
-            contentColor = MaterialTheme.colorScheme.onPrimary
+            contentColor = MaterialTheme.colorScheme.onPrimary,
+            disabledContainerColor = MaterialTheme.colorScheme.outline,
+            disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant
         ),
-        //El estilo del texto del btn lo definimos en Shape.kt y de la fuente en Theme.kt
-        shape = MaterialTheme.shapes.large
+        elevation = ButtonDefaults.buttonElevation(defaultElevation = 0.dp)
     ) {
-        Text(
-            text = text,
-            // en Type.kt y a la fuente en Theme.kt:
-            style = MaterialTheme.typography.labelSmall
-        )
+        Text(text = text, style = MaterialTheme.typography.labelLarge)
     }
 }

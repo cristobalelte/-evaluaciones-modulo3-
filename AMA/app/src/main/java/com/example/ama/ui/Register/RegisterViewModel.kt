@@ -4,8 +4,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.navigation.NavController
 
 class RegisterViewModel : ViewModel() {
+    var navController: NavController? = null
+
 
     var name by mutableStateOf("")
         private set
@@ -80,7 +83,10 @@ class RegisterViewModel : ViewModel() {
             password.isBlank() || confirmPassword.isBlank() -> "Completa ambas contraseñas"
             password != confirmPassword -> "Las contraseñas no coinciden"
             else -> {
+//                navController?.navigate("rolScreen")
                 // Si todo OK, puedes dejar mensaje vacío o uno de éxito.
+//                Ir a la pantalla de Rol:
+                "Cuenta creada con éxito"
                 ""
             }
         }

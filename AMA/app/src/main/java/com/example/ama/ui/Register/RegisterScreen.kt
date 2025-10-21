@@ -43,11 +43,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.example.ama.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegisterScreen(
+    navController: NavController,
     onBack: (() -> Unit)? = null,
     registerVM: RegisterViewModel = viewModel()
 ) {
@@ -165,7 +167,9 @@ fun RegisterScreen(
 
             // Botón principal
             Button(
-                onClick = { registerVM.onSubmit() },
+                onClick = { registerVM.onSubmit()
+                          navController.navigate("rolScreen")
+                },
                 enabled = registerVM.isValid,
                 modifier = Modifier
                     .fillMaxWidth()

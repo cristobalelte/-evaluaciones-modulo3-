@@ -18,6 +18,7 @@ import androidx.navigation.navArgument
 import com.example.ama.ui.Login.LoginScreen
 import com.example.ama.ui.Register.RegScreenDClass
 import com.example.ama.ui.Register.RegisterScreen
+import com.example.ama.ui.Register.RolScreen
 import com.example.ama.ui.Register.StartScreen
 import com.example.ama.ui.components.ProductType
 import com.example.ama.ui.screens.AddProductScreen.AddProductRoute
@@ -75,6 +76,7 @@ fun AppNavigation(
             val ctx = LocalContext.current
             val activity = ctx as? Activity
             RegisterScreen(
+                navController = navController,
                 onBack = {
                     val popped = navController.popBackStack()
                     if (!popped) activity?.finish()
@@ -95,12 +97,18 @@ fun AppNavigation(
         }
 
 
-        composable("registerScreen") {
+    /*    composable("registerScreen") {
             RegScreenDClass(
                 navController = navController,
                 onPublish = { register ->
                     navController.navigate(Routes.HOME)
                 }
+            )
+        }*/
+
+        composable("rolScreen"){
+            RolScreen(
+                navController = navController
             )
         }
 

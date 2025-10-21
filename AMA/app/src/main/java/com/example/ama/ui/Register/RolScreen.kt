@@ -1,9 +1,19 @@
 package com.example.ama.ui.Register
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -14,35 +24,11 @@ import com.example.ama.R
 import com.example.ama.ui.components.PrimaryButton
 import com.example.ama.ui.navigation.Routes
 
-/*@Composable
-fun PrimaryButton(
-    text: String,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    enabled: Boolean = true,
-) {
-    Button(
-        onClick = onClick,
-        enabled = enabled,
-        modifier = modifier
-            .fillMaxWidth()
-            .height(48.dp),
-        shape = RoundedCornerShape(24.dp),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.primary,
-            contentColor = MaterialTheme.colorScheme.onPrimary,
-            disabledContainerColor = MaterialTheme.colorScheme.outline,
-            disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant
-        ),
-        elevation = ButtonDefaults.buttonElevation(defaultElevation = 0.dp)
-    ) {
-        Text(text = text, style = MaterialTheme.typography.labelLarge)
-    }
-}*/
+//ROute: rolScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun StartScreen(navController: NavController) {
+fun RolScreen(navController: NavController) {
     Scaffold(containerColor = MaterialTheme.colorScheme.background, topBar = {}) { padding ->
         Column(
             modifier = Modifier
@@ -62,20 +48,20 @@ fun StartScreen(navController: NavController) {
             Spacer(Modifier.height(30.dp))
 
             PrimaryButton(
-                text = "Iniciar Sesión",
-                onClick = { navController.navigate(Routes.LOGIN) },
+                text = "COMPRADOR",
+                onClick = { navController.navigate(Routes.HOME) },
                 modifier = Modifier.padding(vertical = 6.dp)
             )
             Spacer(Modifier.height(30.dp))
 
             PrimaryButton(
-                text = "Registrarse",
-                onClick = { navController.navigate(Routes.REGISTER) },
+                text = "ARTESANO/A VENDEDOR",
+                onClick = { navController.navigate(Routes.HOME) },
                 modifier = Modifier.padding(vertical = 6.dp)
             )
             Spacer(Modifier.height(30.dp))
 
-            PrimaryButton(
+           /* PrimaryButton(
                 text = "Entrar como invitado",
                 onClick = {
                     navController.navigate(Routes.HOME) {
@@ -86,7 +72,7 @@ fun StartScreen(navController: NavController) {
                 modifier = Modifier.padding(vertical = 6.dp)
             )
 
-            Spacer(Modifier.height(24.dp))
+            Spacer(Modifier.height(24.dp))*/
         }
     }
 }
