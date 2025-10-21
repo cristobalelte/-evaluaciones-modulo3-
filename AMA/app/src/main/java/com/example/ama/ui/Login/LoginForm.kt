@@ -1,7 +1,12 @@
 package com.example.ama.ui.Login
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -11,12 +16,18 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
+import com.example.ama.R
 
 @Composable
 fun LoginForm(
@@ -137,5 +148,60 @@ fun LoginForm(
             }
             Text("Ingresar")
         }
+
+//        Spacer(modifier = Modifier.height(8.dp))
+
+        HorizontalDivider(
+            modifier = Modifier.padding(vertical = 8.dp),
+            thickness = 2.dp,
+            color = Color.Gray
+        )
+
+
+        //        Llamamos a la fun para crear un boton personalizado con la img de facebook:
+        CustomButton(Modifier.clickable{/*URL que sea*/}, painterResource(R.drawable.facebook), "FACEBOOK")
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        //        Llamamos a la fun para crear un boton personalizado con la img de google:
+        CustomButton(Modifier.clickable{/*URL que sea*/}, painterResource(id = R.drawable.google), "GOOGLE")
+
+
+    }
+}
+
+//fun composable para botones personalizados con iconos de google y facebook:
+@Composable
+fun CustomButton(modifier: Modifier, paint: Painter, title: String) {
+    Box(
+        modifier = modifier //parametro que recibe el modificador
+            .fillMaxWidth()
+            .height(48.dp)
+            .padding(horizontal = 32.dp)
+            .background(MaterialTheme.colorScheme.primary) //Color de fondo del boton
+            .border(2.dp, Color.White, shape = CircleShape) //Borde del boton
+        ,
+        contentAlignment = Alignment.CenterStart
+        //El texto siempre estara centrado aunque se ponga una img o no al boton al inicio
+    )
+    {
+        Image(
+            painter = paint, //parametro que recibe la img
+            contentDescription = "Google",
+            modifier = Modifier
+                .padding(start = 24.dp)
+                .size(24.dp)
+        )
+
+
+        Text(
+            text = title, //parametro que recibe el texto
+            color = Color.White,
+            modifier = Modifier
+                .fillMaxWidth(),
+            textAlign = TextAlign.Center,
+            fontWeight = FontWeight.Bold
+
+        )
     }
 }
