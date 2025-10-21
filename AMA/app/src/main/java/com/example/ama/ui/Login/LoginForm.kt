@@ -178,7 +178,7 @@ fun CustomButton(modifier: Modifier, paint: Painter, title: String) {
             .fillMaxWidth()
             .height(48.dp)
             .padding(horizontal = 32.dp)
-            .background(MaterialTheme.colorScheme.primary) //Color de fondo del boton
+            .background(MaterialTheme.colorScheme.primary, shape = CircleShape) //Color de fondo del boton
             .border(2.dp, Color.White, shape = CircleShape) //Borde del boton
         ,
         contentAlignment = Alignment.CenterStart
