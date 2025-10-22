@@ -38,6 +38,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.ama.R
 import com.example.ama.ui.components.BottomBar
@@ -51,6 +52,8 @@ import java.util.Locale
 
 @Composable
 fun CatalogScreen(
+    navController: NavHostController,
+    onOpenPublish : () -> Unit,
     products: List<Product>,
     cartCount: Int,
     snackbarHostState: SnackbarHostState,
@@ -168,7 +171,8 @@ fun CatalogScreen(
             )
         },
         snackbarHost = { SnackbarHost(snackbarHostState) },
-        bottomBar = { BottomBar() }
+        bottomBar = { BottomBar(onPublishClick = onOpenPublish,
+            onProfileClick = { navController.navigate("perfil") }) }
     ) { padding ->
         Column(
             modifier = Modifier

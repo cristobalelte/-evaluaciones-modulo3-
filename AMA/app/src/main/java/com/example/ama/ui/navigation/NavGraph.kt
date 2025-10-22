@@ -191,6 +191,7 @@ fun AppNavigation(
         // 👇 registra el destino de Datos de envío
         composable(Routes.DATOS_ENVIO) {
             DataEnvioScreen(
+                navController = navController,
                 cartCount = vm.cartCount,
                 onBack = { navController.popBackStack() },
                 onOpenCart = { navController.navigate(Routes.CART) },

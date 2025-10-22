@@ -107,7 +107,8 @@ fun ProductRegionScreen(
                 }
             )
         },
-        bottomBar = { BottomBar(onPublishClick = onOpenPublish) }
+        bottomBar = { BottomBar(onPublishClick = onOpenPublish,
+            onProfileClick = { navController.navigate("perfil") }) }
     ) { padding ->
         LazyColumn(
             modifier = Modifier

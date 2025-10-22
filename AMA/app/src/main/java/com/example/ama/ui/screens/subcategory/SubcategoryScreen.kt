@@ -11,6 +11,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.ama.ui.components.BottomBar
 import com.example.ama.ui.components.ProductType
 import com.example.ama.ui.components.Subcategory
@@ -20,6 +21,8 @@ import com.example.ama.ui.components.label
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SubcategoryScreen(
+    navController: NavController,
+    onOpenPublish: () -> Unit,
     category: ProductType,
     onBack: () -> Unit,
     onOpenProducts: (Subcategory) -> Unit
@@ -37,7 +40,13 @@ fun SubcategoryScreen(
                 }
             )
         },
-        bottomBar = { BottomBar(onPublishClick = { /* opcional */ }) }
+        bottomBar = {
+            BottomBar(
+                onPublishClick = onOpenPublish,
+                onProfileClick = { navController.navigate("perfil") }
+            )
+        }
+
     ) { padding ->
         val all = SUBCATS[category].orEmpty()
         val filtered = remember(q, all) {

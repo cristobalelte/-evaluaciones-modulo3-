@@ -7,6 +7,7 @@ import androidx.compose.runtime.*
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.compose.ui.platform.LocalContext
+import androidx.navigation.NavHostController
 import com.example.ama.ui.components.ProductType
 import kotlinx.coroutines.launch
 
@@ -79,5 +80,7 @@ fun CatalogRoute(
         availableTypes = vm.availableTypes,
         selectedTypes = selectedTypes,
         onToggleType = vm::toggleType,
+        onOpenPublish = { navController.navigate("publish") },
+        navController = navController as NavHostController
     )
 }

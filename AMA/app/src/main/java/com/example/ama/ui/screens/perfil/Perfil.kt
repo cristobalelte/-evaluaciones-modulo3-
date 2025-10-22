@@ -5,9 +5,14 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Addchart
 import androidx.compose.material.icons.outlined.Settings
@@ -17,11 +22,13 @@ import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -38,8 +45,6 @@ fun PerfilScreen(
     navController: NavController,
     cartCount: Int,
     onOpenCart: () -> Unit,
-  //  onSearch: (String) -> Unit,
-   // onCategoryClick: (ProductType) -> Unit,
     onOpenPublish: () -> Unit,
     onOpenSettings: () -> Unit,
 
@@ -89,31 +94,35 @@ fun PerfilScreen(
             modifier = Modifier
                 .padding(paddingValues)
                 .fillMaxSize()
+                .verticalScroll(rememberScrollState())
         ) {
             Text(
                 text = "¡Hola Fernando!",
                 modifier = Modifier
                     .padding(16.dp)
-                    .size(12.dp)
+                    .fillMaxSize()
             )
 
             Text(
                 text = "Aqui puedes revisar tus avances y ganancias",
                 modifier = Modifier
                     .padding(16.dp)
-                    .size(8.dp)
+                    .fillMaxSize()
             )
 
             Row(
                 modifier = Modifier
                     .padding(16.dp)
-                    .size(16.dp)
+                    .fillMaxWidth()
+                    .weight(1f)
+
             ) {
                 Box(
                     modifier = Modifier
-                        .padding(16.dp)
-                        .size(16.dp)
-                        .background(color = Color.DarkGray)
+                        .fillMaxSize()
+                        .weight(1f)
+                        .background(color = Color.Gray),
+                    contentAlignment = Alignment.Center
                 )
                 {
                     Text(
@@ -121,28 +130,54 @@ fun PerfilScreen(
                         color = Color.White
                     )
                 }
+
+                Spacer(
+                    modifier = Modifier
+                        .width(12.dp)
+                )
+
                 Box(
                     modifier = Modifier
-                        .padding(16.dp)
-                        .size(16.dp)
-                        .background(color = Color.DarkGray)
+                        .fillMaxSize()
+                        .weight(1f)
+                        .background(color = Color.Gray),
+                    contentAlignment = Alignment.Center
                 )
                 {
                     Column(
                         modifier = Modifier
                             .padding(16.dp)
-                            .size(16.dp)
+                            .fillMaxSize()
                     )
                     {
                         //Agregar icono de escritura con lapiz
                         Icon(
                             imageVector = Icons.Outlined.Addchart,
+                            tint = Color.White,
                             contentDescription = "Cuenta tu historia",
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .weight(1f)
                         )
-                        Text(
-                            text = "Cuenta tu historia",
-                            color = Color.White
-                        )
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .weight(1f),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                text = "Cuenta tu",
+                                color = Color.White,
+                                modifier = Modifier
+                                    .weight(1f)
+                            )
+                            Text(
+                                text = "historia",
+                                color = Color.White,
+                                modifier = Modifier
+                                    .weight(1f)
+                            )
+                        }
                     }
                 }
 
@@ -152,13 +187,15 @@ fun PerfilScreen(
             Row(
                 modifier = Modifier
                     .padding(16.dp)
-                    .size(16.dp)
+                    .fillMaxWidth()
+                    .weight(1f)
             ) {
                 Box(
                     modifier = Modifier
-                        .padding(16.dp)
-                        .size(16.dp)
-                        .background(color = Color.DarkGray)
+                        .fillMaxSize()
+                        .weight(1f)
+                        .background(color = Color.Gray),
+                    contentAlignment = Alignment.Center
                 )
                 {
                     Text(
@@ -166,25 +203,39 @@ fun PerfilScreen(
                         color = Color.White
                     )
                 }
+
+                Spacer(
+                    modifier = Modifier
+                        .width(12.dp)
+                )
+
                 Box(
                     modifier = Modifier
-                        .padding(16.dp)
-                        .size(16.dp)
-                        .background(color = Color.DarkGray)
+                        .fillMaxSize()
+                        .weight(1f)
+                        .background(color = Color.Gray),
+                    contentAlignment = Alignment.Center
                 )
                 {
                     Column(
                         modifier = Modifier
                             .padding(16.dp)
-                            .size(16.dp)
+                            .fillMaxSize()
                     ) {
                         Icon(
                             imageVector = Icons.Outlined.Settings,
-                            contentDescription = "Edita tus datos"
+                            tint = Color.White,
+                            contentDescription = "Edita tus datos",
+                            modifier = Modifier
+                                .weight(1f)
+                                .fillMaxSize()
                         )
                         Text(
                             text = "Edita tus datos",
-                            color = Color.White
+                            color = Color.White,
+                            modifier = Modifier
+                                .weight(1f)
+                                .fillMaxSize()
                         )
                     }
                 }
@@ -196,13 +247,14 @@ fun PerfilScreen(
             Row(
                 modifier = Modifier
                     .padding(16.dp)
-                    .size(16.dp)
+                    .fillMaxWidth()
+                    .weight(1f)
             ) {
                 Box(
                     modifier = Modifier
-                        .padding(16.dp)
-                        .size(16.dp)
-                        .background(color = Color.DarkGray)
+                        .weight(1f)
+                        .background(color = Color.Gray),
+                    contentAlignment = Alignment.Center
                 )
                 {
                     Text(
@@ -210,11 +262,17 @@ fun PerfilScreen(
                         color = Color.White
                     )
                 }
+
+                Spacer(
+                    modifier = Modifier
+                        .width(12.dp)
+                )
+
                 Box(
                     modifier = Modifier
-                        .padding(16.dp)
-                        .size(16.dp)
-                        .background(color = Color.DarkGray)
+                        .weight(1f)
+                        .background(color = Color.Gray),
+                    contentAlignment = Alignment.Center
                 )
                 {
                     Text(
@@ -226,7 +284,12 @@ fun PerfilScreen(
             }
             //Cierre Row 3
 
-            Button(onClick = { /*TODO*/ })
+            Button(
+                onClick = { /*TODO*/ },
+                modifier = Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth()
+            )
             {
                 Text(text = "Salir del perfil")
             }

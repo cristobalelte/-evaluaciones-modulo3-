@@ -18,13 +18,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
 import com.example.ama.R
 import com.example.ama.ui.components.BottomBar
 import kotlinx.coroutines.flow.StateFlow
 
 @Composable
 fun DataEnvioScreen(
-
+    navController: NavController,
     cartCount: StateFlow<Int>,
     onBack: () -> Unit,
     onOpenCart: () -> Unit,
@@ -61,7 +62,8 @@ fun DataEnvioScreen(
                 }
             )
         },
-        bottomBar = { BottomBar(onPublishClick = onOpenPublish) }
+        bottomBar = { BottomBar(onPublishClick = onOpenPublish,
+            onProfileClick = { navController.navigate("perfil") }) }
     ) { padding ->
         LazyColumn(
             modifier = Modifier

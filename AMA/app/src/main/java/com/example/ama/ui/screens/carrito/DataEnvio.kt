@@ -73,7 +73,9 @@ fun DataEnvio(
                 }
             )
         },
-        bottomBar = { BottomBar(onPublishClick = onOpenPublish) }
+        bottomBar = { BottomBar(onPublishClick = onOpenPublish,
+            onProfileClick = { navController.navigate("perfil") }) }
+        
     ) { padding ->
         Column(
             modifier = Modifier
