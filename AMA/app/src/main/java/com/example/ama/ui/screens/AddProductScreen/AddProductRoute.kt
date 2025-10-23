@@ -23,9 +23,8 @@ fun AddProductRoute(
 
     // Asegura repos y datos listos (JSON + Room)
     LaunchedEffect(Unit) {
-        vm.attachCatalog(ctx)
-        vm.attachCart(ctx)
         vm.loadFromDisk(ctx)
+        vm.attachCart(context = ctx, owner = "usuario1") // usa aquí el usuario logueado real
     }
 
     AddProductScreen(

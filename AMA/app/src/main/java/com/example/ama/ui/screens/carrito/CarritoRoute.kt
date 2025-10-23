@@ -1,29 +1,60 @@
 package com.example.ama.ui.screens.carrito
 
+import android.app.Application
 import androidx.compose.runtime.*
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.compose.rememberNavController
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import com.example.ama.ui.carrito.CartViewModel
+import com.example.ama.ui.components.Product
+import com.example.ama.ui.components.ProductType
+import com.example.ama.ui.components.Subcategory
+
 import com.example.ama.ui.screens.catalog.CatalogViewModel
 
+// ui/screens/carrito/CartRoute.kt
 @Composable
 fun CartRoute(
-    vm: CatalogViewModel,
-    onBack: () -> Unit
+    navController: NavController,
+    cartVm: CartViewModel = viewModel(
+        factory = CartViewModel.provideFactory(
+            LocalContext.current.applicationContext as Application
+        )
+    )
 ) {
-    val items by vm.cartItems.collectAsStateWithLifecycle()
-    val total = remember(items) { vm.cartTotal() }
+    val rows by cartVm.rows.collectAsState(initial = emptyList())
+
+    // Conviertes cada fila a tu CartItem para la UI
+    val items = remember(rows) {
+        rows.map { r ->
+            val p = com.example.ama.ui.components.Product(
+                id = r.productId,
+                name = r.name,
+                price = r.price,
+                imageUrl = r.imageUrl ?: "",
+                author = "", region = "",
+                type = com.example.ama.ui.components.ProductType.OTRO,
+                stock = 0,
+                subcategory = com.example.ama.ui.components.Subcategory.OTROS,
+                description = "",
+                isActive = false
+            )
+            com.example.ama.ui.screens.catalog.CatalogViewModel.CartItem(product = p, qty = r.qty)
+        }
+    }
+
+    val total = remember(items) { items.sumOf { it.product.price * it.qty } }
 
     CartScreen(
-        navController = rememberNavController(),
+        navController = navController,
         items = items,
         total = total,
-        onBack = onBack,
-        onInc = { vm.incQty(it) },
-        onDec = { vm.decQty(it) },
-        onRemove = { vm.removeFromCart(it) },
-        onClear = { vm.clearCart() },
-        onCheckout = { /* TODO */ }
-
+        onBack = { navController.popBackStack() },
+        onInc = { id -> cartVm.inc(id) },
+        onDec = { id -> cartVm.dec(id) },
+        onRemove = { id -> cartVm.remove(id) },
+        onClear = { cartVm.clear() },
+        onCheckout = { navController.navigate("datosEnvio") }
     )
 }
 

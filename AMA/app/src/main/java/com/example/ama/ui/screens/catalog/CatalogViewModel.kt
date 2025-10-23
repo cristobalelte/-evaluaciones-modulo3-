@@ -8,6 +8,7 @@ import com.example.ama.data.CartRepository
 import com.example.ama.data.CatalogRepository
 import com.example.ama.data.db.CartRow
 import com.example.ama.ui.components.Product
+import com.example.ama.ui.carrito.CartViewModel
 import com.example.ama.ui.components.ProductType
 import com.example.ama.ui.components.Subcategory
 import kotlinx.coroutines.Dispatchers
@@ -95,16 +96,20 @@ class CatalogViewModel : ViewModel() {
     }
 
 
-    fun attachCart(context: Context) {
-        if (cartRepo != null) return
+    fun attachCart(context: Context, owner: String) {
         cartRepo = CartRepository(context)
         viewModelScope.launch {
-            cartRepo!!.rows.collectLatest { rows ->
-                lastRows = rows
-                remapRows()
-            }
+            cartRepo?.refreshFromServer(owner) // <- firma nueva
         }
     }
+
+    /** Conveniencia: si no pasas owner, no intenta refrescar. */
+    fun syncCartFromServer(owner: String) = viewModelScope.launch {
+        cartRepo?.refreshFromServer(owner)
+    }
+
+
+
 
     // Carga productos desde JSON y vuelve a mapear filas del carrito
     fun loadFromDisk(context: Context) {
@@ -123,14 +128,19 @@ class CatalogViewModel : ViewModel() {
     }
 
     // Operaciones de carrito (siempre a través de Room)
-    fun addToCart(p: Product)         = viewModelScope.launch { cartRepo?.add(p.id) }
+    fun addToCart(p: Product) = viewModelScope.launch {
+        cartRepo?.add(p)           // <-- ya no CartRepository.add(...)
+    }
+    fun addToCart(id: String) = viewModelScope.launch {
+        getById(id)?.let { cartRepo?.add(it) }
+    }
     fun incQty(id: String)            = viewModelScope.launch { cartRepo?.inc(id) }
     fun decQty(id: String)            = viewModelScope.launch { cartRepo?.dec(id) }
     fun removeFromCart(id: String)    = viewModelScope.launch { cartRepo?.remove(id) }
     fun clearCart()                   = viewModelScope.launch { cartRepo?.clear() }
     fun cartTotal(): Double           = _cartItems.value.sumOf { it.product.price * it.qty }
 
-    // ----------------- Filtros / búsqueda -----------------
+    //  Filtros / búsqueda
     private val _onlyAvailable = MutableStateFlow(true)
     val onlyAvailable: StateFlow<Boolean> = _onlyAvailable
 
@@ -149,7 +159,7 @@ class CatalogViewModel : ViewModel() {
     fun clearFilters() { _regions.value = emptySet(); _types.value = emptySet(); _query.value = ""; _onlyAvailable.value = true; refresh() }
     fun setOnlyAvailable(v: Boolean) { _onlyAvailable.value = v; refresh() }
 
-    // ----------------- Paginación / listado -----------------
+    //  Paginación / listado
     private val pageSize = 12
     private var nextIndex = 0
 
@@ -187,7 +197,7 @@ class CatalogViewModel : ViewModel() {
 
     fun getById(id: String): Product? = all.firstOrNull { it.id == id }
 
-    // ----------------- Helpers de búsqueda -----------------
+    //  Helpers de búsqueda
     private fun matchesQuery(p: Product, q: String): Boolean {
         if (q.isBlank()) return true
         val nq = norm(q)

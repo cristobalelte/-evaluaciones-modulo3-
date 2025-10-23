@@ -24,7 +24,7 @@ fun CatalogRoute(
     // Carga catálogo + adjunta carrito una sola vez
     LaunchedEffect(Unit) {
         vm.loadFromDisk(ctx)
-        vm.attachCart(ctx)
+        vm.attachCart(context = ctx, owner = "usuario1") // usa aquí el usuario logueado real
     }
 
     // State de VM

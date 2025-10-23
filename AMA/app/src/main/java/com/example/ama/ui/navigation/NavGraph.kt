@@ -26,7 +26,11 @@ import com.example.ama.ui.screens.AddProductScreen.AddProductRoute
 import com.example.ama.ui.screens.HomeScreen.ProductPay
 import com.example.ama.ui.screens.HomeScreen.ProductRegionScreen
 import com.example.ama.ui.screens.HomeScreen.ProductTypeScreen
-
+import android.app.Application
+import androidx.compose.runtime.remember
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.ama.ui.carrito.CartViewModel
 import com.example.ama.ui.screens.carrito.CartRoute
 import com.example.ama.ui.screens.carrito.DataEnvio
 import com.example.ama.ui.screens.catalog.CatalogRoute
@@ -37,6 +41,7 @@ import com.example.ama.ui.screens.perfil.PerfilScreen
 import com.example.ama.ui.screens.settings.SettingsScreen
 import com.example.ama.ui.screens.subcategory.ProductSubCatScreen
 import com.example.ama.ui.theme.ThemeOption
+import kotlinx.coroutines.flow.firstOrNull
 
 
 @Composable
@@ -54,7 +59,7 @@ fun AppNavigation(
     // Cargar catálogo (JSON) y adjuntar carrito (Room) al iniciar
     LaunchedEffect(Unit) {
         vm.loadFromDisk(ctx)
-        vm.attachCart(ctx)
+        vm.attachCart(context = ctx, owner = "usuario1") // usa aquí el usuario logueado real
     }
 
     // Estado para el badge del carrito
@@ -172,12 +177,17 @@ fun AppNavigation(
         ) { backStack ->
             val id = backStack.arguments?.getString("id") ?: return@composable
             val product = vm.getById(id) ?: run { navController.popBackStack(); return@composable }
-            val cartCount by vm.cartCount.collectAsState(initial = 0)
+
+            // VM del carrito para sumar cantidades en la “bolita” y para agregar
+            val app = LocalContext.current.applicationContext as Application
+            val cartVm: CartViewModel = viewModel(factory = CartViewModel.provideFactory(app))
+            val rows by cartVm.rows.collectAsStateWithLifecycle(emptyList())
+            val cartCount = rows.sumOf { it.qty }
 
             ProductDetailScreen(
                 product = product,
                 onBack = { navController.popBackStack() },
-                onAddToCart = { vm.addToCart(it) },
+                onAddToCart = { cartVm.add(it) },     // <-- guarda en Room
                 cartCount = cartCount,
                 onOpenCart = { navController.navigate(Routes.CART) }
             )
@@ -185,8 +195,11 @@ fun AppNavigation(
 
 
         composable(Routes.CART) {
-            CartRoute(vm = vm, onBack = { navController.popBackStack() })
+            CartRoute(navController)
         }
+
+
+
 
         // 👇 registra el destino de Datos de envío
         composable(Routes.DATOS_ENVIO) {
