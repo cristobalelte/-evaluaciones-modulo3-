@@ -34,6 +34,7 @@ import com.example.ama.ui.screens.catalog.CatalogViewModel
 import com.example.ama.ui.screens.checkout.DataEnvioScreen
 import com.example.ama.ui.screens.detail.ProductDetailScreen
 import com.example.ama.ui.screens.perfil.PerfilScreen
+import com.example.ama.ui.screens.products.ProductScreen
 import com.example.ama.ui.screens.settings.SettingsScreen
 import com.example.ama.ui.screens.subcategory.ProductSubCatScreen
 import com.example.ama.ui.theme.ThemeOption
@@ -285,6 +286,11 @@ fun AppNavigation(
                 onOpenSettings = { navController.navigate(Routes.SETTINGS) }
             )
         }
+
+        composable("productList") {
+            ProductScreen()
+        }
+
     }
 }
 

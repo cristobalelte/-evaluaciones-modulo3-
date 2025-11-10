@@ -91,8 +91,11 @@ fun HomeScreen(
                 }
             )
         },
-        bottomBar = { BottomBar(onPublishClick = onOpenPublish,
-            onProfileClick = { navController.navigate("perfil") }) }
+        bottomBar = {
+            BottomBar(
+                onPublishClick = onOpenPublish,
+                onProfileClick = { navController.navigate("perfil") })
+        }
     ) { padding ->
         LazyColumn(
             modifier = Modifier
@@ -103,7 +106,7 @@ fun HomeScreen(
         ) {
             // Buscador
             item {
-                val bg      = MaterialTheme.colorScheme.primaryContainer
+                val bg = MaterialTheme.colorScheme.primaryContainer
                 val content = MaterialTheme.colorScheme.onPrimaryContainer
 
                 OutlinedTextField(
@@ -144,7 +147,7 @@ fun HomeScreen(
             }
 
             // CATEGORÍAS (carrusel)
-            item { SectionTitle("Categorías") }
+            item {SectionTitle("Categorías")}
             item {
                 CategoryCarousel(
                     items = categories,
@@ -166,7 +169,15 @@ fun HomeScreen(
             item {
                 SectionTitle(
                     title = "Lo nuevo de este mes",
-                    trailing = { TextButton(onClick = onSeeAllNew) { Text("Ver todo") } }
+//                  trailing = { TextButton(onClick = onSeeAllNew) { Text("Ver toto") } }
+                    trailing = {
+                        TextButton(
+                            onClick = { navController.navigate("productList") }
+                        )
+                        {
+                            Text("Ver todo")
+                        }
+                    }
                 )
             }
             item {
@@ -337,12 +348,10 @@ private fun ArtisanBannerRow(
                         if (b.title == ImagenesEnumeration.ArtesanosDelSur.nombre) {
 
                             painterResource(ImagenesEnumeration.ArtesanosDelSur.imgLoc)
-                        }
-                        else if (b.title == ImagenesEnumeration.TejedorasDeChiloe.nombre) {
+                        } else if (b.title == ImagenesEnumeration.TejedorasDeChiloe.nombre) {
 
                             painterResource(ImagenesEnumeration.TejedorasDeChiloe.imgLoc)
-                        }
-                        else if (b.title == ImagenesEnumeration.MadererosDelMaule.nombre) {
+                        } else if (b.title == ImagenesEnumeration.MadererosDelMaule.nombre) {
                             painterResource(ImagenesEnumeration.MadererosDelMaule.imgLoc)
 
                         } else {
