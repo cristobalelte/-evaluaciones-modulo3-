@@ -288,7 +288,13 @@ fun AppNavigation(
         }
 
         composable("productList") {
-            ProductScreen()
+            ProductScreen(
+                navController = navController,
+                cartCount = cartCount,
+                onOpenCart = { navController.navigate(Routes.CART) },
+                onOpenPublish = { navController.navigate(Routes.PUBLISH) },
+                onOpenSettings = { navController.navigate(Routes.SETTINGS) }
+            )
         }
 
     }
