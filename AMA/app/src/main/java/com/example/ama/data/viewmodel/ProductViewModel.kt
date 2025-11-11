@@ -1,8 +1,9 @@
-package com.example.ama.data
+package com.example.ama.data.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.ama.data.dataclass.ProductData
+import com.example.ama.data.repository.ProductRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 

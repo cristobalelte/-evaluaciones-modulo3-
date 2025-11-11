@@ -1,4 +1,4 @@
-package com.example.ama.data
+package com.example.ama.data.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

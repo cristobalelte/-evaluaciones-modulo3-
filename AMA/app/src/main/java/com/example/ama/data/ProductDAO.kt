@@ -2,6 +2,7 @@ package com.example.ama.data
 
 import androidx.room.Dao
 import androidx.room.Query
+import com.example.ama.data.dataclass.ProductData
 import kotlinx.coroutines.flow.Flow
 
 @Dao

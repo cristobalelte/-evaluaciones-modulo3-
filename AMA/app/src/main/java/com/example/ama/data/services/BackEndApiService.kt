@@ -1,6 +1,6 @@
 package com.example.ama.data.services
 
-import com.example.ama.data.ProductData
+import com.example.ama.data.dataclass.ProductData
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.Body
@@ -14,7 +14,8 @@ import kotlin.getValue
 
 interface BackEndApiService {
     object RetrofitInstance {
-        private const val BASE_URL = "http://54.243.16.169:3000/"
+//        private const val BASE_URL = "http://54.243.16.169:3000/"
+        private const val BASE_URL = "http://3.128.184.226:3000/"
         val api: BackEndApiService by lazy {
             Retrofit.Builder()
                 .baseUrl(BASE_URL)
@@ -35,11 +36,21 @@ interface BackEndApiService {
 
     }*/
 
-    @GET("productos")
+    @GET("productos?maxPrice=50000&minPrice=1000&sortByPrice=true&creatorId=42")
     suspend fun getProducts(
         @Query("limit") limit: Int,
         @Query("offset") offset: Int
     ): List<ProductData>
+
+    @GET("carrito")
+    suspend fun getCarrito(
+        @Query("limit") limit: Int,
+        @Query("offset") offset: Int
+    ): List<ProductData>
+
+
+
+
 
     /*    @GET("meds_list/{id}.json")
         suspend fun getMedicamentoById(@Path("id") id: Int): ProductData?

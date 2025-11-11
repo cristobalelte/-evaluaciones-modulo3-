@@ -1,7 +1,6 @@
-package com.example.ama.ui.screens.products
+package com.example.ama.ui.screens.carrito2
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Settings
@@ -20,12 +19,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavController
 import com.example.ama.R
 import com.example.ama.ui.components.BottomBar
-import com.example.ama.ui.components.ProductType
+import com.example.ama.ui.screens.products.ProductList
 
-//Ruta: productList
+//Ruta: carritoList
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProductScreen(
+fun CarritoScreen(
     navController: NavController,
     cartCount: Int,
     onOpenCart: () -> Unit,
@@ -61,6 +60,6 @@ fun ProductScreen(
                 onProfileClick = { navController.navigate("perfil") })
         }
     ) { innerPadding ->
-        ProductList(modifier = Modifier.padding(innerPadding))
+        CarritoList(modifier = Modifier.padding(innerPadding))
     }
 }

@@ -29,6 +29,7 @@ import com.example.ama.ui.screens.HomeScreen.ProductTypeScreen
 
 import com.example.ama.ui.screens.carrito.CartRoute
 import com.example.ama.ui.screens.carrito.DataEnvio
+import com.example.ama.ui.screens.carrito2.CarritoScreen
 import com.example.ama.ui.screens.catalog.CatalogRoute
 import com.example.ama.ui.screens.catalog.CatalogViewModel
 import com.example.ama.ui.screens.checkout.DataEnvioScreen
@@ -289,6 +290,16 @@ fun AppNavigation(
 
         composable("productList") {
             ProductScreen(
+                navController = navController,
+                cartCount = cartCount,
+                onOpenCart = { navController.navigate(Routes.CART) },
+                onOpenPublish = { navController.navigate(Routes.PUBLISH) },
+                onOpenSettings = { navController.navigate(Routes.SETTINGS) }
+            )
+        }
+
+        composable("carritoList") {
+            CarritoScreen(
                 navController = navController,
                 cartCount = cartCount,
                 onOpenCart = { navController.navigate(Routes.CART) },

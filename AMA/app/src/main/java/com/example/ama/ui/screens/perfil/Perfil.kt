@@ -33,8 +33,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.ama.R
+import com.example.ama.ui.Register.RegisterScreen
+import com.example.ama.ui.Register.RegisterViewModel
 import com.example.ama.ui.components.BottomBar
 import com.example.ama.ui.components.ProductType
 
@@ -47,6 +50,13 @@ fun PerfilScreen(
     onOpenCart: () -> Unit,
     onOpenPublish: () -> Unit,
     onOpenSettings: () -> Unit,
+//    para regScreen:
+    registerVM: RegisterViewModel = viewModel(),
+    registerScreen: Unit = RegisterScreen(
+        registerVM = registerVM,
+        navController = navController,
+        onBack = { navController.popBackStack() }
+    )
 
     // NUEVO: data para las secciones
     /*categories: List<CategoryItem> = defaultCategories(),
@@ -97,7 +107,11 @@ fun PerfilScreen(
                 .verticalScroll(rememberScrollState())
         ) {
             Text(
-                text = "¡Hola Fernando!",
+                if (registerVM.name != null){
+                    "¡Hola ${registerVM.name}!"
+                } else {
+                    "¡Hola visitante!"
+                },
                 modifier = Modifier
                     .padding(16.dp)
                     .fillMaxSize()
