@@ -48,6 +48,7 @@ fun DataEnvio(
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
+
                 title = {
                     Image(
                         painter = painterResource(R.drawable.logo_artemayor_horizontal),

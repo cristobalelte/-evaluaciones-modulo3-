@@ -23,6 +23,7 @@ uiText = "1.9.1"
 uiGraphicsVersion = "1.9.2"
 foundationVersion = "1.9.2"
 retrofit = "3.0.0"
+playServicesAnalyticsImpl = "18.2.0"
 
 [libraries]
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
@@ -60,6 +61,7 @@ foundation = { group = "androidx.compose.foundation", name = "foundation", versi
 #core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "core-splashscreen" }
 retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
 retrofit-converter-gson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofit" }
+play-services-analytics-impl = { group = "com.google.android.gms", name = "play-services-analytics-impl", version.ref = "playServicesAnalyticsImpl" }
 
 
 [plugins]

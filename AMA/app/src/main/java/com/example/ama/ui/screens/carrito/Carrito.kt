@@ -3,15 +3,11 @@ package com.example.ama.ui.screens.carrito
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import com.example.ama.R
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowBack
-import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -20,25 +16,22 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import com.example.ama.ui.navigation.Routes
-import com.example.ama.ui.screens.catalog.CatalogViewModel
+import com.example.ama.R
 import java.text.NumberFormat
 import java.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CartScreen(
-    navController: NavController,
-    items: List<CatalogViewModel.CartItem>,
+    items: List<CartViewModel.CartItem>,
     total: Double,
     onBack: () -> Unit,
     onInc: (String) -> Unit,
     onDec: (String) -> Unit,
     onRemove: (String) -> Unit,
     onClear: () -> Unit,
-    onCheckout: () -> Unit
+    onCheckout: () -> Unit,
 ) {
     val money = NumberFormat.getCurrencyInstance(Locale("es", "CL"))
 
@@ -75,7 +68,7 @@ fun CartScreen(
                 Spacer(Modifier.height(12.dp))
 
                 Button(
-                    onClick = { navController.navigate("datosEnvio") }, //
+                    onClick = onCheckout,              // dispara checkout
                     enabled = items.isNotEmpty(),
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(24.dp),
@@ -84,15 +77,12 @@ fun CartScreen(
                         contentColor   = MaterialTheme.colorScheme.onPrimary
                     )
                 ) { Text("CONTINUAR COMPRA") }
-
             }
         }
     ) { padding ->
         if (items.isEmpty()) {
             Box(
-                Modifier
-                    .fillMaxSize()
-                    .padding(padding),
+                Modifier.fillMaxSize().padding(padding),
                 contentAlignment = Alignment.Center
             ) { Text(stringResource(R.string.carro_vacio)) }
         } else {
@@ -114,10 +104,9 @@ fun CartScreen(
     }
 }
 
-
 @Composable
 private fun CartRow(
-    item: CatalogViewModel.CartItem,
+    item: CartViewModel.CartItem,  // <-- aquí el cambio
     onInc: () -> Unit,
     onDec: () -> Unit,
     onRemove: () -> Unit
@@ -131,17 +120,13 @@ private fun CartRow(
         elevation = CardDefaults.cardElevation(0.dp)
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(12.dp),
+            modifier = Modifier.fillMaxWidth().padding(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             AsyncImage(
                 model = item.product.imageUrl,
                 contentDescription = item.product.name,
-                modifier = Modifier
-                    .size(56.dp)
-                    .clip(RoundedCornerShape(8.dp)),
+                modifier = Modifier.size(56.dp).clip(RoundedCornerShape(8.dp)),
                 contentScale = ContentScale.Crop
             )
 
@@ -160,15 +145,9 @@ private fun CartRow(
                 )
                 Spacer(Modifier.height(8.dp))
 
-                // Controles cantidad (+ 1 -)
-                QuantityControl(
-                    qty = item.qty,
-                    onInc = onInc,
-                    onDec = onDec
-                )
+                QuantityControl(qty = item.qty, onInc = onInc, onDec = onDec)
             }
 
-            // Botón Eliminar (rojo lleno, redondeado)
             Button(
                 onClick = onRemove,
                 shape = RoundedCornerShape(14.dp),
@@ -176,18 +155,13 @@ private fun CartRow(
                     containerColor = MaterialTheme.colorScheme.primary,
                     contentColor   = MaterialTheme.colorScheme.onPrimary
                 )
-            ) {
-                Text("Eliminar")
-            }
+            ) { Text("Eliminar") }
         }
     }
 }
+
 @Composable
-private fun QuantityControl(
-    qty: Int,
-    onInc: () -> Unit,
-    onDec: () -> Unit
-) {
+private fun QuantityControl(qty: Int, onInc: () -> Unit, onDec: () -> Unit) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         OutlinedIconButtonCircle(onClick = onInc) { Text("+") }
         Spacer(Modifier.width(12.dp))
@@ -198,10 +172,7 @@ private fun QuantityControl(
 }
 
 @Composable
-private fun OutlinedIconButtonCircle(
-    onClick: () -> Unit,
-    content: @Composable () -> Unit
-) {
+private fun OutlinedIconButtonCircle(onClick: () -> Unit, content: @Composable () -> Unit) {
     OutlinedIconButton(
         onClick = onClick,
         shape = CircleShape,
@@ -213,4 +184,3 @@ private fun OutlinedIconButtonCircle(
         modifier = Modifier.size(36.dp)
     ) { content() }
 }
-

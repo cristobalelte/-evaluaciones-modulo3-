@@ -1,17 +1,20 @@
 package com.example.ama.data.db
 
-
 import androidx.room.*
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface CartDao {
-
     @Query("SELECT * FROM cart")
     fun observeAll(): Flow<List<CartRow>>
 
+
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsert(row: CartRow)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun upsertAll(rows: List<CartRow>)
 
     @Query("SELECT * FROM cart WHERE productId = :id")
     suspend fun getById(id: String): CartRow?
@@ -21,4 +24,8 @@ interface CartDao {
 
     @Query("DELETE FROM cart")
     suspend fun clear()
+    @Query("SELECT * FROM cart") suspend fun getAllOnce(): List<CartRow>
+    @Query("SELECT * FROM cart")
+    suspend fun getAll(): List<CartRow>
+
 }

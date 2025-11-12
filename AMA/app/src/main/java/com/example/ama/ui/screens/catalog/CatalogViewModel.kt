@@ -106,6 +106,7 @@ class CatalogViewModel : ViewModel() {
         }
     }
 
+
     // Carga productos desde JSON y vuelve a mapear filas del carrito
     fun loadFromDisk(context: Context) {
         val repo = CatalogRepository(context)
@@ -123,7 +124,14 @@ class CatalogViewModel : ViewModel() {
     }
 
     // Operaciones de carrito (siempre a través de Room)
-    fun addToCart(p: Product)         = viewModelScope.launch { cartRepo?.add(p.id) }
+    fun addToCart(p: Product) = viewModelScope.launch {
+        cartRepo?.add(
+            id = p.id,
+            name = p.name,
+            price = p.price,
+            imageUrl = p.imageUrl
+        )
+    }
     fun incQty(id: String)            = viewModelScope.launch { cartRepo?.inc(id) }
     fun decQty(id: String)            = viewModelScope.launch { cartRepo?.dec(id) }
     fun removeFromCart(id: String)    = viewModelScope.launch { cartRepo?.remove(id) }

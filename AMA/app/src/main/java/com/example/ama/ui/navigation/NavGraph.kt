@@ -28,6 +28,7 @@ import com.example.ama.ui.screens.HomeScreen.ProductRegionScreen
 import com.example.ama.ui.screens.HomeScreen.ProductTypeScreen
 
 import com.example.ama.ui.screens.carrito.CartRoute
+import com.example.ama.ui.screens.carrito.CartViewModel
 import com.example.ama.ui.screens.carrito.DataEnvio
 import com.example.ama.ui.screens.carrito2.CarritoScreen
 import com.example.ama.ui.screens.catalog.CatalogRoute
@@ -179,7 +180,9 @@ fun AppNavigation(
             ProductDetailScreen(
                 product = product,
                 onBack = { navController.popBackStack() },
-                onAddToCart = { vm.addToCart(it) },
+                onAddToCart = {
+                    vm.addToCart(product)
+                },
                 cartCount = cartCount,
                 onOpenCart = { navController.navigate(Routes.CART) }
             )
@@ -187,10 +190,14 @@ fun AppNavigation(
 
 
         composable(Routes.CART) {
-            CartRoute(vm = vm, onBack = { navController.popBackStack() })
+            val cartVm: CartViewModel = viewModel()   // o hiltViewModel()
+            CartRoute(
+                vm = cartVm,
+                onBack = { navController.popBackStack() },
+                onCheckoutSuccess = { navController.navigate(Routes.DATOS_ENVIO) }
+            )
         }
 
-        // 👇 registra el destino de Datos de envío
         composable(Routes.DATOS_ENVIO) {
             DataEnvioScreen(
                 navController = navController,

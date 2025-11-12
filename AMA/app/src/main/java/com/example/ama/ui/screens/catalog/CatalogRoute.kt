@@ -9,6 +9,7 @@ import androidx.navigation.NavController
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import com.example.ama.ui.components.ProductType
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
@@ -19,6 +20,7 @@ fun CatalogRoute(
     onOpenCart: () -> Unit,
     initialType: ProductType? = null,
     onBack: (() -> Unit)? = null,
+
 ) {
     val ctx = LocalContext.current
 
@@ -49,9 +51,9 @@ fun CatalogRoute(
         cartCount = cartCount,
         snackbarHostState = snackbarHost,
         onAddToCart = { p ->
+            vm.addToCart(p)
             scope.launch {
-                vm.addToCart(p)
-                snackbarHost.showSnackbar("Agregado")
+                snackbarHost.showSnackbar("Agregado: ${p.name}")
             }
         },
         onViewDetail = { p -> onViewDetail(p.id) },
