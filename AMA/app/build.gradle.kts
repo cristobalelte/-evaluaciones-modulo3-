@@ -53,6 +53,7 @@ dependencies {
     implementation(libs.androidx.compose.ui.ui.graphics)
     implementation(libs.foundation)
     implementation(libs.retrofit)
+
     implementation(libs.retrofit.converter.gson)
     implementation("com.squareup.retrofit2:retrofit:2.11.0")
     implementation("com.squareup.retrofit2:converter-moshi:2.11.0")

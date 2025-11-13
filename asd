@@ -1,0 +1,16 @@
+A	AMA/.idea/.name
+M	AMA/app/build.gradle.kts
+M	AMA/app/src/main/AndroidManifest.xml
+D	AMA/app/src/main/java/com/example/ama/data/ProductDAO.kt
+D	AMA/app/src/main/java/com/example/ama/data/ProductData.kt
+D	AMA/app/src/main/java/com/example/ama/data/ProductRepository.kt
+D	AMA/app/src/main/java/com/example/ama/data/ProductViewModel.kt
+D	AMA/app/src/main/java/com/example/ama/data/ProductViewModelFactory.kt
+D	AMA/app/src/main/java/com/example/ama/data/services/BackEndApiService.kt
+M	AMA/app/src/main/java/com/example/ama/ui/navigation/NavGraph.kt
+M	AMA/app/src/main/java/com/example/ama/ui/screens/HomeScreen/HomeScreen.kt
+D	AMA/app/src/main/java/com/example/ama/ui/screens/products/ProductCard.kt
+D	AMA/app/src/main/java/com/example/ama/ui/screens/products/ProductList.kt
+D	AMA/app/src/main/java/com/example/ama/ui/screens/products/ProductScreen.kt
+D	AMA/app/src/main/res/xml/network_security_config.xml
+M	AMA/gradle/libs.versions.toml

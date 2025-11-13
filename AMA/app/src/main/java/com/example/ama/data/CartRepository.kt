@@ -6,7 +6,6 @@ import androidx.room.Room
 import androidx.room.migration.Migration
 import androidx.room.withTransaction
 import androidx.sqlite.db.SupportSQLiteDatabase
-import com.example.ama.core.dto.ProductDto
 import com.example.ama.core.dto.ShoppingCarsDto
 
 import com.example.ama.data.db.AppDb
