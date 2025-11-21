@@ -19,11 +19,98 @@ fun ProductCard(product: ProductData) {
     ) {
         product.name?.let {
             Text(
-                text = it, style = MaterialTheme.typography.titleMedium,
+                text = "Nombre: $it", style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.padding(16.dp)
             )
         }
 
+        product.creatorId?.let {
+            Text(
+                text = "creator_Id: $it", style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(16.dp)
+            )
+        }
+
+        product.craftType?.let {
+            Text(
+                text = "Categoria: $it", style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(16.dp)
+            )
+        }
+
+        product.createdAt?.let {
+            Text(
+                text = "Fecha: $it", style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(16.dp)
+            )
+        }
+
+
+
+        product.id?.let {
+            Text(
+                text = "Id: $it", style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(16.dp)
+            )
+        }
+
+        product.price?.let {
+            Text(
+                text = "Precio: $it", style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(16.dp)
+            )
+        }
+
+        product.region?.let {
+            Text(
+                text = "Region: $it", style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(16.dp)
+            )
+        }
+
+        product.material?: let {
+            Text(
+                text = "Material: $it", style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(16.dp)
+            )
+
+        }
+
+        product.stock?.let {
+            Text(
+                text ="Stock: $it", style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(16.dp)
+            )
+        }
+        product.isFeatured?.let {
+            if (it) {
+                Text(
+                    text = "Producto destacado", style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(16.dp)
+                )
+            } else {
+                Text(
+                    text = "Producto no destacado", style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(16.dp)
+                )
+            }
+
+        }
+
+        product.isActive?.let {
+            if (it) {
+                Text(
+                    text = "Producto activo", style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(16.dp)
+                )
+            }
+            else {
+                Text(
+                    text = "Producto inactivo", style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(16.dp)
+                )
+            }
+        }
 
     }
 
