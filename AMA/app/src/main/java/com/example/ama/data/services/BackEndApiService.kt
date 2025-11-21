@@ -1,5 +1,6 @@
 package com.example.ama.data.services
 
+import com.example.ama.data.dataclass.EquipoAmaItem
 import com.example.ama.data.dataclass.ProductData
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -47,6 +48,14 @@ interface BackEndApiService {
         @Query("limit") limit: Int,
         @Query("offset") offset: Int
     ): List<ProductData>
+
+
+    // URL para get equipo: http://3.128.184.226:3000/equipo/integrante/todo
+    @GET("equipo/integrante/todo")
+    suspend fun getEquipo(
+        @Query("limit") limit: Int,
+        @Query("offset") offset: Int
+    ): List<EquipoAmaItem>
 
 
 

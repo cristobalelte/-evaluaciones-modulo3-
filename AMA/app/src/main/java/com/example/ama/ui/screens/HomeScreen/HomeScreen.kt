@@ -198,6 +198,22 @@ fun HomeScreen(
             }
 
 
+            //VER EQUIPO:
+            item {
+                SectionTitle(
+                    title = "Equipo de trabajo AMA",
+                    trailing = {
+                        TextButton(
+                            onClick = { navController.navigate("equipoScreen") }
+                        )
+                        {
+                            Text("Nustro equipo")
+                        }
+                    }
+                )
+            }
+
+
             item {
                 ProductRow(
                     products = newThisMonth,

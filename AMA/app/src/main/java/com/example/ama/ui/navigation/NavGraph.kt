@@ -35,6 +35,7 @@ import com.example.ama.ui.screens.catalog.CatalogRoute
 import com.example.ama.ui.screens.catalog.CatalogViewModel
 import com.example.ama.ui.screens.checkout.DataEnvioScreen
 import com.example.ama.ui.screens.detail.ProductDetailScreen
+import com.example.ama.ui.screens.equipo.EquipoScreen
 import com.example.ama.ui.screens.perfil.PerfilScreen
 import com.example.ama.ui.screens.products.ProductScreen
 import com.example.ama.ui.screens.settings.SettingsScreen
@@ -307,6 +308,17 @@ fun AppNavigation(
 
         composable("carritoList") {
             CarritoScreen(
+                navController = navController,
+                cartCount = cartCount,
+                onOpenCart = { navController.navigate(Routes.CART) },
+                onOpenPublish = { navController.navigate(Routes.PUBLISH) },
+                onOpenSettings = { navController.navigate(Routes.SETTINGS) }
+            )
+        }
+
+
+        composable("equipoScreen") {
+            EquipoScreen(
                 navController = navController,
                 cartCount = cartCount,
                 onOpenCart = { navController.navigate(Routes.CART) },
