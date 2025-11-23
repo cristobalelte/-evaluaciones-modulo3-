@@ -2,6 +2,7 @@ package com.example.ama.ui.screens.perfil
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -9,7 +10,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -22,12 +22,13 @@ import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -36,10 +37,13 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.ama.R
+import com.example.ama.data.dataclass.ProductData
+import com.example.ama.data.viewmodel.ProductViewModel
+import com.example.ama.data.viewmodel.ProductViewModelFactory
 import com.example.ama.ui.Register.RegisterScreen
 import com.example.ama.ui.Register.RegisterViewModel
 import com.example.ama.ui.components.BottomBar
-import com.example.ama.ui.components.ProductType
+import com.example.ama.ui.navigation.Routes
 
 //Ruta: perfil
 @OptIn(ExperimentalMaterial3Api::class)
@@ -68,6 +72,12 @@ fun PerfilScreen(
     onSeeAllNew: () -> Unit = {},
      */
 ) {
+    //    Para ref cantidad de productos en el Backend, creamos var productList para tener la cant total con .size :
+    val productListViewModel: ProductViewModel = viewModel(
+        factory = ProductViewModelFactory()
+    )
+    val productList by productListViewModel.productList.collectAsState()
+
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -132,7 +142,7 @@ fun PerfilScreen(
 
             ) {
                 Box(
-                    modifier = Modifier
+                    modifier = Modifier.clickable(onClick = { navController.navigate("prodPublicados") })
                         .fillMaxSize()
                         .weight(1f)
                         .background(color = Color.Gray),
@@ -140,7 +150,7 @@ fun PerfilScreen(
                 )
                 {
                     Text(
-                        text = "3 Productos publicados",
+                        text = "${productList.size} productos publicados",
                         color = Color.White
                     )
                 }
@@ -168,30 +178,17 @@ fun PerfilScreen(
                         Icon(
                             imageVector = Icons.Outlined.Addchart,
                             tint = Color.White,
-                            contentDescription = "Cuenta tu historia",
+                            contentDescription = "Tu historia",
                             modifier = Modifier
                                 .fillMaxSize()
                                 .weight(1f)
                         )
-                        Column(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .weight(1f),
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
                             Text(
-                                text = "Cuenta tu",
+                                text = "Cuenta tu historia",
                                 color = Color.White,
                                 modifier = Modifier
                                     .weight(1f)
                             )
-                            Text(
-                                text = "historia",
-                                color = Color.White,
-                                modifier = Modifier
-                                    .weight(1f)
-                            )
-                        }
                     }
                 }
 
@@ -239,7 +236,7 @@ fun PerfilScreen(
                         Icon(
                             imageVector = Icons.Outlined.Settings,
                             tint = Color.White,
-                            contentDescription = "Edita tus datos",
+                            contentDescription = "Datos",
                             modifier = Modifier
                                 .weight(1f)
                                 .fillMaxSize()
@@ -299,7 +296,7 @@ fun PerfilScreen(
             //Cierre Row 3
 
             Button(
-                onClick = { /*TODO*/ },
+                onClick = { navController.navigate(Routes.LOGIN) },
                 modifier = Modifier
                     .padding(16.dp)
                     .fillMaxWidth()

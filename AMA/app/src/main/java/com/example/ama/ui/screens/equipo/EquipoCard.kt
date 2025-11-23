@@ -14,11 +14,9 @@ import com.example.ama.data.dataclass.EquipoAmaItem
 fun EquipoCard(equipoAmaItem: EquipoAmaItem) {
     Card(
         modifier = Modifier
-
             .fillMaxWidth()
             .padding(8.dp)
     ) {
-
         equipoAmaItem.nombre?.let {
             Text(
                 text = it, style = MaterialTheme.typography.titleMedium,

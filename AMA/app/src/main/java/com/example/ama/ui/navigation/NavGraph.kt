@@ -15,8 +15,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.ama.data.dataclass.ProductData
 import com.example.ama.ui.Login.LoginScreen
-import com.example.ama.ui.Register.RegScreenDClass
 import com.example.ama.ui.Register.RegisterScreen
 import com.example.ama.ui.Register.RolScreen
 import com.example.ama.ui.Register.StartScreen
@@ -38,6 +38,7 @@ import com.example.ama.ui.screens.detail.ProductDetailScreen
 import com.example.ama.ui.screens.equipo.EquipoScreen
 import com.example.ama.ui.screens.perfil.PerfilScreen
 import com.example.ama.ui.screens.products.ProductScreen
+import com.example.ama.ui.screens.products.publicados.ProdPublicados
 import com.example.ama.ui.screens.settings.SettingsScreen
 import com.example.ama.ui.screens.subcategory.ProductSubCatScreen
 import com.example.ama.ui.theme.ThemeOption
@@ -304,6 +305,18 @@ fun AppNavigation(
                 onOpenPublish = { navController.navigate(Routes.PUBLISH) },
                 onOpenSettings = { navController.navigate(Routes.SETTINGS) }
             )
+        }
+
+        composable("prodPublicados") {
+            ProdPublicados(
+                navController = navController,
+                cartCount = cartCount,
+                onOpenCart = { navController.navigate(Routes.CART) },
+                onOpenPublish = { navController.navigate(Routes.PUBLISH) },
+                onOpenSettings = { navController.navigate(Routes.SETTINGS) }
+            )
+
+
         }
 
         composable("carritoList") {

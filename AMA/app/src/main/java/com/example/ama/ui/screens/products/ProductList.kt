@@ -18,7 +18,6 @@ fun ProductList(modifier: Modifier = Modifier) {
     val productListViewModel: ProductViewModel = viewModel(
         factory = ProductViewModelFactory()
     )
-
     val productList by productListViewModel.productList.collectAsState()
     val listState = rememberLazyListState()
 
@@ -26,7 +25,7 @@ fun ProductList(modifier: Modifier = Modifier) {
         snapshotFlow { listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index }
             .collect { index ->
 //                Log.d("ProductList", "Index: ${(index?:0)+1}, Size: ${productList.size}")
-                if ((index?:0)+1 == productList.size) {
+                if ((index ?: 0) + 1 == productList.size) {
                     productListViewModel.getNextProduct()
                 }
             }
@@ -35,7 +34,7 @@ fun ProductList(modifier: Modifier = Modifier) {
     LazyColumn(
         state = listState,
         modifier = modifier
-    ){
+    ) {
         items(productList.size) { index ->
             ProductCard(product = productList[index])
         }
