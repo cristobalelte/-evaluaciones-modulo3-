@@ -37,6 +37,7 @@ fun PublicadosCard(product: ProductData) {
             .padding(8.dp)
     ) {
         var showPopup by remember { mutableStateOf(false) }
+        var showPopup2 by remember { mutableStateOf(false) }
 
         // 3. Usa el componente Popup
         if (showPopup) {
@@ -51,6 +52,14 @@ fun PublicadosCard(product: ProductData) {
                     verticalArrangement = Arrangement.Center
                 )
                 {
+                    Text(
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .padding(top = 8.dp),
+                        text = "¿Estás seguro de que deseas eliminar tu artesanía?",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = Color.Black
+                    )
                     Box(
                         contentAlignment = Alignment.Center,
                         modifier = Modifier
@@ -70,13 +79,16 @@ fun PublicadosCard(product: ProductData) {
                     } //Cierre box
 
                     Text(
-                        text= "${product.name}",
+                        text = "${product.name}",
                         style = MaterialTheme.typography.titleMedium,
                         color = Color.Black
                     )
 
                     Button(
-                        onClick = { showPopup = false },
+                        onClick = {
+                            showPopup = false
+                            showPopup2 = true
+                        },
                         modifier = Modifier
                             .padding(end = 8.dp)
                     )
@@ -104,6 +116,42 @@ fun PublicadosCard(product: ProductData) {
 
 
                 } //Cierre Column
+            }
+        }
+
+        if (showPopup2) {
+            Popup(onDismissRequest = { showPopup2 = false }) { // Cierra la ventana al tocar fuera
+                Column(
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .fillMaxWidth()
+                        .background(Color.White),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                )
+                {
+                    Text(
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .padding(top = 8.dp),
+                        text = "Tu artesanía ${product.name} se ha eliminado correctamente",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = Color.Black
+                    )
+
+                    Button(
+                        onClick = { showPopup2 = false },
+                        modifier = Modifier
+                            .padding(end = 8.dp)
+                    ){
+                        Text(
+                            text = "Volver",
+                            color = Color.White
+                        )
+                    }
+
+                }
+
             }
         }
 
