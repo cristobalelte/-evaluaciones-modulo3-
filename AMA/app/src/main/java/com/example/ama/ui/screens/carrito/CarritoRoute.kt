@@ -2,11 +2,13 @@ package com.example.ama.ui.screens.carrito
 
 import androidx.compose.runtime.*
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-
+import androidx.navigation.NavController
+import com.example.ama.ui.navigation.Routes
 
 
 @Composable
 fun CartRoute(
+    navController: NavController,
     vm: CartViewModel,
     onBack: () -> Unit,
     onCheckoutSuccess: () -> Unit,
@@ -41,13 +43,14 @@ fun CartRoute(
         onDec = { vm.dec(it) },
         onRemove = { vm.remove(it) },
         onClear = { vm.clear() },
-        onCheckout = {
-            vm.checkout(
-                owner = "usuario123",
-                onSuccess = onCheckoutSuccess,
-                onFail = { /* TODO: snackbar/toast con error */ }
-            )
-        }
+        onCheckout = { navController.navigate(Routes.DATOS_ENVIO)}
+//        onCheckout = {
+//            vm.checkout(
+//                owner = "usuario123",
+//                onSuccess = onCheckoutSuccess,
+//                onFail = { /* TODO: snackbar/toast con error */ }
+//            )
+//        }
     )
 }
 

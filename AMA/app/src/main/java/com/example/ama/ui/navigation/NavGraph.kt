@@ -194,13 +194,14 @@ fun AppNavigation(
         composable(Routes.CART) {
             val cartVm: CartViewModel = viewModel()   // o hiltViewModel()
             CartRoute(
+                navController = navController,
                 vm = cartVm,
                 onBack = { navController.popBackStack() },
                 onCheckoutSuccess = { navController.navigate(Routes.DATOS_ENVIO) }
             )
         }
 
-        composable(Routes.DATOS_ENVIO) {
+        composable("opcionEntrega") {
             DataEnvioScreen(
                 navController = navController,
                 cartCount = vm.cartCount,
@@ -266,7 +267,7 @@ fun AppNavigation(
             )
         }
 
-        composable("datosEnvio") {
+        composable(Routes.DATOS_ENVIO) {
             DataEnvio(
                 navController = navController,
                 cartCount = cartCount,
