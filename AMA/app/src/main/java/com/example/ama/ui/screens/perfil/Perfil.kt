@@ -84,7 +84,8 @@ fun PerfilScreen(
                 title = {
                     Image(
                         painter = painterResource(R.drawable.logo_artemayor_horizontal),
-                        contentDescription = "Arte Mayor"
+                        contentDescription = "Arte Mayor",
+                        modifier = Modifier.clickable(onClick = { navController.navigate(Routes.HOME) })
                     )
                 },
                 navigationIcon = {

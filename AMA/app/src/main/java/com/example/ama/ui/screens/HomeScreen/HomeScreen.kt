@@ -43,6 +43,7 @@ import com.example.ama.ui.components.BottomBar
 import com.example.ama.ui.components.Product
 import com.example.ama.ui.components.ProductType
 import com.example.ama.ui.components.priceFormatted
+import com.example.ama.ui.navigation.Routes
 import com.example.ama.ui.screens.HomeScreen.ImagenesEnumeration
 
 
@@ -74,7 +75,8 @@ fun HomeScreen(
                 title = {
                     Image(
                         painter = painterResource(R.drawable.logo_artemayor_horizontal),
-                        contentDescription = "Arte Mayor"
+                        contentDescription = "Arte Mayor",
+                        modifier = Modifier.clickable(onClick = { navController.navigate(Routes.HOME)})
                     )
                 },
                 navigationIcon = {
@@ -182,7 +184,7 @@ fun HomeScreen(
             }
 
             // CARRITO DE COMPRAS (productos recientes)
-            item {
+           /* item {
                 SectionTitle(
                     title = "Carrito de compras",
 //                  trailing = { TextButton(onClick = onSeeAllNew) { Text("Ver toto") } }
@@ -195,7 +197,7 @@ fun HomeScreen(
                         }
                     }
                 )
-            }
+            }*/
 
 
             //VER EQUIPO:

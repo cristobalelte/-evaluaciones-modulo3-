@@ -2,6 +2,7 @@ package com.example.ama.ui.screens.HomeScreen
 
 import android.widget.Toast
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -35,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.ama.R
 import com.example.ama.ui.components.BottomBar
+import com.example.ama.ui.navigation.Routes
 
 //metodoPago
 @OptIn(ExperimentalMaterial3Api::class)
@@ -52,7 +54,8 @@ fun ProductPay(
                 title = {
                     Image(
                         painter = painterResource(R.drawable.logo_artemayor_horizontal),
-                        contentDescription = "Arte Mayor"
+                        contentDescription = "Arte Mayor",
+                        modifier = Modifier.clickable(onClick = { navController.navigate(Routes.HOME)})
                     )
                 },
                 // 👈 Botón de Configuración a la izquierda

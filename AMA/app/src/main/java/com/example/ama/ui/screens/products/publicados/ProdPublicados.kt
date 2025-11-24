@@ -1,6 +1,8 @@
 package com.example.ama.ui.screens.products.publicados
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
@@ -26,6 +28,7 @@ import com.example.ama.data.viewmodel.ProductViewModel
 import com.example.ama.data.viewmodel.ProductViewModelFactory
 import com.example.ama.ui.components.BottomBar
 import com.example.ama.ui.components.Product
+import com.example.ama.ui.navigation.Routes
 import com.example.ama.ui.screens.products.ProductCard
 
 //ruta: prodPublicados
@@ -54,7 +57,8 @@ fun ProdPublicados(
                 title = {
                     Image(
                         painter = painterResource(R.drawable.logo_artemayor_horizontal),
-                        contentDescription = "Arte Mayor"
+                        contentDescription = "Arte Mayor",
+                        modifier = Modifier.clickable(onClick = { navController.navigate(Routes.HOME)})
                     )
                 },
                 navigationIcon = {
@@ -81,8 +85,8 @@ fun ProdPublicados(
     {
         paddingValues ->
         LazyColumn(
+            modifier = Modifier.padding(paddingValues),
             state = listState,
-            modifier = modifier
         ){
             items(productList.size) { index ->
                 ProductCard(product = productList[index])

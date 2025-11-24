@@ -3,6 +3,7 @@ package com.example.ama.ui.screens.HomeScreen
 import android.R.attr.category
 import android.widget.Toast
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -61,6 +62,7 @@ import com.example.ama.ui.components.BottomBar
 import com.example.ama.ui.components.ProductType
 import com.example.ama.ui.components.SUBCATS
 import com.example.ama.ui.components.label
+import com.example.ama.ui.navigation.Routes
 
 //Ruta = "regionScreen"
 @OptIn(ExperimentalMaterial3Api::class)
@@ -85,7 +87,8 @@ fun ProductRegionScreen(
                 title = {
                     Image(
                         painter = painterResource(R.drawable.logo_artemayor_horizontal),
-                        contentDescription = "Arte Mayor"
+                        contentDescription = "Arte Mayor",
+                        modifier = Modifier.clickable(onClick = { navController.navigate(Routes.HOME)})
                     )
                 },
                 // 👈 Botón de Configuración a la izquierda

@@ -3,6 +3,7 @@
 package com.example.ama.ui.screens.checkout
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -21,6 +22,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.ama.R
 import com.example.ama.ui.components.BottomBar
+import com.example.ama.ui.navigation.Routes
 import kotlinx.coroutines.flow.StateFlow
 
 @Composable
@@ -41,7 +43,8 @@ fun DataEnvioScreen(
                     Image(
                         painter = painterResource(R.drawable.logo_artemayor_horizontal),
                         contentDescription = "Arte Mayor",
-                        modifier = Modifier.height(28.dp)
+                        modifier = Modifier.height(28.dp).clickable(onClick = { navController.navigate(
+                            Routes.HOME)})
                     )
                 },
                 navigationIcon = {

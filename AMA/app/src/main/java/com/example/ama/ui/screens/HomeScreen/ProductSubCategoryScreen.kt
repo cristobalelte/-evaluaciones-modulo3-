@@ -2,6 +2,7 @@ package com.example.ama.ui.screens.subcategory
 
 import android.R.attr.minWidth
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -61,6 +62,7 @@ import com.example.ama.ui.components.SUBCATS
 import com.example.ama.ui.components.label
 import com.example.ama.ui.components.prettyLabel
 import com.example.ama.R
+import com.example.ama.ui.navigation.Routes
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -85,7 +87,8 @@ fun ProductSubCatScreen(
                 title = {
                     Image(
                         painter = painterResource(R.drawable.logo_artemayor_horizontal),
-                        contentDescription = "Arte Mayor"
+                        contentDescription = "Arte Mayor",
+                        modifier = Modifier.clickable(onClick = { navController.navigate(Routes.HOME)})
                     )
                 },
 

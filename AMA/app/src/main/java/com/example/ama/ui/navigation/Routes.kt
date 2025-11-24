@@ -6,7 +6,10 @@ import com.example.ama.ui.components.ProductType
 object Routes {
     const val HOME = "home"
     const val LOGIN = "login"
-    const val CART = "cart"
+    //    navController.navigate("carritoList")
+//    const val CART = "cart"
+    const val CART = "carritoList"
+
     const val PUBLISH = "publish"
     const val CATALOG = "catalog"
     const val SETTINGS = "settings"

@@ -1,6 +1,7 @@
 package com.example.ama.ui.screens.carrito2
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Settings
@@ -19,6 +20,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavController
 import com.example.ama.R
 import com.example.ama.ui.components.BottomBar
+import com.example.ama.ui.navigation.Routes
 import com.example.ama.ui.screens.products.ProductList
 
 //Ruta: carritoList
@@ -37,7 +39,8 @@ fun CarritoScreen(
                 title = {
                     Image(
                         painter = painterResource(R.drawable.logo_artemayor_horizontal),
-                        contentDescription = "Arte Mayor"
+                        contentDescription = "Arte Mayor",
+                        modifier = Modifier.clickable(onClick = { navController.navigate(Routes.HOME) })
                     )
                 },
                 navigationIcon = {

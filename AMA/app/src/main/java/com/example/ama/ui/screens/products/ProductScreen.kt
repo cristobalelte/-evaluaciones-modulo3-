@@ -1,6 +1,7 @@
 package com.example.ama.ui.screens.products
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -21,6 +22,7 @@ import androidx.navigation.NavController
 import com.example.ama.R
 import com.example.ama.ui.components.BottomBar
 import com.example.ama.ui.components.ProductType
+import com.example.ama.ui.navigation.Routes
 
 //Ruta: productList
 @OptIn(ExperimentalMaterial3Api::class)
@@ -38,7 +40,8 @@ fun ProductScreen(
                 title = {
                     Image(
                         painter = painterResource(R.drawable.logo_artemayor_horizontal),
-                        contentDescription = "Arte Mayor"
+                        contentDescription = "Arte Mayor",
+                        modifier = Modifier.clickable(onClick = { navController.navigate(Routes.HOME)})
                     )
                 },
                 navigationIcon = {
