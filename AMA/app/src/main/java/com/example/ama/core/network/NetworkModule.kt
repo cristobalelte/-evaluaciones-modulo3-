@@ -12,7 +12,8 @@ object NetworkModule {
         .build()
 
     private val retrofit = Retrofit.Builder()
-        .baseUrl("http://54.243.16.169:3000/")    // debe terminar con /
+//        .baseUrl("http://54.243.16.169:3000/")    // debe terminar con /
+        .baseUrl("http://3.128.184.226:3000/")
         .addConverterFactory(MoshiConverterFactory.create(moshi))
         .client(OkHttpClient.Builder().build())
         .build()

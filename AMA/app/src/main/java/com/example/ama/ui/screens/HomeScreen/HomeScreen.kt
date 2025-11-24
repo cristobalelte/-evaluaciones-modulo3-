@@ -184,7 +184,7 @@ fun HomeScreen(
             }
 
             // CARRITO DE COMPRAS (productos recientes)
-           /* item {
+            item {
                 SectionTitle(
                     title = "Carrito de compras",
 //                  trailing = { TextButton(onClick = onSeeAllNew) { Text("Ver toto") } }
@@ -193,11 +193,11 @@ fun HomeScreen(
                             onClick = { navController.navigate("carritoList") }
                         )
                         {
-                            Text("Ver Carrito")
+                            Text("Ver Carrito de Backend")
                         }
                     }
                 )
-            }*/
+            }
 
 
             //VER EQUIPO:

@@ -7,8 +7,8 @@ object Routes {
     const val HOME = "home"
     const val LOGIN = "login"
     //    navController.navigate("carritoList")
-//    const val CART = "cart"
-    const val CART = "carritoList"
+    const val CART = "cart"
+//    const val CART = "carritoList"
 
     const val PUBLISH = "publish"
     const val CATALOG = "catalog"
