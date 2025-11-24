@@ -147,7 +147,7 @@ fun PerfilScreen(
                         .fillMaxSize()
                         .weight(1f)
                         .background(color = Color.Gray),
-                    contentAlignment = Alignment.Center
+                    contentAlignment = Alignment.Center,
                 )
                 {
                     Text(

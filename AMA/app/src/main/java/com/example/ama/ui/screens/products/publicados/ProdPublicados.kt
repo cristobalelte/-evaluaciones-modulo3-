@@ -89,7 +89,7 @@ fun ProdPublicados(
             state = listState,
         ){
             items(productList.size) { index ->
-                ProductCard(product = productList[index])
+                PublicadosCard(product = productList[index])
             }
 
         }

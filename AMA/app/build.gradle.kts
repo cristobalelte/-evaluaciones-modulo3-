@@ -62,6 +62,7 @@ dependencies {
     implementation("com.squareup.moshi:moshi:1.15.1")
     implementation(libs.play.services.analytics.impl)
     implementation("com.squareup.moshi:moshi-kotlin:1.15.1")
+    implementation(libs.androidx.compose.material3)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

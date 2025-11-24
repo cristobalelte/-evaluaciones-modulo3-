@@ -31,6 +31,7 @@ fun ProductCard(product: ProductData) {
             )
         }
 
+//      Categoria:
         product.craftType?.let {
             Text(
                 text = "Categoria: $it", style = MaterialTheme.typography.bodyMedium,
