@@ -1,33 +1,112 @@
 package com.example.ama.ui.screens.products.publicados
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Popup
 import com.example.ama.data.dataclass.ProductData
 
 @Composable
-fun PublicadosCard(product: ProductData){
+fun PublicadosCard(product: ProductData) {
     Card(
         modifier = Modifier
             .fillMaxSize()
             .padding(8.dp)
     ) {
+        var showPopup by remember { mutableStateOf(false) }
+
+        // 3. Usa el componente Popup
+        if (showPopup) {
+            Popup(onDismissRequest = { showPopup = false }) { // Cierra la ventana al tocar fuera
+                // Define el contenido de la ventana emergente aquí
+                Column(
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .fillMaxWidth()
+                        .background(Color.White),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                )
+                {
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .fillMaxWidth()
+                            .background(Color.DarkGray)
+                    )
+                    {
+                        Text(
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier
+                                .padding(top = 8.dp),
+                            text = "$${product.price}",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = Color.White
+                        )
+                    } //Cierre box
+
+                    Text(
+                        text= "${product.name}",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = Color.Black
+                    )
+
+                    Button(
+                        onClick = { showPopup = false },
+                        modifier = Modifier
+                            .padding(end = 8.dp)
+                    )
+                    {
+                        Text(
+                            text = "Sí. Estoy seguro",
+                            color = Color.White
+                        )
+                    }
+
+                    Button(
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.LightGray,
+                            contentColor = Color.Black
+                        ),
+                        onClick = { showPopup = false },
+                        modifier = Modifier
+                            .padding(end = 8.dp)
+                    )
+                    {
+                        Text(
+                            text = "No. Cancelar"
+                        )
+                    }
+
+
+                } //Cierre Column
+            }
+        }
+
         /*Image(
         painter = painterResource(id = R.drawable.logo_artemayor_horizontal),
         contentDescription = "Descripción de la imagen", // Es importante para la accesibilidad
@@ -83,7 +162,7 @@ fun PublicadosCard(product: ProductData){
                     .fillMaxWidth()
             ) {
                 Button(
-                    onClick = { /* Acción al hacer clic en el botón */ },
+                    onClick = { showPopup = true },
                     modifier = Modifier
                         .weight(1f)
                         .padding(end = 8.dp)
