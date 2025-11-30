@@ -209,7 +209,7 @@ fun HomeScreen(
                             onClick = { navController.navigate("equipoScreen") }
                         )
                         {
-                            Text("Nustro equipo")
+                            Text("Nuestro equipo")
                         }
                     }
                 )
