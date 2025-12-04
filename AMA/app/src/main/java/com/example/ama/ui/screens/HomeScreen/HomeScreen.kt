@@ -167,7 +167,7 @@ fun HomeScreen(
                 )
             }
 
-            // LO NUEVO DE ESTE MES (productos recientes)
+            // LO NUEVO DE ESTE MES (productos recientes): Centrar titulos
             item {
                 SectionTitle(
                     title = "Lo nuevo de este mes",
