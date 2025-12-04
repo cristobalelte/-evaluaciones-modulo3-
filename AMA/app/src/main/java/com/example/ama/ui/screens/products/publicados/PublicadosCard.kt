@@ -199,7 +199,7 @@ fun PublicadosCard(product: ProductData) {
             )
             Text(
                 textAlign = TextAlign.Center,
-                text = "${product.craftType}",
+                text = "${product.craftType}", //Categoria
                 style = MaterialTheme.typography.titleMedium,
                 color = Color.Black
             )

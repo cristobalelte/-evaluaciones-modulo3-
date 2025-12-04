@@ -5,11 +5,13 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -37,14 +39,19 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.ama.R
+import com.example.ama.data.viewmodel.ProductViewModel
+import com.example.ama.data.viewmodel.ProductViewModelFactory
 import com.example.ama.ui.components.BottomBar
 import com.example.ama.ui.components.Product
 import com.example.ama.ui.components.ProductType
 import com.example.ama.ui.components.priceFormatted
 import com.example.ama.ui.navigation.Routes
 import com.example.ama.ui.screens.HomeScreen.ImagenesEnumeration
+import com.example.ama.ui.screens.HomeScreen.NuevoMesCard
+import com.example.ama.ui.screens.products.publicados.PublicadosCard
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -67,6 +74,13 @@ fun HomeScreen(
     onOpenProduct: (Product) -> Unit = {},
     onSeeAllNew: () -> Unit = {},
 ) {
+    //    Crear un viewmodel para obtener la lista de prod publicados y llamarlo desde acá, reempl las sgtes vars:
+    val productListViewModel: ProductViewModel = viewModel(
+        factory = ProductViewModelFactory()
+    )
+    val productList by productListViewModel.productList.collectAsState()
+    val listState = rememberLazyListState()
+
     var query by remember { mutableStateOf("") }
 
     Scaffold(
@@ -76,7 +90,7 @@ fun HomeScreen(
                     Image(
                         painter = painterResource(R.drawable.logo_artemayor_horizontal),
                         contentDescription = "Arte Mayor",
-                        modifier = Modifier.clickable(onClick = { navController.navigate(Routes.HOME)})
+                        modifier = Modifier.clickable(onClick = { navController.navigate(Routes.HOME) })
                     )
                 },
                 navigationIcon = {
@@ -149,7 +163,7 @@ fun HomeScreen(
             }
 
             // CATEGORÍAS (carrusel)
-            item {SectionTitle("Categorías")}
+            item { SectionTitle("Categorías") }
             item {
                 CategoryCarousel(
                     items = categories,
@@ -168,20 +182,63 @@ fun HomeScreen(
             }
 
             // LO NUEVO DE ESTE MES (productos recientes): Centrar titulos
+            /*   item {
+                   SectionTitle(
+                       title = "Lo nuevo de este mes",
+   //                  trailing = { TextButton(onClick = onSeeAllNew) { Text("Ver toto") } }
+                       trailing = {
+                           TextButton(
+                               onClick = { navController.navigate("productList") }
+                           )
+                           {
+                               Text("Ver todo")
+                           }
+                       }
+                   )
+               }*/
             item {
-                SectionTitle(
-                    title = "Lo nuevo de este mes",
-//                  trailing = { TextButton(onClick = onSeeAllNew) { Text("Ver toto") } }
-                    trailing = {
-                        TextButton(
-                            onClick = { navController.navigate("productList") }
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Box(
+                        modifier = Modifier.padding(4.dp)
+                    ){
+                        Text(
+                            text = "Lo nuevo de este mes",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.SemiBold
                         )
-                        {
-                            Text("Ver todo")
-                        }
                     }
-                )
+                    Box(
+                        modifier = Modifier
+                            .padding(4.dp)
+                            .fillMaxWidth()
+                            .width(220.dp)
+                            .aspectRatio(16f / 9f), // Establece la relación de aspecto (ej: 16:9)
+                    ){
+                        Row(
+                            modifier = Modifier
+                                .padding(4.dp)
+                                .fillMaxWidth()
+                                .horizontalScroll(rememberScrollState())
+                        ){
+                            for (product in productList) {
+                                Box(
+                                    modifier = Modifier.fillMaxWidth()
+                                ){
+                                    NuevoMesCard(product = product)
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                }
             }
+
 
             // CARRITO DE COMPRAS (productos recientes)
             item {
