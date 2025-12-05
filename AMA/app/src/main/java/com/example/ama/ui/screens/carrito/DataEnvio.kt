@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.ama.R
 import com.example.ama.ui.components.BottomBar
+import com.example.ama.ui.components.TopBar
 import com.example.ama.ui.navigation.Routes
 
 //Ruta = "datosEnvio"
@@ -49,37 +50,18 @@ fun DataEnvio(
 //    var query by remember { mutableStateOf("") }
     Scaffold(
         topBar = {
-            CenterAlignedTopAppBar(
-
-                title = {
-                    Image(
-                        painter = painterResource(R.drawable.logo_artemayor_horizontal),
-                        contentDescription = "Arte Mayor",
-                        modifier = Modifier.clickable(onClick = { navController.navigate(Routes.HOME) })
-                    )
-                },
-                // 👈 Botón de Configuración a la izquierda
-                navigationIcon = {
-                    IconButton(onClick = onOpenSettings) {
-                        Icon(
-                            imageVector = Icons.Outlined.Settings,
-                            contentDescription = "Configuración"
-                        )
-                    }
-                },
-                // 👉 Solo carrito a la derecha
-                actions = {
-                    IconButton(onClick = onOpenCart) {
-                        BadgedBox(badge = { if (cartCount > 0) Badge { Text("$cartCount") } }) {
-                            Icon(Icons.Outlined.ShoppingCart, contentDescription = "Carrito")
-                        }
-                    }
-                }
+            TopBar(
+                navController,
+                cartCount,
+                onOpenCart
             )
         },
-        bottomBar = { BottomBar(onPublishClick = onOpenPublish,
-            onProfileClick = { navController.navigate("perfil") }) }
-        
+        bottomBar = {
+            BottomBar(
+                navController = navController,
+                onPublishClick = onOpenPublish,
+                onProfileClick = { navController.navigate("perfil") })
+        }
     ) { padding ->
         Column(
             modifier = Modifier

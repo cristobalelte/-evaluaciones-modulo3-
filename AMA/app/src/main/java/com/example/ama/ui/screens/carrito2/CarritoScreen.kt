@@ -20,6 +20,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavController
 import com.example.ama.R
 import com.example.ama.ui.components.BottomBar
+import com.example.ama.ui.components.TopBar
 import com.example.ama.ui.navigation.Routes
 import com.example.ama.ui.screens.products.ProductList
 
@@ -35,34 +36,20 @@ fun CarritoScreen(
 ){
     Scaffold(
         topBar = {
-            CenterAlignedTopAppBar(
-                title = {
-                    Image(
-                        painter = painterResource(R.drawable.logo_artemayor_horizontal),
-                        contentDescription = "Arte Mayor",
-                        modifier = Modifier.clickable(onClick = { navController.navigate(Routes.HOME) })
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = onOpenSettings) {
-                        Icon(Icons.Outlined.Settings, contentDescription = "Configuración")
-                    }
-                },
-                actions = {
-                    IconButton(onClick = onOpenCart) {
-                        BadgedBox(badge = { if (cartCount > 0) Badge { Text("$cartCount") } }) {
-                            Icon(Icons.Outlined.ShoppingCart, contentDescription = "Carrito")
-                        }
-                    }
-                }
+            TopBar(
+                navController,
+                cartCount,
+                onOpenCart
             )
         },
         bottomBar = {
             BottomBar(
+                navController = navController,
                 onPublishClick = onOpenPublish,
                 onProfileClick = { navController.navigate("perfil") })
         }
-    ) { innerPadding ->
+    )
+    { innerPadding ->
         CarritoList(modifier = Modifier.padding(innerPadding))
     }
 }

@@ -10,24 +10,26 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import com.example.ama.ui.components.TopBar
 import com.example.ama.ui.theme.ThemeOption
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
+    navController: NavController,
+    cartCount: Int,
+    onOpenCart: () -> Unit,
     themeOpt: ThemeOption,
     onChangeTheme: (ThemeOption) -> Unit,
     onBack: () -> Unit
 ) {
     Scaffold(
         topBar = {
-            CenterAlignedTopAppBar(
-                title = { Text("Configuración") },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Volver")
-                    }
-                }
+            TopBar(
+                navController,
+                cartCount,
+                onOpenCart
             )
         }
     ) { padding ->

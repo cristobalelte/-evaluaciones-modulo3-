@@ -16,11 +16,14 @@ import com.example.ama.ui.components.BottomBar
 import com.example.ama.ui.components.ProductType
 import com.example.ama.ui.components.Subcategory
 import com.example.ama.ui.components.SUBCATS
+import com.example.ama.ui.components.TopBar
 import com.example.ama.ui.components.label
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SubcategoryScreen(
+    cartCount: Int,
+    onOpenCart: () -> Unit,
     navController: NavController,
     onOpenPublish: () -> Unit,
     category: ProductType,
@@ -28,25 +31,20 @@ fun SubcategoryScreen(
     onOpenProducts: (Subcategory) -> Unit
 ) {
     var q by remember { mutableStateOf("") }
-
     Scaffold(
         topBar = {
-            CenterAlignedTopAppBar(
-                title = { Text(category.name.lowercase().replaceFirstChar { it.titlecase() }) },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(Icons.Outlined.ArrowBack, contentDescription = "Volver")
-                    }
-                }
+            TopBar(
+                navController,
+                cartCount,
+                onOpenCart
             )
         },
         bottomBar = {
             BottomBar(
+                navController = navController,
                 onPublishClick = onOpenPublish,
-                onProfileClick = { navController.navigate("perfil") }
-            )
+                onProfileClick = { navController.navigate("perfil") })
         }
-
     ) { padding ->
         val all = SUBCATS[category].orEmpty()
         val filtered = remember(q, all) {

@@ -22,6 +22,7 @@ import androidx.navigation.NavController
 import com.example.ama.R
 import com.example.ama.ui.components.BottomBar
 import com.example.ama.ui.components.ProductType
+import com.example.ama.ui.components.TopBar
 import com.example.ama.ui.navigation.Routes
 
 //Ruta: productList
@@ -36,30 +37,15 @@ fun ProductScreen(
 ){
     Scaffold(
         topBar = {
-            CenterAlignedTopAppBar(
-                title = {
-                    Image(
-                        painter = painterResource(R.drawable.logo_artemayor_horizontal),
-                        contentDescription = "Arte Mayor",
-                        modifier = Modifier.clickable(onClick = { navController.navigate(Routes.HOME)})
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = onOpenSettings) {
-                        Icon(Icons.Outlined.Settings, contentDescription = "Configuración")
-                    }
-                },
-                actions = {
-                    IconButton(onClick = onOpenCart) {
-                        BadgedBox(badge = { if (cartCount > 0) Badge { Text("$cartCount") } }) {
-                            Icon(Icons.Outlined.ShoppingCart, contentDescription = "Carrito")
-                        }
-                    }
-                }
+            TopBar(
+                navController,
+                cartCount,
+                onOpenCart
             )
         },
         bottomBar = {
             BottomBar(
+                navController = navController,
                 onPublishClick = onOpenPublish,
                 onProfileClick = { navController.navigate("perfil") })
         }

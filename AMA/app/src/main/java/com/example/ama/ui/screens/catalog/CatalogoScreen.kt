@@ -171,8 +171,12 @@ fun CatalogScreen(
             )
         },
         snackbarHost = { SnackbarHost(snackbarHostState) },
-        bottomBar = { BottomBar(onPublishClick = onOpenPublish,
-            onProfileClick = { navController.navigate("perfil") }) }
+        bottomBar = { BottomBar(
+            navController = navController,
+            onPublishClick = onOpenPublish,
+            onProfileClick = { navController.navigate("perfil") }
+        )
+        }
     ) { padding ->
         Column(
             modifier = Modifier

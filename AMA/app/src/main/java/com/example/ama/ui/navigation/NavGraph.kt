@@ -2,7 +2,7 @@ package com.example.ama.ui.navigation
 
 import android.app.Activity
 import android.net.Uri
-import com.example.ama.ui.screens.home.HomeScreen
+import com.example.ama.ui.screens.HomeScreen.HomeScreen
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -15,7 +15,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.ama.data.dataclass.ProductData
 import com.example.ama.ui.Login.LoginScreen
 import com.example.ama.ui.Register.RegisterScreen
 import com.example.ama.ui.Register.RolScreen
@@ -33,7 +32,7 @@ import com.example.ama.ui.screens.carrito.DataEnvio
 import com.example.ama.ui.screens.carrito2.CarritoScreen
 import com.example.ama.ui.screens.catalog.CatalogRoute
 import com.example.ama.ui.screens.catalog.CatalogViewModel
-import com.example.ama.ui.screens.checkout.DataEnvioScreen
+import com.example.ama.ui.screens.HomeScreen.DataEnvioScreen
 import com.example.ama.ui.screens.detail.ProductDetailScreen
 import com.example.ama.ui.screens.equipo.EquipoScreen
 import com.example.ama.ui.screens.perfil.PerfilScreen
@@ -93,6 +92,7 @@ fun AppNavigation(
 
         composable(Routes.LOGIN) {
             LoginScreen(
+                navController = navController,
                 onLoggedIn = {
                     navController.navigate(Routes.HOME) {
                         popUpTo(Routes.LOGIN) { inclusive = true }
@@ -203,8 +203,9 @@ fun AppNavigation(
 
         composable("opcionEntrega") {
             DataEnvioScreen(
+                cartCount = cartCount,
                 navController = navController,
-                cartCount = vm.cartCount,
+                count = vm.cartCount,
                 onBack = { navController.popBackStack() },
                 onOpenCart = { navController.navigate(Routes.CART) },
                 onOpenPublish = { /* ... */ },
@@ -216,6 +217,9 @@ fun AppNavigation(
 
         composable(Routes.SETTINGS) {
             SettingsScreen(
+                navController = navController,
+                cartCount = cartCount,
+                onOpenCart = { navController.navigate(Routes.CART) },
                 themeOpt = themeOpt,
                 onChangeTheme = onChangeTheme,
                 onBack = { navController.popBackStack() }

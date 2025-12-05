@@ -1,4 +1,4 @@
-package com.example.ama.ui.screens.home
+package com.example.ama.ui.screens.HomeScreen
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
@@ -17,7 +17,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.FavoriteBorder
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.ShoppingCart
@@ -47,11 +48,11 @@ import com.example.ama.data.viewmodel.ProductViewModelFactory
 import com.example.ama.ui.components.BottomBar
 import com.example.ama.ui.components.Product
 import com.example.ama.ui.components.ProductType
+import com.example.ama.ui.components.TopBar
 import com.example.ama.ui.components.priceFormatted
 import com.example.ama.ui.navigation.Routes
-import com.example.ama.ui.screens.HomeScreen.ImagenesEnumeration
-import com.example.ama.ui.screens.HomeScreen.NuevoMesCard
-import com.example.ama.ui.screens.products.publicados.PublicadosCard
+import com.example.ama.ui.theme.onPrimaryLight
+import com.example.ama.ui.theme.primaryLight
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -85,34 +86,20 @@ fun HomeScreen(
 
     Scaffold(
         topBar = {
-            CenterAlignedTopAppBar(
-                title = {
-                    Image(
-                        painter = painterResource(R.drawable.logo_artemayor_horizontal),
-                        contentDescription = "Arte Mayor",
-                        modifier = Modifier.clickable(onClick = { navController.navigate(Routes.HOME) })
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = onOpenSettings) {
-                        Icon(Icons.Outlined.Settings, contentDescription = "Configuración")
-                    }
-                },
-                actions = {
-                    IconButton(onClick = onOpenCart) {
-                        BadgedBox(badge = { if (cartCount > 0) Badge { Text("$cartCount") } }) {
-                            Icon(Icons.Outlined.ShoppingCart, contentDescription = "Carrito")
-                        }
-                    }
-                }
+            TopBar(
+                navController,
+                cartCount,
+                onOpenCart
             )
         },
         bottomBar = {
             BottomBar(
+                navController = navController,
                 onPublishClick = onOpenPublish,
                 onProfileClick = { navController.navigate("perfil") })
         }
-    ) { padding ->
+    )
+    { padding ->
         LazyColumn(
             modifier = Modifier
                 .padding(padding)
@@ -203,7 +190,7 @@ fun HomeScreen(
                 ) {
                     Box(
                         modifier = Modifier.padding(4.dp)
-                    ){
+                    ) {
                         Text(
                             text = "Lo nuevo de este mes",
                             style = MaterialTheme.typography.titleMedium,
@@ -216,17 +203,61 @@ fun HomeScreen(
                             .fillMaxWidth()
                             .width(220.dp)
                             .aspectRatio(16f / 9f), // Establece la relación de aspecto (ej: 16:9)
-                    ){
+                    ) {
                         Row(
                             modifier = Modifier
                                 .padding(4.dp)
                                 .fillMaxWidth()
                                 .horizontalScroll(rememberScrollState())
-                        ){
+                        ) {
                             for (product in productList) {
                                 Box(
                                     modifier = Modifier.fillMaxWidth()
-                                ){
+                                ) {
+                                    NuevoMesCard(product = product)
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                }
+            }
+
+            // ESPECIAL DE TEMPORADA (banner)
+            item {
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Box(
+                        modifier = Modifier.padding(4.dp)
+                    ) {
+                        Text(
+                            text = "Especial de Temporada",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+                    Box(
+                        modifier = Modifier
+                            .padding(4.dp)
+                            .fillMaxWidth()
+                            .width(220.dp)
+                            .aspectRatio(16f / 9f), // Establece la relación de aspecto (ej: 16:9)
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .padding(4.dp)
+                                .fillMaxWidth()
+                                .horizontalScroll(rememberScrollState())
+                        ) {
+                            for (product in productList) {
+                                Box(
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
                                     NuevoMesCard(product = product)
                                 }
 
@@ -281,12 +312,12 @@ fun HomeScreen(
             }
 
             // ESPECIAL DE TEMPORADA (banner)
-            item { SectionTitle("Especial de temporada") }
-            item {
-                SeasonalBanner(resId = seasonalBannerRes)
-            }
+            /* item { SectionTitle("Especial de temporada") }
+             item {
+                 SeasonalBanner(resId = seasonalBannerRes)
+             }
 
-            item { Spacer(Modifier.height(28.dp)) }
+             item { Spacer(Modifier.height(28.dp)) }*/
         }
     }
 }

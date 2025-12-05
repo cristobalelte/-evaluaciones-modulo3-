@@ -1,73 +1,50 @@
 @file:OptIn(ExperimentalMaterial3Api::class)
 
-package com.example.ama.ui.screens.checkout
+package com.example.ama.ui.screens.HomeScreen
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.outlined.Settings
-import androidx.compose.material.icons.outlined.ShoppingCart
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import com.example.ama.R
 import com.example.ama.ui.components.BottomBar
-import com.example.ama.ui.navigation.Routes
+import com.example.ama.ui.components.TopBar
 import kotlinx.coroutines.flow.StateFlow
 
 @Composable
 fun DataEnvioScreen(
+    cartCount: Int,
     navController: NavController,
-    cartCount: StateFlow<Int>,
+    count: StateFlow<Int>,
     onBack: () -> Unit,
     onOpenCart: () -> Unit,
     onOpenPublish: () -> Unit,
     onOpenSettings: () -> Unit = {},
     onNext: () -> Unit
 ) {
-    val count by cartCount.collectAsStateWithLifecycle(initialValue = 0)
+    val count by count.collectAsStateWithLifecycle(initialValue = 0)
     Scaffold(
         topBar = {
-            CenterAlignedTopAppBar(
-                title = {
-                    Image(
-                        painter = painterResource(R.drawable.logo_artemayor_horizontal),
-                        contentDescription = "Arte Mayor",
-                        modifier = Modifier.height(28.dp).clickable(onClick = { navController.navigate(
-                            Routes.HOME)})
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Volver")
-                    }
-                },
-                actions = {
-                    // (opcional) ajustes
-                    IconButton(onClick = onOpenSettings) {
-                        Icon(Icons.Outlined.Settings, contentDescription = "Configuración")
-                    }
-                    IconButton(onClick = onOpenCart) {
-                        BadgedBox( badge = { if (count > 0) Badge { Text("$count") } }) {
-                            Icon(Icons.Outlined.ShoppingCart, contentDescription = "Carrito")
-                        }
-                    }
-                }
+            TopBar(
+                navController,
+                cartCount,
+                onOpenCart
             )
         },
-        bottomBar = { BottomBar(onPublishClick = onOpenPublish,
-            onProfileClick = { navController.navigate("perfil") }) }
-    ) { padding ->
+        bottomBar = {
+            BottomBar(
+                navController = navController,
+                onPublishClick = onOpenPublish,
+                onProfileClick = { navController.navigate("perfil") })
+        }
+    )
+    { padding ->
         LazyColumn(
             modifier = Modifier
                 .padding(padding)

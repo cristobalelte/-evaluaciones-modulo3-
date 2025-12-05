@@ -1,6 +1,7 @@
 package com.example.ama.ui.Register
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -26,6 +28,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -34,6 +37,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -45,6 +49,9 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.ama.R
+import com.example.ama.ui.navigation.Routes
+import com.example.ama.ui.theme.onPrimaryLight
+import com.example.ama.ui.theme.primaryLight
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -56,11 +63,24 @@ fun RegisterScreen(
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
+                modifier = Modifier.padding(horizontal = 8.dp),
+                expandedHeight = 100.dp,
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = primaryLight, //Color de fondo
+                    titleContentColor = onPrimaryLight, //Color del texto
+                    navigationIconContentColor = onPrimaryLight, // Color del icono de navegación
+                    actionIconContentColor = onPrimaryLight
+                ),
                 title = {
                     Image(
-                        painter = painterResource(R.drawable.logo_artemayor_horizontal),
+                        alignment = Alignment.Center,
+                        painter = painterResource(R.drawable.logo_artemayor_blanco),
                         contentDescription = "Arte Mayor",
-                        modifier = Modifier.height(28.dp)
+                        modifier = Modifier
+                            .padding(start = 16.dp)
+                            .clickable(onClick = { navController.navigate(Routes.HOME) })
+                            .width(120.dp),
+                        contentScale = ContentScale.Fit // O usa ContentScale.Fit si prefieres
                     )
                 },
                 navigationIcon = {
