@@ -180,6 +180,7 @@ fun AppNavigation(
             val cartCount by vm.cartCount.collectAsState(initial = 0)
 
             ProductDetailScreen(
+                navController = navController,
                 product = product,
                 onBack = { navController.popBackStack() },
                 onAddToCart = {

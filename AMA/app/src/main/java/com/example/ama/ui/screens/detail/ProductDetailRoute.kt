@@ -8,6 +8,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.navigation.NavController
 import com.example.ama.ui.components.Product
 import com.example.ama.ui.screens.catalog.CatalogViewModel
 import com.example.ama.ui.screens.catalog.CatalogRoute
@@ -15,6 +16,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun ProductDetailRoute(
+    navController: NavController,
     productId: String,
     onBack: () -> Unit,
     vm: CatalogViewModel,
@@ -34,6 +36,7 @@ fun ProductDetailRoute(
     }
 
     ProductDetailScreen(
+        navController = navController,
         product = product,
         onBack = onBack,
         onAddToCart = { p ->

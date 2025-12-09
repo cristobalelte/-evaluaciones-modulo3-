@@ -73,7 +73,9 @@ fun PerfilScreen(
     onSeeAllNew: () -> Unit = {},
      */
 ) {
-    //    Para ref cantidad de productos en el Backend, creamos var productList para tener la cant total con .size :
+    //    Para ref cantidad de productos en el Backend, creamos la var productList para tener la cant total,
+    //    obteniendo el catalogo compl de productos y su cantidad con: .size,
+    //    Como el catalogo de productos se obtiene del ProductViewModel, tb debemos referenciarlo:
     val productListViewModel: ProductViewModel = viewModel(
         factory = ProductViewModelFactory()
     )
