@@ -10,6 +10,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.outlined.Visibility
 import androidx.compose.material.icons.outlined.VisibilityOff
 import androidx.compose.material3.*
@@ -28,14 +30,40 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import com.example.ama.R
+import androidx.compose.runtime.rememberCoroutineScope
 
 @Composable
 fun LoginForm(
     modifier: Modifier = Modifier,
     snackbarHostState: SnackbarHostState,
-    onSubmit: suspend () -> Boolean,          // el contenedor decide navegación
+    onSubmit: suspend () -> Boolean,
 ) {
     var showPassword by remember { mutableStateOf(false) }
+
+    val vm = androidx.lifecycle.viewmodel.compose.viewModel<LoginViewModel>()
+
+    // VALIDACIÓN LOCAL
+    val isEmailValid = vm.email.isNotBlank() // si quieres, aquí puedes meter regex de correo
+    val isPasswordValid = vm.password.length >= 6
+
+    val emailHasError = !isEmailValid && vm.email.isNotBlank()
+    val passwordHasError = !isPasswordValid && vm.password.isNotBlank()
+
+    val emailBorderColor = when {
+        emailHasError -> Color(0xFFF44336)
+        vm.email.isNotBlank() -> Color(0xFF4CAF50)
+        else -> Color(0xFFBDBDBD)
+    }
+
+    val passwordBorderColor = when {
+        passwordHasError -> Color(0xFFF44336)
+        vm.password.isNotBlank() -> Color(0xFF4CAF50)
+        else -> Color(0xFFBDBDBD)
+    }
+
+    val isFormValid = isEmailValid && isPasswordValid
+
+    val scope = rememberCoroutineScope()
 
     Column(
         modifier = modifier
@@ -46,73 +74,117 @@ fun LoginForm(
         Text(
             text = "Iniciar sesión",
             style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.SemiBold,
             modifier = Modifier.padding(top = 8.dp, bottom = 8.dp)
         )
 
-        // Campos
-        val vm = androidx.lifecycle.viewmodel.compose.viewModel<LoginViewModel>()
-        //Recuadro correo:
+
         OutlinedTextField(
             value = vm.email,
             onValueChange = { vm.onEmailChange(it) },
             label = { Text("Correo electrónico") },
             placeholder = { Text("ejemplo@gmail.com") },
             singleLine = true,
-            isError = vm.emailError != null,
+            isError = emailHasError,
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Email,
                 imeAction = ImeAction.Next
             ),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            trailingIcon = {
+                if (vm.email.isNotBlank()) {
+                    if (emailHasError) {
+                        Icon(
+                            imageVector = Icons.Filled.Close,
+                            contentDescription = "Correo inválido",
+                            tint = Color(0xFFF44336)
+                        )
+                    } else {
+                        Icon(
+                            imageVector = Icons.Filled.CheckCircle,
+                            contentDescription = "Correo válido",
+                            tint = Color(0xFF4CAF50)
+                        )
+                    }
+                }
+            },
+            colors = TextFieldDefaults.colors(
+                focusedIndicatorColor = Color.Gray,
+                unfocusedIndicatorColor = Color.Gray,
+                focusedContainerColor   = Color.White,
+                unfocusedContainerColor = Color.White,
+                errorIndicatorColor = Color(0xFFF44336),
+                cursorColor = Color.Black
+            )
         )
-        //Error al ingresar correo
-        AnimatedVisibility(vm.emailError != null) {
+
+        AnimatedVisibility(emailHasError) {
             Text(
-                vm.emailError ?: "",
+                "Por favor, ingresa un correo válido",
                 color = MaterialTheme.colorScheme.error,
                 style = MaterialTheme.typography.bodySmall
             )
         }
 
-        //Recuadro ingreso contraseña:
+
         OutlinedTextField(
             value = vm.password,
             onValueChange = { vm.onPasswordChange(it) },
             label = { Text("Contraseña") },
             singleLine = true,
-            isError = vm.passwordError != null,
+            isError = passwordHasError,
             visualTransformation = if (showPassword) VisualTransformation.None
             else PasswordVisualTransformation(),
             trailingIcon = {
-                IconButton(onClick = { showPassword = !showPassword }) {
-                    Icon(
-                        imageVector = if (showPassword) Icons.Outlined.VisibilityOff else Icons.Outlined.Visibility,
-                        contentDescription = if (showPassword) "Ocultar contraseña" else "Mostrar contraseña"
-                    )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    if (vm.password.isNotBlank()) {
+                        if (passwordHasError) {
+                            Icon(
+                                imageVector = Icons.Filled.Close,
+                                contentDescription = "Contraseña inválida",
+                                tint = Color(0xFFF44336)
+                            )
+                        } else {
+                            Icon(
+                                imageVector = Icons.Filled.CheckCircle,
+                                contentDescription = "Contraseña válida",
+                                tint = Color(0xFF4CAF50)
+                            )
+                        }
+                    }
+                    IconButton(onClick = { showPassword = !showPassword }) {
+                        Icon(
+                            imageVector = if (showPassword) Icons.Outlined.VisibilityOff else Icons.Outlined.Visibility,
+                            contentDescription = if (showPassword) "Ocultar contraseña" else "Mostrar contraseña"
+                        )
+                    }
                 }
             },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Password,
                 imeAction = ImeAction.Done
             ),
-            keyboardActions = KeyboardActions(
-                onDone = {
-                    // Intento de submit con tecla Done
-                }
-            ),
-            modifier = Modifier.fillMaxWidth()
+            keyboardActions = KeyboardActions(onDone = { /* opcional: submit */ }),
+            modifier = Modifier.fillMaxWidth(),
+            colors = TextFieldDefaults.colors(
+                focusedIndicatorColor = Color.Gray,
+                unfocusedIndicatorColor = Color.Gray,
+                focusedContainerColor   = Color.White,
+                unfocusedContainerColor = Color.White,
+                errorIndicatorColor = Color(0xFFF44336),
+                cursorColor = Color.Black
+            )
         )
 
-        //Error contraseña:
-        AnimatedVisibility(vm.passwordError != null) {
+        AnimatedVisibility(passwordHasError) {
             Text(
-                vm.passwordError ?: "",
+                "La contraseña debe tener al menos 6 caracteres",
                 color = MaterialTheme.colorScheme.error,
                 style = MaterialTheme.typography.bodySmall
             )
         }
 
-        //Se ordenan horizontalmente 3 elementos:
+
         Row(verticalAlignment = Alignment.CenterVertically) {
             Checkbox(
                 checked = vm.rememberMe,
@@ -121,13 +193,17 @@ fun LoginForm(
             Text("Recordarme")
             Spacer(Modifier.weight(1f))
             TextButton(onClick = { /* TODO: recuperar contraseña */ }) {
-                Text("¿Olvidaste tu contraseña?")
+                Text(
+                    "¿Olvidaste tu contraseña?",
+                    color = Color(0xFF9C1A1A)
+                )
             }
         }
-        //Cierre Row
 
-        // Botón Ingresar
-        val scope = rememberCoroutineScope()
+
+        val loginButtonColor =
+            if (isFormValid && !vm.isLoading) Color(0xFFFFC107) else Color(0xFFBDBDBD)
+
         Button(
             onClick = {
                 scope.launch {
@@ -139,69 +215,91 @@ fun LoginForm(
                     }
                 }
             },
-            enabled = !vm.isLoading,
-            modifier = Modifier.fillMaxWidth()
+            enabled = isFormValid && !vm.isLoading,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(48.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = loginButtonColor,
+                contentColor = Color.White,
+                disabledContainerColor = Color(0xFFBDBDBD),
+                disabledContentColor = Color.White
+            ),
+            shape = CircleShape
         ) {
             if (vm.isLoading) {
-                CircularProgressIndicator(strokeWidth = 2.dp, modifier = Modifier.size(18.dp))
+                CircularProgressIndicator(
+                    strokeWidth = 2.dp,
+                    modifier = Modifier.size(18.dp)
+                )
                 Spacer(Modifier.width(8.dp))
             }
             Text("Ingresar")
         }
 
-//        Spacer(modifier = Modifier.height(8.dp))
-
         HorizontalDivider(
-            modifier = Modifier.padding(vertical = 8.dp),
-            thickness = 2.dp,
-            color = Color.Gray
+            modifier = Modifier.padding(vertical = 12.dp),
+            thickness = 1.dp,
+            color = Color(0xFFDDDDDD)
         )
 
 
-        //        Llamamos a la fun para crear un boton personalizado con la img de facebook:
-        CustomButton(Modifier.clickable{/*URL que sea*/}, painterResource(R.drawable.facebook), "FACEBOOK")
+        CustomButton(
+            modifier = Modifier.clickable { /* TODO: Google */ },
+            paint = painterResource(id = R.drawable.google),
+            title = "Iniciar sesión con Google",
+            backgroundColor = Color.White,
+            borderColor = Color(0xFFBDBDBD),
+            textColor = Color.Black
+        )
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        //        Llamamos a la fun para crear un boton personalizado con la img de google:
-        CustomButton(Modifier.clickable{/*URL que sea*/}, painterResource(id = R.drawable.google), "GOOGLE")
-
-
+        CustomButton(
+            modifier = Modifier.clickable { /* TODO: Facebook */ },
+            paint = painterResource(id = R.drawable.facebook),
+            title = "Iniciar sesión con Facebook",
+            backgroundColor = Color.White,
+            borderColor = Color(0xFF1877F2),
+            textColor = Color(0xFF1877F2)
+        )
     }
 }
 
-//fun composable para botones personalizados con iconos de google y facebook:
+
+// Botón redondo con icono (Google / Facebook)
 @Composable
-fun CustomButton(modifier: Modifier, paint: Painter, title: String) {
+fun CustomButton(
+    modifier: Modifier = Modifier,
+    paint: Painter,
+    title: String,
+    backgroundColor: Color,
+    borderColor: Color,
+    textColor: Color
+) {
     Box(
-        modifier = modifier //parametro que recibe el modificador
+        modifier = modifier
             .fillMaxWidth()
             .height(48.dp)
-            .padding(horizontal = 32.dp)
-            .background(MaterialTheme.colorScheme.primary, shape = CircleShape) //Color de fondo del boton
-            .border(2.dp, Color.White, shape = CircleShape) //Borde del boton
-        ,
+            .padding(horizontal = 8.dp)
+            .background(backgroundColor, shape = CircleShape)
+            .border(1.dp, borderColor, shape = CircleShape),
         contentAlignment = Alignment.CenterStart
-        //El texto siempre estara centrado aunque se ponga una img o no al boton al inicio
-    )
-    {
+    ) {
         Image(
-            painter = paint, //parametro que recibe la img
-            contentDescription = "Google",
+            painter = paint,
+            contentDescription = title,
             modifier = Modifier
                 .padding(start = 24.dp)
                 .size(24.dp)
         )
 
-
         Text(
-            text = title, //parametro que recibe el texto
-            color = Color.White,
-            modifier = Modifier
-                .fillMaxWidth(),
+            text = title,
+            color = textColor,
+            modifier = Modifier.fillMaxWidth(),
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold
-
         )
     }
 }

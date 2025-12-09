@@ -1,26 +1,19 @@
 package com.example.ama.ui.screens.HomeScreen
 
 import androidx.annotation.DrawableRes
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.outlined.Search
-import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.ShoppingCart
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -48,11 +41,12 @@ import com.example.ama.data.viewmodel.ProductViewModelFactory
 import com.example.ama.ui.components.BottomBar
 import com.example.ama.ui.components.Product
 import com.example.ama.ui.components.ProductType
-import com.example.ama.ui.components.TopBar
 import com.example.ama.ui.components.priceFormatted
 import com.example.ama.ui.navigation.Routes
-import com.example.ama.ui.theme.onPrimaryLight
-import com.example.ama.ui.theme.primaryLight
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.ExperimentalFoundationApi
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -65,8 +59,7 @@ fun HomeScreen(
     onCategoryClick: (ProductType) -> Unit,
     onOpenPublish: () -> Unit,
     onOpenSettings: () -> Unit,
-
-    // NUEVO: data para las secciones
+    // Data para las secciones
     categories: List<CategoryItem> = defaultCategories(),
     artisanBanners: List<ArtisanBanner> = sampleArtisanBanners(),
     newThisMonth: List<Product> = emptyList(),
@@ -75,31 +68,54 @@ fun HomeScreen(
     onOpenProduct: (Product) -> Unit = {},
     onSeeAllNew: () -> Unit = {},
 ) {
-    //    Crear un viewmodel para obtener la lista de prod publicados y llamarlo desde acá, reempl las sgtes vars:
-    val productListViewModel: ProductViewModel = viewModel(
-        factory = ProductViewModelFactory()
-    )
+    // ViewModel que trae la lista de productos
+    val productListViewModel: ProductViewModel = viewModel(factory = ProductViewModelFactory())
     val productList by productListViewModel.productList.collectAsState()
-    val listState = rememberLazyListState()
 
     var query by remember { mutableStateOf("") }
+    val colors = MaterialTheme.colorScheme
 
     Scaffold(
+        // HEADER rojo estilo figma, conectado al tema
         topBar = {
-            TopBar(
-                navController,
-                cartCount,
-                onOpenCart
-            )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(100.dp)
+                    .background(colors.primary)
+                    .padding(horizontal = 16.dp),
+                contentAlignment = Alignment.CenterStart
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Image(
+                        painter = painterResource(R.drawable.logo_artemayor_blanco),
+                        contentDescription = "Arte Mayor",
+                        modifier = Modifier.height(40.dp),
+                        contentScale = ContentScale.Fit
+                    )
+
+                    IconButton(onClick = onOpenCart) {
+                        Icon(
+                            imageVector = Icons.Outlined.ShoppingCart,
+                            contentDescription = "Carrito",
+                            tint = colors.onPrimary
+                        )
+                    }
+                }
+            }
         },
         bottomBar = {
             BottomBar(
                 navController = navController,
                 onPublishClick = onOpenPublish,
-                onProfileClick = { navController.navigate("perfil") })
+                onProfileClick = { navController.navigate("perfil") }
+            )
         }
-    )
-    { padding ->
+    ) { padding ->
         LazyColumn(
             modifier = Modifier
                 .padding(padding)
@@ -107,11 +123,8 @@ fun HomeScreen(
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
-            // Buscador
+            // 🔍 Buscador tipo pill, usando colores del tema
             item {
-                val bg = MaterialTheme.colorScheme.primaryContainer
-                val content = MaterialTheme.colorScheme.onPrimaryContainer
-
                 OutlinedTextField(
                     value = query,
                     onValueChange = { query = it },
@@ -121,45 +134,36 @@ fun HomeScreen(
                     singleLine = true,
                     placeholder = { Text("¿Qué artesanía buscas?") },
                     leadingIcon = { Icon(Icons.Outlined.Search, contentDescription = null) },
-                    trailingIcon = {
-                        TextButton(
-                            onClick = { onSearch(query) },
-                            colors = ButtonDefaults.textButtonColors(contentColor = content)
-                        ) { Text("Buscar") }
-                    },
-                    shape = RoundedCornerShape(28.dp),
+                    shape = RoundedCornerShape(26.dp),
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedContainerColor = bg,
-                        unfocusedContainerColor = bg,
-                        disabledContainerColor = bg,
-                        focusedBorderColor = Color.Transparent,
-                        unfocusedBorderColor = Color.Transparent,
-                        disabledBorderColor = Color.Transparent,
-                        focusedTextColor = content,
-                        unfocusedTextColor = content,
-                        focusedPlaceholderColor = content.copy(alpha = 0.7f),
-                        unfocusedPlaceholderColor = content.copy(alpha = 0.7f),
-                        focusedLeadingIconColor = content,
-                        unfocusedLeadingIconColor = content,
-                        focusedTrailingIconColor = content,
-                        unfocusedTrailingIconColor = content
+                        focusedContainerColor = colors.surface,
+                        unfocusedContainerColor = colors.surface,
+                        disabledContainerColor = colors.surface,
+                        focusedBorderColor = colors.outline,
+                        unfocusedBorderColor = colors.outline,
+                        disabledBorderColor = colors.outline,
+                        focusedTextColor = colors.onSurface,
+                        unfocusedTextColor = colors.onSurface,
+                        focusedPlaceholderColor = colors.onSurfaceVariant,
+                        unfocusedPlaceholderColor = colors.onSurfaceVariant,
+                        focusedLeadingIconColor = colors.onSurfaceVariant,
+                        unfocusedLeadingIconColor = colors.onSurfaceVariant
                     ),
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
                     keyboardActions = KeyboardActions(onSearch = { onSearch(query) })
                 )
             }
 
-            // CATEGORÍAS (carrusel)
+            // CATEGORÍAS
             item { SectionTitle("Categorías") }
             item {
                 CategoryCarousel(
                     items = categories,
                     onClick = { onCategoryClick(it.type) },
-
-                    )
+                )
             }
 
-            // CONOCE A NUESTROS ARTESANOS/AS (banners laterales)
+            // CONOCE A NUESTROS ARTESANOS
             item { SectionTitle("Conoce a nuestros artesanos y artesanas") }
             item {
                 ArtisanBannerRow(
@@ -168,161 +172,102 @@ fun HomeScreen(
                 )
             }
 
-            // LO NUEVO DE ESTE MES (productos recientes): Centrar titulos
-            /*   item {
-                   SectionTitle(
-                       title = "Lo nuevo de este mes",
-   //                  trailing = { TextButton(onClick = onSeeAllNew) { Text("Ver toto") } }
-                       trailing = {
-                           TextButton(
-                               onClick = { navController.navigate("productList") }
-                           )
-                           {
-                               Text("Ver todo")
-                           }
-                       }
-                   )
-               }*/
+            // LO NUEVO DE ESTE MES – grilla 2x2 (máx 4 productos)
+            item {
+                Column(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = "Lo nuevo de este mes",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.SemiBold,
+                        modifier = Modifier
+                            .align(Alignment.CenterHorizontally)
+                            .padding(bottom = 8.dp)
+                    )
+
+                    val productsToShow = productList.take(4)
+                    val rows = productsToShow.chunked(2)
+
+                    rows.forEach { rowItems ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 4.dp),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            rowItems.forEach { product ->
+                                Box(
+                                    modifier = Modifier.weight(1f)
+                                ) {
+                                    NuevoMesCard(product = product)
+                                }
+                            }
+                            // Si hay solo 1 producto en la fila, llenamos el espacio
+                            if (rowItems.size == 1) {
+                                Spacer(modifier = Modifier.weight(1f))
+                            }
+                        }
+                    }
+                }
+            }
+
+            // ESPECIAL DE TEMPORADA (puedes cambiar por un banner real)
             item {
                 Column(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Box(
-                        modifier = Modifier.padding(4.dp)
-                    ) {
-                        Text(
-                            text = "Lo nuevo de este mes",
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.SemiBold
-                        )
-                    }
-                    Box(
-                        modifier = Modifier
-                            .padding(4.dp)
-                            .fillMaxWidth()
-                            .width(220.dp)
-                            .aspectRatio(16f / 9f), // Establece la relación de aspecto (ej: 16:9)
-                    ) {
-                        Row(
-                            modifier = Modifier
-                                .padding(4.dp)
-                                .fillMaxWidth()
-                                .horizontalScroll(rememberScrollState())
-                        ) {
-                            for (product in productList) {
-                                Box(
-                                    modifier = Modifier.fillMaxWidth()
-                                ) {
-                                    NuevoMesCard(product = product)
-                                }
-
-                            }
-
-                        }
-
-                    }
-
+                    Text(
+                        text = "Especial de temporada",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.SemiBold,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                    SeasonalBanner(resId = seasonalBannerRes)
                 }
             }
 
-            // ESPECIAL DE TEMPORADA (banner)
-            item {
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Box(
-                        modifier = Modifier.padding(4.dp)
-                    ) {
-                        Text(
-                            text = "Especial de Temporada",
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.SemiBold
-                        )
-                    }
-                    Box(
-                        modifier = Modifier
-                            .padding(4.dp)
-                            .fillMaxWidth()
-                            .width(220.dp)
-                            .aspectRatio(16f / 9f), // Establece la relación de aspecto (ej: 16:9)
-                    ) {
-                        Row(
-                            modifier = Modifier
-                                .padding(4.dp)
-                                .fillMaxWidth()
-                                .horizontalScroll(rememberScrollState())
-                        ) {
-                            for (product in productList) {
-                                Box(
-                                    modifier = Modifier.fillMaxWidth()
-                                ) {
-                                    NuevoMesCard(product = product)
-                                }
-
-                            }
-
-                        }
-
-                    }
-
-                }
-            }
-
-
-            // CARRITO DE COMPRAS (productos recientes)
+            // CARRITO DE COMPRAS (ejemplo de sección extra)
             item {
                 SectionTitle(
                     title = "Carrito de compras",
-//                  trailing = { TextButton(onClick = onSeeAllNew) { Text("Ver toto") } }
                     trailing = {
                         TextButton(
                             onClick = { navController.navigate("carritoList") }
-                        )
-                        {
-                            Text("Ver Carrito de Backend")
+                        ) {
+                            Text("Ver carrito de backend")
                         }
                     }
                 )
             }
 
-
-            //VER EQUIPO:
+            // EQUIPO AMA
             item {
                 SectionTitle(
                     title = "Equipo de trabajo AMA",
                     trailing = {
                         TextButton(
                             onClick = { navController.navigate("equipoScreen") }
-                        )
-                        {
+                        ) {
                             Text("Nuestro equipo")
                         }
                     }
                 )
             }
 
-
+            // Ejemplo de fila de productos adicional (usa newThisMonth si quieres)
             item {
                 ProductRow(
                     products = newThisMonth,
                     onClick = onOpenProduct
                 )
             }
-
-            // ESPECIAL DE TEMPORADA (banner)
-            /* item { SectionTitle("Especial de temporada") }
-             item {
-                 SeasonalBanner(resId = seasonalBannerRes)
-             }
-
-             item { Spacer(Modifier.height(28.dp)) }*/
         }
     }
 }
-//Cierre fun HomeScreen
 
+/* --------------------------- DATA CLASSES --------------------------- */
 
 data class CategoryItem(
     val label: String,
@@ -336,6 +281,7 @@ data class ArtisanBanner(
     @DrawableRes val imageRes: Int
 )
 
+/* --------------------------- UI HELPERS --------------------------- */
 
 @Composable
 private fun SectionTitle(
@@ -357,7 +303,7 @@ fun CroppedCategoryImage(
     @DrawableRes resId: Int,
     boxSize: Dp = 44.dp,
     bottomCutFraction: Float = 0.65f,
-    maskBottomFraction: Float = 0.18f // franja inferior que se tapa
+    maskBottomFraction: Float = 0.18f
 ) {
     Box(
         modifier = Modifier
@@ -378,7 +324,6 @@ fun CroppedCategoryImage(
             contentScale = ContentScale.Crop,
             alignment = Alignment.TopCenter
         )
-        // 👇 “Faldilla” que tapa lo de abajo
         Box(
             Modifier
                 .align(Alignment.BottomCenter)
@@ -389,7 +334,7 @@ fun CroppedCategoryImage(
     }
 }
 
-
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun CategoryCarousel(
     items: List<CategoryItem>,
@@ -443,7 +388,7 @@ private fun CategoryCarousel(
     }
 }
 
-
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun ArtisanBannerRow(
     banners: List<ArtisanBanner>,
@@ -468,20 +413,7 @@ private fun ArtisanBannerRow(
             ) {
                 Box {
                     Image(
-//                        painter = painterResource(b.imageRes),
-                        if (b.title == ImagenesEnumeration.ArtesanosDelSur.nombre) {
-
-                            painterResource(ImagenesEnumeration.ArtesanosDelSur.imgLoc)
-                        } else if (b.title == ImagenesEnumeration.TejedorasDeChiloe.nombre) {
-
-                            painterResource(ImagenesEnumeration.TejedorasDeChiloe.imgLoc)
-                        } else if (b.title == ImagenesEnumeration.MadererosDelMaule.nombre) {
-                            painterResource(ImagenesEnumeration.MadererosDelMaule.imgLoc)
-
-                        } else {
-                            painterResource(b.imageRes)
-
-                        },
+                        painter = painterResource(b.imageRes),
                         contentDescription = b.title,
                         modifier = Modifier.fillMaxSize(),
                         contentScale = ContentScale.Crop
@@ -508,7 +440,6 @@ private fun ArtisanBannerRow(
         }
     }
 }
-
 
 @Composable
 private fun ProductRow(
@@ -541,9 +472,7 @@ private fun ProductCardSmall(
                     .height(120.dp)
                     .background(MaterialTheme.colorScheme.surfaceVariant)
             ) {
-                // Imagen real aquí si tienes URL (Coil)
-                // AsyncImage(model = product.imageUrl, contentDescription = product.name, ...)
-                // Precio como pill
+                // aquí podrías poner AsyncImage con la foto real del producto
                 Surface(
                     color = MaterialTheme.colorScheme.surface,
                     shape = RoundedCornerShape(12.dp),
@@ -554,7 +483,9 @@ private fun ProductCardSmall(
                 ) {
                     Text(
                         text = product.priceFormatted,
-                        style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.SemiBold),
+                        style = MaterialTheme.typography.labelLarge.copy(
+                            fontWeight = FontWeight.SemiBold
+                        ),
                         modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
                     )
                 }
@@ -568,7 +499,6 @@ private fun ProductCardSmall(
                 modifier = Modifier.padding(horizontal = 10.dp)
             )
             Spacer(Modifier.height(6.dp))
-            // Subtítulo corto opcional (autor o categoría)
             Text(
                 text = product.author,
                 style = MaterialTheme.typography.labelMedium,
@@ -581,7 +511,6 @@ private fun ProductCardSmall(
         }
     }
 }
-
 
 @Composable
 private fun SeasonalBanner(@DrawableRes resId: Int) {
@@ -600,7 +529,7 @@ private fun SeasonalBanner(@DrawableRes resId: Int) {
     }
 }
 
-// ------------------------------ DATA DE MUESTRA ------------------------------
+/* --------------------------- DATA DE MUESTRA --------------------------- */
 
 private fun defaultCategories() = listOf(
     CategoryItem("Lana", R.drawable.lana_icon, ProductType.LANA),
@@ -612,8 +541,19 @@ private fun defaultCategories() = listOf(
 )
 
 private fun sampleArtisanBanners() = listOf(
-    ArtisanBanner("a1", "Artesanos del Sur", R.drawable.logo_artemayor_horizontal),
-    ArtisanBanner("a2", "Tejedoras de Chiloé", R.drawable.logo_artemayor_horizontal),
-    ArtisanBanner("a3", "Madereros del Maule", R.drawable.logo_artemayor_horizontal),
+    ArtisanBanner(
+        id = "a1",
+        title = ImagenesEnumeration.ArtesanosDelSur.nombre,
+        imageRes = ImagenesEnumeration.ArtesanosDelSur.imgLoc
+    ),
+    ArtisanBanner(
+        id = "a2",
+        title = ImagenesEnumeration.TejedorasDeChiloe.nombre,
+        imageRes = ImagenesEnumeration.TejedorasDeChiloe.imgLoc
+    ),
+    ArtisanBanner(
+        id = "a3",
+        title = ImagenesEnumeration.MadererosDelMaule.nombre,
+        imageRes = ImagenesEnumeration.MadererosDelMaule.imgLoc
+    ),
 )
-

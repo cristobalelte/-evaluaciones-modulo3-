@@ -1,9 +1,11 @@
 package com.example.ama.ui.Login
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -32,40 +34,35 @@ fun LoginScreen(
 
     Scaffold(
         topBar = {
-            CenterAlignedTopAppBar(
-                modifier = Modifier.padding(horizontal = 8.dp),
-                expandedHeight = 100.dp,
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = primaryLight, //Color de fondo
-                    titleContentColor = onPrimaryLight, //Color del texto
-                    navigationIconContentColor = onPrimaryLight, // Color del icono de navegación
-                    actionIconContentColor = onPrimaryLight
-                ),
-                navigationIcon = {
-                    Image(
-                        alignment = Alignment.Center,
-                        painter = painterResource(R.drawable.logo_artemayor_blanco),
-                        contentDescription = "Arte Mayor",
-                        modifier = Modifier
-                            .padding(start = 16.dp)
-                            .clickable(onClick = { navController.navigate(Routes.HOME) })
-                            .width(120.dp),
-                        contentScale = ContentScale.Fit // O usa ContentScale.Fit si prefieres
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(120.dp)
+                    .background(primaryLight)
+                    .padding(horizontal = 16.dp),
+            ) {
+                // Flecha de volver (usa el navController directamente)
+                IconButton(
+                    onClick = { navController.popBackStack() },
+                    modifier = Modifier.align(Alignment.CenterStart)
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Volver",
+                        tint = onPrimaryLight
                     )
-                },
+                }
 
-                title = {
-                    /* Image(
-                         alignment = Alignment.CenterStart,
-                         painter = painterResource(R.drawable.logo_artemayor_blanco),
-                         contentDescription = "Arte Mayor",
-                         modifier = Modifier
-                             .clickable(onClick = { navController.navigate(Routes.HOME) })
-                             .width(100.dp),
-                         contentScale = ContentScale.Fit // O usa ContentScale.Fit si prefieres
-                     )*/
-                },
-            )
+                Image(
+                    painter = painterResource(R.drawable.logo_artemayor_blanco),
+                    contentDescription = "Arte Mayor",
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .height(56.dp)
+                        .clickable { navController.navigate(Routes.HOME) },
+                    contentScale = ContentScale.Fit
+                )
+            }
         },
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { padding ->

@@ -1,16 +1,10 @@
+
 package com.example.ama.ui.Register
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -19,21 +13,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.outlined.Visibility
 import androidx.compose.material.icons.outlined.VisibilityOff
-import androidx.compose.material3.Button
-import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -62,38 +43,36 @@ fun RegisterScreen(
 ) {
     Scaffold(
         topBar = {
-            CenterAlignedTopAppBar(
-                modifier = Modifier.padding(horizontal = 8.dp),
-                expandedHeight = 100.dp,
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = primaryLight, //Color de fondo
-                    titleContentColor = onPrimaryLight, //Color del texto
-                    navigationIconContentColor = onPrimaryLight, // Color del icono de navegación
-                    actionIconContentColor = onPrimaryLight
-                ),
-                title = {
-                    Image(
-                        alignment = Alignment.Center,
-                        painter = painterResource(R.drawable.logo_artemayor_blanco),
-                        contentDescription = "Arte Mayor",
-                        modifier = Modifier
-                            .padding(start = 16.dp)
-                            .clickable(onClick = { navController.navigate(Routes.HOME) })
-                            .width(120.dp),
-                        contentScale = ContentScale.Fit // O usa ContentScale.Fit si prefieres
-                    )
-                },
-                navigationIcon = {
-                    onBack?.let {
-                        IconButton(onClick = it) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = "Volver"
-                            )
-                        }
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(120.dp)
+                    .background(primaryLight)
+                    .padding(horizontal = 16.dp),
+            ) {
+                if (onBack != null) {
+                    IconButton(
+                        onClick = onBack,
+                        modifier = Modifier.align(Alignment.CenterStart)
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Volver",
+                            tint = onPrimaryLight
+                        )
                     }
                 }
-            )
+
+                Image(
+                    painter = painterResource(R.drawable.logo_artemayor_blanco),
+                    contentDescription = "Arte Mayor",
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .height(56.dp)
+                        .clickable { navController.navigate(Routes.HOME) },
+                    contentScale = ContentScale.Fit
+                )
+            }
         }
     ) { padding ->
         Column(
@@ -104,79 +83,109 @@ fun RegisterScreen(
                 .fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
+
+            // Título
             Text(
                 text = "Ingresa tus datos",
-                style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.SemiBold),
+                style = MaterialTheme.typography.headlineMedium.copy(
+                    fontWeight = FontWeight.SemiBold
+                ),
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth(),
-                color = MaterialTheme.colorScheme.primary
+                color = Color.Gray
             )
 
-            // NOMBRE
-            LabelWithAsterisk("NOMBRE")
+            LabelWithAsterisk("Nombre")
             FilledPillField(
                 value = registerVM.name,
                 onValueChange = registerVM::onNameChange,
                 placeholder = "Ingresa tu nombre aquí"
             )
 
-            // APELLIDO
-            LabelWithAsterisk("APELLIDO")
+
+            LabelWithAsterisk("Apellido")
             FilledPillField(
                 value = registerVM.lastName,
                 onValueChange = registerVM::onLastNameChange,
                 placeholder = "Ingresa tu apellido aquí"
             )
 
-            // CORREO
-            LabelWithAsterisk("CORREO")
+            LabelWithAsterisk("Correo")
             FilledPillField(
                 value = registerVM.email,
                 onValueChange = registerVM::onEmailChange,
                 placeholder = "Ingresa tu correo aquí",
                 isError = registerVM.emailError != null,
                 supportingText = registerVM.emailError,
-                keyboardType = KeyboardType.Email // 👈 teclado correcto para emails
+                keyboardType = KeyboardType.Email
             )
 
-            // TELÉFONO
-            LabelWithAsterisk("TELÉFONO DE CONTACTO")
+
+            LabelWithAsterisk("Teléfono de contacto")
             FilledPillField(
                 value = registerVM.phone,
                 onValueChange = registerVM::onPhoneChange,
-                placeholder = "Ingresa tu número de teléfono aquí"
+                placeholder = "Ingresa tu número de teléfono aquí",
+                keyboardType = KeyboardType.Phone
             )
 
-            // CONTRASEÑA
-            LabelWithAsterisk("CONTRASEÑA")
+            LabelWithAsterisk("Región")
+            FilledPillField(
+                value = registerVM.region,
+                onValueChange = registerVM::onRegionChange,
+                placeholder = "Ingresa tu región aquí"
+            )
+
+            LabelWithAsterisk("Ciudad/Comuna")
+            FilledPillField(
+                value = registerVM.city,
+                onValueChange = registerVM::onCityChange,
+                placeholder = "Ingresa tu ciudad o comuna aquí"
+            )
+
+            LabelWithAsterisk("Dirección")
+            FilledPillField(
+                value = registerVM.address,
+                onValueChange = registerVM::onAddressChange,
+                placeholder = "Ingresa tu dirección aquí"
+            )
+
+            LabelWithAsterisk("Contraseña")
             var showPass by remember { mutableStateOf(false) }
             FilledPillField(
                 value = registerVM.password,
                 onValueChange = registerVM::onPasswordChange,
                 placeholder = "Ingresa tu contraseña aquí",
-                visualTransformation = if (showPass) VisualTransformation.None else PasswordVisualTransformation(),
+                visualTransformation = if (showPass) VisualTransformation.None
+                else PasswordVisualTransformation(),
                 trailingIcon = {
                     IconButton(onClick = { showPass = !showPass }) {
                         Icon(
-                            imageVector = if (showPass) Icons.Outlined.VisibilityOff else Icons.Outlined.Visibility,
+                            imageVector = if (showPass)
+                                Icons.Outlined.VisibilityOff
+                            else
+                                Icons.Outlined.Visibility,
                             contentDescription = null
                         )
                     }
                 }
             )
 
-            // CONFIRMAR CONTRASEÑA
-            LabelWithAsterisk("VUELVE A INGRESAR TU CONTRASEÑA")
+            LabelWithAsterisk("Volver a ingresar contraseña")
             var showPass2 by remember { mutableStateOf(false) }
             FilledPillField(
                 value = registerVM.confirmPassword,
                 onValueChange = registerVM::onConfirmPasswordChange,
-                placeholder = "Ingresa nuevamente tu contraseña aquí",
-                visualTransformation = if (showPass2) VisualTransformation.None else PasswordVisualTransformation(),
+                placeholder = "Re-ingresa tu contraseña aquí",
+                visualTransformation = if (showPass2) VisualTransformation.None
+                else PasswordVisualTransformation(),
                 trailingIcon = {
                     IconButton(onClick = { showPass2 = !showPass2 }) {
                         Icon(
-                            imageVector = if (showPass2) Icons.Outlined.VisibilityOff else Icons.Outlined.Visibility,
+                            imageVector = if (showPass2)
+                                Icons.Outlined.VisibilityOff
+                            else
+                                Icons.Outlined.Visibility,
                             contentDescription = null
                         )
                     }
@@ -185,21 +194,24 @@ fun RegisterScreen(
 
             Spacer(Modifier.height(4.dp))
 
-            // Botón principal
             Button(
-                onClick = { registerVM.onSubmit()
-                          navController.navigate("rolScreen")
+                onClick = {
+                    registerVM.onSubmit()
+                    if (registerVM.isValid) {
+                        navController.navigate("rolScreen")
+                    }
                 },
-                enabled = registerVM.isValid,
+                // siempre enabled para que muestre errores
+                enabled = true,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(48.dp),
                 shape = RoundedCornerShape(24.dp)
             ) {
-                Text("REGISTRARME")
+                Text("Registrarme")
             }
 
-            // Error general (opcional)
+            // Error general bajo el botón
             if (registerVM.errorMessage.isNotBlank()) {
                 Text(
                     text = registerVM.errorMessage,
@@ -213,6 +225,7 @@ fun RegisterScreen(
     }
 }
 
+/** Etiqueta con asterisco rojo (campo obligatorio) */
 @Composable
 private fun LabelWithAsterisk(text: String) {
     val labelStyle = MaterialTheme.typography.labelMedium.copy(
@@ -221,7 +234,7 @@ private fun LabelWithAsterisk(text: String) {
         letterSpacing = 0.sp
     )
     Row(verticalAlignment = Alignment.CenterVertically) {
-        Text(text = text.uppercase(), style = labelStyle)
+        Text(text = text, style = labelStyle)
         Text(text = " *", style = labelStyle, color = MaterialTheme.colorScheme.primary)
     }
 }
@@ -238,7 +251,9 @@ private fun FilledPillField(
     trailingIcon: (@Composable (() -> Unit))? = null,
     keyboardType: KeyboardType = KeyboardType.Text,
 ) {
-    TextField(
+    val colors = MaterialTheme.colorScheme
+
+    OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
         singleLine = true,
@@ -252,24 +267,29 @@ private fun FilledPillField(
         isError = isError,
         supportingText = supportingText?.let { { Text(it) } },
         keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
-        colors = androidx.compose.material3.TextFieldDefaults.colors(
-            // contenedor “pill” relleno
-            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
-            focusedContainerColor   = MaterialTheme.colorScheme.surfaceVariant,
-            errorContainerColor     = MaterialTheme.colorScheme.surfaceVariant,
+        colors = OutlinedTextFieldDefaults.colors(
+            focusedContainerColor   = Color.White,
+            unfocusedContainerColor = Color.White,
+            disabledContainerColor  = Color.White,
+            errorContainerColor     = Color(0xFFFFEBEE),
 
-            // SIN líneas ni bordes
-            focusedIndicatorColor   = Color.Transparent,
-            unfocusedIndicatorColor = Color.Transparent,
-            errorIndicatorColor     = Color.Transparent,
-            disabledIndicatorColor  = Color.Transparent,
+            focusedBorderColor      = colors.secondary,
+            unfocusedBorderColor    = Color(0xFFDDDDDD),
+            disabledBorderColor     = Color(0xFFDDDDDD),
+            errorBorderColor        = Color(0xFFF44336),
 
-            // textos / cursor
-            cursorColor             = MaterialTheme.colorScheme.onSurface,
-            focusedTextColor        = MaterialTheme.colorScheme.onSurface,
-            unfocusedTextColor      = MaterialTheme.colorScheme.onSurface,
-            focusedPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant,
-            unfocusedPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            focusedTextColor        = colors.onSurface,
+            unfocusedTextColor      = colors.onSurface,
+            disabledTextColor       = colors.onSurfaceVariant,
+            errorTextColor          = colors.onSurface,
+
+            focusedPlaceholderColor   = colors.onSurfaceVariant,
+            unfocusedPlaceholderColor = colors.onSurfaceVariant,
+            errorPlaceholderColor     = colors.onSurfaceVariant,
+
+            focusedTrailingIconColor   = colors.onSurfaceVariant,
+            unfocusedTrailingIconColor = colors.onSurfaceVariant,
+            errorTrailingIconColor     = Color(0xFFF44336)
         )
     )
 }
