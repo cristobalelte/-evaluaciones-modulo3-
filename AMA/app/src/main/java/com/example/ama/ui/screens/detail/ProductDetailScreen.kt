@@ -21,23 +21,30 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Popup
+import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.ama.R
 import com.example.ama.ui.components.Product
 import com.example.ama.ui.components.ProductType
+import com.example.ama.ui.components.TopBar
 import com.example.ama.ui.components.label
+import com.example.ama.ui.navigation.Routes
 import java.text.NumberFormat
 import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProductDetailScreen(
+    navController: NavController,
     product: Product,
     onBack: () -> Unit,
     onAddToCart: (Product) -> Unit,
@@ -46,6 +53,74 @@ fun ProductDetailScreen(
     cartCount: Int,
     onOpenCart: () -> Unit,
 ) {
+    var showPopup by remember { mutableStateOf(false) }
+    // 3. Usa el componente Popup. Si la var bool showPopup es true, muestra el popup
+    if (showPopup) {
+        Popup(onDismissRequest = { showPopup = false }) { // Cierra la ventana al tocar fuera
+            // Define el contenido de la ventana emergente aquí
+            Column(
+                modifier = Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth()
+                    .background(Color.White),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            )
+            {
+                Text(
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .padding(top = 8.dp),
+                    text = "Agregaste a tu carrito",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = Color.Black
+                )
+                Text(
+                    text = "${product.name}",
+                    style = MaterialTheme.typography.titleSmall,
+                    color = Color.Black
+                )
+//                Se agrega producto al carrito, se cierra el popup
+//                y vamos al carrito:
+                Button(
+                    onClick = {
+                        showPopup = false
+                        onAddToCart(product)
+                        navController.navigate(Routes.CART)
+                    },
+                    modifier = Modifier
+                        .padding(end = 8.dp)
+                )
+                {
+                    Text(
+                        text = "Ir al carrito",
+                        color = Color.White
+                    )
+                }
+
+//                Se agrega producto al carrito y se cierra el popup:
+//                pero no vamos al carrito, sino que volvemos a la pantalla anterior:
+                Button(
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.LightGray,
+                        contentColor = Color.Black
+                    ),
+                    onClick = {
+                        showPopup = false
+                        onAddToCart(product)},
+                    modifier = Modifier
+                        .padding(end = 8.dp)
+                )
+                {
+                    Text(
+                        text = "Seguir comprando"
+                    )
+                }
+
+
+            } //Cierre Column
+        }
+    }
     val currency = remember { NumberFormat.getCurrencyInstance(Locale("es", "CL")) }
 
     val typeText = remember(product.type) {
@@ -67,9 +142,11 @@ fun ProductDetailScreen(
     }
     var index by remember { mutableIntStateOf(0) }
 
+
+
     Scaffold(
         topBar = {
-            CenterAlignedTopAppBar(
+           /* CenterAlignedTopAppBar(
                 title = {
                     Image(
                         painter = painterResource(R.drawable.logo_artemayor_horizontal),
@@ -97,9 +174,13 @@ fun ProductDetailScreen(
                         }
                     }
                 }
+            )*/
+            TopBar(
+                navController,
+                cartCount,
+                onOpenCart
             )
         }
-,
     ) { padding ->
         Column(
             modifier = Modifier
@@ -222,7 +303,8 @@ fun ProductDetailScreen(
 
 
             Button(
-                onClick = { onAddToCart(product) },
+//                onClick = { onAddToCart(product) },
+                onClick = { showPopup = true },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(48.dp),
