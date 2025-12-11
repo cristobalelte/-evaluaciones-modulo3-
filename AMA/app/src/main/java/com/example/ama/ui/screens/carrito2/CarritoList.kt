@@ -20,6 +20,8 @@ fun CarritoList(modifier: Modifier = Modifier){
         factory = CarritoViewModelFactory()
     )
 
+//    Creamos una variable que almacena los productos recolectados por el CarritoViewModel, que a su vez es tomado del CartRepository
+//    y que a su vez es tomado de la API Service externa:
     val carritoList by carritoListViewModel.carritoList.collectAsState()
     val listState = rememberLazyListState()
 
@@ -33,6 +35,7 @@ fun CarritoList(modifier: Modifier = Modifier){
             }
     }
 
+//    Se muestra en un formato ProductCard la lista de productos (carritoList) que se recolecta del CarritoViewModel:
     LazyColumn(
         state = listState,
         modifier = modifier

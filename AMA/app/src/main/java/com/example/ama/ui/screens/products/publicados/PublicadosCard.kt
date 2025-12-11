@@ -41,115 +41,140 @@ fun PublicadosCard(product: ProductData) {
 
         // 3. Usa el componente Popup
         if (showPopup) {
-            Popup(onDismissRequest = { showPopup = false }) { // Cierra la ventana al tocar fuera
-                // Define el contenido de la ventana emergente aquí
-                Column(
+            Popup(
+                alignment = Alignment.Center,
+                onDismissRequest = { showPopup = false } // Cierra la ventana al tocar fuera
+            )
+            {
+                // Fondo oscuro y difuminado
+                Box(
                     modifier = Modifier
-                        .padding(16.dp)
-                        .fillMaxWidth()
-                        .background(Color.White),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
+                        .fillMaxSize()
+                        .background(Color.Black.copy(alpha = 0.6f)), // Color negro semitransparente
+                    contentAlignment = Alignment.Center
                 )
                 {
-                    Text(
-                        textAlign = TextAlign.Center,
+                    // Define el contenido de la ventana emergente aquí
+                    Column(
                         modifier = Modifier
-                            .padding(top = 8.dp),
-                        text = "¿Estás seguro de que deseas eliminar tu artesanía?",
-                        style = MaterialTheme.typography.titleMedium,
-                        color = Color.Black
-                    )
-                    Box(
-                        contentAlignment = Alignment.Center,
-                        modifier = Modifier
-                            .padding(8.dp)
+                            .padding(16.dp)
                             .fillMaxWidth()
-                            .background(Color.DarkGray)
+                            .background(Color.White),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
                     )
                     {
                         Text(
                             textAlign = TextAlign.Center,
                             modifier = Modifier
                                 .padding(top = 8.dp),
-                            text = "$${product.price}",
+                            text = "¿Estás seguro de que deseas eliminar tu artesanía?",
                             style = MaterialTheme.typography.titleMedium,
-                            color = Color.White
+                            color = Color.Black
                         )
-                    } //Cierre box
+                        Box(
+                            contentAlignment = Alignment.Center,
+                            modifier = Modifier
+                                .padding(8.dp)
+                                .fillMaxWidth()
+                                .background(Color.DarkGray)
+                        )
+                        {
+                            Text(
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier
+                                    .padding(top = 8.dp),
+                                text = "$${product.price}",
+                                style = MaterialTheme.typography.titleMedium,
+                                color = Color.White
+                            )
+                        } //Cierre box
 
-                    Text(
-                        text = "${product.name}",
-                        style = MaterialTheme.typography.titleMedium,
-                        color = Color.Black
-                    )
-
-                    Button(
-                        onClick = {
-                            showPopup = false
-                            showPopup2 = true
-                        },
-                        modifier = Modifier
-                            .padding(end = 8.dp)
-                    )
-                    {
                         Text(
-                            text = "Sí. Estoy seguro",
-                            color = Color.White
+                            text = "${product.name}",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = Color.Black
                         )
-                    }
 
-                    Button(
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.LightGray,
-                            contentColor = Color.Black
-                        ),
-                        onClick = { showPopup = false },
-                        modifier = Modifier
-                            .padding(end = 8.dp)
-                    )
-                    {
-                        Text(
-                            text = "No. Cancelar"
+                        Button(
+                            onClick = {
+                                showPopup = false
+                                showPopup2 = true
+                            },
+                            modifier = Modifier
+                                .padding(end = 8.dp)
                         )
-                    }
+                        {
+                            Text(
+                                text = "Sí. Estoy seguro",
+                                color = Color.White
+                            )
+                        }
+
+                        Button(
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color.LightGray,
+                                contentColor = Color.Black
+                            ),
+                            onClick = { showPopup = false },
+                            modifier = Modifier
+                                .padding(end = 8.dp)
+                        )
+                        {
+                            Text(
+                                text = "No. Cancelar"
+                            )
+                        }
 
 
-                } //Cierre Column
-            }
-        }
+                    } //Cierre Column
+                } //Cierre Box
+            } //Cierre Popup
+        } //Cierre if
 
         if (showPopup2) {
-            Popup(onDismissRequest = { showPopup2 = false }) { // Cierra la ventana al tocar fuera
-                Column(
+            Popup(
+                alignment = Alignment.Center,
+                onDismissRequest = { showPopup2 = false } // Cierra la ventana al tocar fuera
+            )
+            {  // Fondo oscuro y difuminado
+                Box(
                     modifier = Modifier
-                        .padding(16.dp)
-                        .fillMaxWidth()
-                        .background(Color.White),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
+                        .fillMaxSize()
+                        .background(Color.Black.copy(alpha = 0.6f)), // Color negro semitransparente
+                    contentAlignment = Alignment.Center
                 )
                 {
-                    Text(
-                        textAlign = TextAlign.Center,
+                    Column(
                         modifier = Modifier
-                            .padding(top = 8.dp),
-                        text = "Tu artesanía ${product.name} se ha eliminado correctamente",
-                        style = MaterialTheme.typography.titleMedium,
-                        color = Color.Black
+                            .padding(16.dp)
+                            .fillMaxWidth()
+                            .background(Color.White),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
                     )
-
-                    Button(
-                        onClick = { showPopup2 = false },
-                        modifier = Modifier
-                            .padding(end = 8.dp)
-                    ){
+                    {
                         Text(
-                            text = "Volver",
-                            color = Color.White
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier
+                                .padding(top = 8.dp),
+                            text = "Tu artesanía ${product.name} se ha eliminado correctamente",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = Color.Black
                         )
-                    }
 
+                        Button(
+                            onClick = { showPopup2 = false },
+                            modifier = Modifier
+                                .padding(end = 8.dp)
+                        ) {
+                            Text(
+                                text = "Volver",
+                                color = Color.White
+                            )
+                        }
+
+                    }
                 }
 
             }

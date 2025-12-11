@@ -1,6 +1,5 @@
-package com.example.ama.core.dto.mappers
+package com.example.ama.core.dto
 
-import com.example.ama.core.dto.ProductDto
 import com.example.ama.ui.components.Product
 import com.example.ama.ui.components.ProductType
 

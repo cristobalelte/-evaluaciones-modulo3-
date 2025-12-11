@@ -182,6 +182,7 @@ fun AppNavigation(
             ProductDetailScreen(
                 navController = navController,
                 product = product,
+                onOpenPublish = { navController.navigate(Routes.PUBLISH) },
                 onBack = { navController.popBackStack() },
                 onAddToCart = {
                     vm.addToCart(product)

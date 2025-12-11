@@ -1,6 +1,5 @@
 package com.example.ama.ui.screens.catalog
 
-import android.R.attr.description
 import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.ViewModel
@@ -22,8 +21,6 @@ import kotlinx.coroutines.withContext
 import java.text.Normalizer
 import java.util.UUID
 import kotlin.math.min
-import com.example.ama.core.dto.mappers.toUi
-import kotlinx.coroutines.flow.map
 
 class CatalogViewModel : ViewModel() {
 

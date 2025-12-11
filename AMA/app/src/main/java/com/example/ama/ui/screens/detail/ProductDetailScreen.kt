@@ -33,6 +33,7 @@ import androidx.compose.ui.window.Popup
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.ama.R
+import com.example.ama.ui.components.BottomBar
 import com.example.ama.ui.components.Product
 import com.example.ama.ui.components.ProductType
 import com.example.ama.ui.components.TopBar
@@ -47,6 +48,7 @@ fun ProductDetailScreen(
     navController: NavController,
     product: Product,
     onBack: () -> Unit,
+    onOpenPublish: () -> Unit,
     onAddToCart: (Product) -> Unit,
     publishedBy: String? = null,
     description: String? = null,
@@ -56,82 +58,97 @@ fun ProductDetailScreen(
     var showPopup by remember { mutableStateOf(false) }
     // 3. Usa el componente Popup. Si la var bool showPopup es true, muestra el popup
     if (showPopup) {
-        Popup(onDismissRequest = { showPopup = false }) { // Cierra la ventana al tocar fuera
-            // Define el contenido de la ventana emergente aquí
-            Column(
+        Popup(
+            alignment = Alignment.Center,
+            onDismissRequest = { showPopup = false } // Cierra la ventana al tocar fuera
+        )
+        {
+            // Fondo oscuro y difuminado
+            Box(
                 modifier = Modifier
-                    .padding(16.dp)
-                    .fillMaxWidth()
-                    .background(Color.White),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.6f)), // Color negro semitransparente
+                contentAlignment = Alignment.Center
             )
             {
-                Text(
-                    textAlign = TextAlign.Center,
+                // Define el contenido de la ventana emergente aquí
+                Column(
                     modifier = Modifier
-                        .padding(top = 8.dp),
-                    text = "Agregaste a tu carrito",
-                    style = MaterialTheme.typography.titleMedium,
-                    color = Color.Black
-                )
-                Text(
-                    text = "${product.name}",
-                    style = MaterialTheme.typography.titleSmall,
-                    color = Color.Black
-                )
-//                Se agrega producto al carrito, se cierra el popup
-//                y vamos al carrito:
-                Button(
-                    onClick = {
-                        showPopup = false
-                        onAddToCart(product)
-                        navController.navigate(Routes.CART)
-                    },
-                    modifier = Modifier
-                        .padding(end = 8.dp)
+                        .padding(16.dp)
+                        .fillMaxWidth()
+                        .background(Color.White),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
                 )
                 {
                     Text(
-                        text = "Ir al carrito",
-                        color = Color.White
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .padding(top = 8.dp),
+                        text = "Agregaste a tu carrito",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = Color.Black
                     )
-                }
+                    Text(
+                        text = product.name,
+                        style = MaterialTheme.typography.titleSmall,
+                        color = Color.Black
+                    )
+//                Se agrega producto al carrito, se cierra el popup
+//                y vamos al carrito:
+                    Button(
+                        onClick = {
+                            showPopup = false
+                            onAddToCart(product)
+                            navController.navigate(Routes.CART)
+                        },
+                        modifier = Modifier
+                            .padding(end = 8.dp)
+                    )
+                    {
+                        Text(
+                            text = "Ir al carrito",
+                            color = Color.White
+                        )
+                    }
 
 //                Se agrega producto al carrito y se cierra el popup:
 //                pero no vamos al carrito, sino que volvemos a la pantalla anterior:
-                Button(
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.LightGray,
-                        contentColor = Color.Black
-                    ),
-                    onClick = {
-                        showPopup = false
-                        onAddToCart(product)},
-                    modifier = Modifier
-                        .padding(end = 8.dp)
-                )
-                {
-                    Text(
-                        text = "Seguir comprando"
+                    Button(
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.LightGray,
+                            contentColor = Color.Black
+                        ),
+                        onClick = {
+                            showPopup = false
+                            onAddToCart(product)
+                        },
+                        modifier = Modifier
+                            .padding(end = 8.dp)
                     )
-                }
+                    {
+                        Text(
+                            text = "Seguir comprando"
+                        )
+                    }
 
 
-            } //Cierre Column
-        }
-    }
+                } //Cierre Column
+            } //Cierre Box
+        } // Cierre Popup
+    } //Cierre if
+
     val currency = remember { NumberFormat.getCurrencyInstance(Locale("es", "CL")) }
 
     val typeText = remember(product.type) {
         when (product.type) {
-            ProductType.LANA  -> "Lana"
-            ProductType.MADERA  -> "Madera"
-            ProductType.CERAMICA-> "Cerámica"
-            ProductType.GREDA   -> "Greda"
-            ProductType.HILO    -> "Hilo"
+            ProductType.LANA -> "Lana"
+            ProductType.MADERA -> "Madera"
+            ProductType.CERAMICA -> "Cerámica"
+            ProductType.GREDA -> "Greda"
+            ProductType.HILO -> "Hilo"
             ProductType.PINTURA -> "Pintura"
-            ProductType.OTRO    -> "Otro"
+            ProductType.OTRO -> "Otro"
         }
     }
 
@@ -146,46 +163,24 @@ fun ProductDetailScreen(
 
     Scaffold(
         topBar = {
-           /* CenterAlignedTopAppBar(
-                title = {
-                    Image(
-                        painter = painterResource(R.drawable.logo_artemayor_horizontal),
-                        contentDescription = "Arte Mayor",
-                        modifier = Modifier.height(40.dp)
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Volver"
-                        )
-                    }
-                },
-                actions = {
-                    IconButton(onClick = onOpenCart) {
-                        BadgedBox(badge = {
-                            if (cartCount > 0) Badge { Text("$cartCount") }
-                        }) {
-                            Icon(
-                                imageVector = Icons.Outlined.ShoppingCart,
-                                contentDescription = "Carrito"
-                            )
-                        }
-                    }
-                }
-            )*/
             TopBar(
                 navController,
                 cartCount,
                 onOpenCart
+            )
+        },
+        bottomBar = {
+            BottomBar(
+                navController = navController,
+                onPublishClick = onOpenPublish,
+                onProfileClick = { navController.navigate("perfil") }
             )
         }
     ) { padding ->
         Column(
             modifier = Modifier
                 .padding(padding)
-                .verticalScroll( rememberScrollState() )
+                .verticalScroll(rememberScrollState())
                 .fillMaxSize()
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -196,11 +191,21 @@ fun ProductDetailScreen(
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(16.dp))
             ) {
+                /*Operador Elvis ?:
+               Si la parte izquierda (images.getOrNull(index)) es no nula, se usa ese valor.
+               Si es nula, se usa el valor a la derecha del ?:.
+               Resultado
+               model obtiene la imagen correspondiente si existe.
+               Si no existe, obtiene el recurso drawable placeholder_image.
+               */
+
+//                La var model es la imagen que se va a mostrar, tomada de la var images = product.imageUrl
+//               Si no existe se muestra la imagen de placeholder_image:
                 val model: Any =
                     images.getOrNull(index) ?: R.drawable.placeholder_image
 
                 AsyncImage(
-                    model = model,
+                    model = model, //Imagen obtenida de la var images = product.imageUrl
                     contentDescription = product.name,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -234,6 +239,7 @@ fun ProductDetailScreen(
                 }
 
 
+//                Imagen del corazon abajo a la derecha sobre la Imagen:
                 Surface(
                     shape = CircleShape,
                     color = MaterialTheme.colorScheme.surface.copy(alpha = 0.85f),
@@ -247,20 +253,46 @@ fun ProductDetailScreen(
                     }
                 }
             }
+//Fin aspecto Imagen
+
+//            Poner horizontalmente Nombre del Autor y Tipo: "Categoria $categoria":
+
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = product.author,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.primary
+                )
+
+                Spacer(Modifier.width(10.dp))
+
+                Text(
+                    text = "|",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.primary
+                )
+
+                Spacer(Modifier.width(10.dp))
+
+                Text(
+                    "Categoria $typeText",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+
+            }
 
 
-            Text(
-                text = "Autor/a: ${product.author}",
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-
-            // Título + precio
+            // Título:
             Text(
                 text = product.name,
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.SemiBold
             )
+
+//             Precio:
             Text(
                 text = currency.format(product.price),
                 style = MaterialTheme.typography.titleLarge,
@@ -271,48 +303,42 @@ fun ProductDetailScreen(
             val descToShow = (description ?: product.description).ifBlank { "Sin descripción" }
             Text(
                 text = descToShow,
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurface,
             )
 
             // Metadatos
-            Text(
-                "Región: ${product.region}",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            Text(
-                "Tipo: $typeText",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            Text(
-                "Stock: ${product.stock}",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
+            /* Text(
+                 "Región: ${product.region}",
+                 style = MaterialTheme.typography.bodySmall,
+                 color = MaterialTheme.colorScheme.onSurfaceVariant
+             )
+             Text(
+                 "Stock: ${product.stock}",
+                 style = MaterialTheme.typography.bodySmall,
+                 color = MaterialTheme.colorScheme.onSurfaceVariant
+             )
 
-            Text(
-                text = "Subcategoría: ${product.subcategory.label()}",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-
+             Text(
+                 text = "Subcategoría: ${product.subcategory.label()}",
+                 style = MaterialTheme.typography.bodySmall,
+                 color = MaterialTheme.colorScheme.onSurfaceVariant
+             )
+ */
 
             Spacer(Modifier.weight(1f))
 
 
             Button(
-//                onClick = { onAddToCart(product) },
                 onClick = { showPopup = true },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(48.dp),
+                    .height(44.dp),
                 shape = RoundedCornerShape(24.dp)
             ) {
                 Icon(Icons.Outlined.ShoppingCart, contentDescription = null)
                 Spacer(Modifier.width(8.dp))
-                Text(stringResource(R.string.add_to_cart), fontSize = 18.sp)
+                Text(stringResource(R.string.add_to_cart), fontSize = 16.sp)
             }
         }
     }

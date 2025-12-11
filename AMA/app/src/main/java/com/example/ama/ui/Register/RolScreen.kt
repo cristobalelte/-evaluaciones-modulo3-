@@ -17,6 +17,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -47,11 +48,32 @@ fun RolScreen(navController: NavController) {
 
             Spacer(Modifier.height(30.dp))
 
-            PrimaryButton(
+            // ============= BOTÓN AMARILLO: COMPRADOR =============
+            Button(
+                onClick = { /*TODO*/ },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(48.dp),
+                shape = RoundedCornerShape(24.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFFFFC107),  // Amarillo
+                    contentColor = Color(0xFF7B001A)     // Rojo Arte Mayor
+                ),
+                elevation = ButtonDefaults.buttonElevation(defaultElevation = 0.dp)
+            ) {
+                Text(
+                    text = "COMPRADOR",
+                    style = MaterialTheme.typography.labelLarge
+                )
+            }
+
+           /* PrimaryButton(
                 text = "COMPRADOR",
                 onClick = { navController.navigate(Routes.HOME) },
                 modifier = Modifier.padding(vertical = 6.dp)
-            )
+            )*/
+
+
             Spacer(Modifier.height(30.dp))
 
             PrimaryButton(
