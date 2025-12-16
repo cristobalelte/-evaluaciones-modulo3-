@@ -1,72 +1,36 @@
 package com.example.ama.ui.screens.subcategory
 
-import android.R.attr.minWidth
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.outlined.ArrowDropDown
 import androidx.compose.material.icons.outlined.Search
-import androidx.compose.material.icons.outlined.ShoppingCart
-import androidx.compose.material3.AssistChip
-import androidx.compose.material3.AssistChipDefaults
-import androidx.compose.material3.Badge
-import androidx.compose.material3.BadgedBox
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilterChip
+import androidx.compose.material.icons.outlined.Tune
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.ama.ui.components.BottomBar
 import com.example.ama.ui.components.ProductType
 import com.example.ama.ui.components.SUBCATS
+import com.example.ama.ui.components.TopBar
 import com.example.ama.ui.components.label
 import com.example.ama.ui.components.prettyLabel
-import com.example.ama.R
-import com.example.ama.ui.components.TopBar
-import com.example.ama.ui.navigation.Routes
 
-
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProductSubCatScreen(
     navController: NavController,
@@ -77,182 +41,174 @@ fun ProductSubCatScreen(
     onBack: () -> Unit,
     onSearch: (String) -> Unit = {}
 ) {
-
     var q by remember { mutableStateOf("") }
-    val subcats = remember(category) { SUBCATS[category] ?: emptyList() }
+
+    val allSubcats = remember(category) { SUBCATS[category] ?: emptyList() }
+    val filtered = remember(q, allSubcats) {
+        allSubcats
+            .filter { q.isBlank() || it.label().contains(q, ignoreCase = true) }
+            .sortedBy { it.label() }
+    }
+
+    // Colores neutros como el mock
+    val pageBg = Color.White
+    val rowBg  = Color(0xFFF6EDED) // gris suave
+    val gapBg  = Color.White       // separación blanca entre filas
 
     Scaffold(
-        topBar = {
-            TopBar(
-                navController,
-                cartCount,
-                onOpenCart
-            )
-        },
+        containerColor = pageBg,
+        topBar = { TopBar(navController, cartCount, onOpenCart) },
         bottomBar = {
             BottomBar(
                 navController = navController,
                 onPublishClick = onOpenPublish,
-                onProfileClick = { navController.navigate("perfil") })
+                onProfileClick = { navController.navigate("perfil") }
+            )
         }
-    )
-    { padding ->
+    ) { padding ->
         LazyColumn(
             modifier = Modifier
                 .padding(padding)
                 .fillMaxSize(),
-            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 10.dp)
         ) {
 
-            item {
-                val pillBg = MaterialTheme.colorScheme.primaryContainer
-                val pillFg = MaterialTheme.colorScheme.onPrimaryContainer
-
-                OutlinedTextField(
-                    value = q,
-                    onValueChange = { q = it },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(52.dp),
-                    singleLine = true,
-                    placeholder = { Text("¿Qué artesanía buscas?") },
-                    leadingIcon = { Icon(Icons.Outlined.Search, null) },
-                    trailingIcon = {
-                        TextButton(
-                            onClick = { onSearch(q) },
-                            colors = ButtonDefaults.textButtonColors(contentColor = pillFg)
-                        ) { Text("Buscar") }
-                    },
-                    shape = RoundedCornerShape(28.dp),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedContainerColor   = pillBg,
-                        unfocusedContainerColor = pillBg,
-                        disabledContainerColor  = pillBg,
-                        focusedBorderColor      = Color.Transparent,
-                        unfocusedBorderColor    = Color.Transparent,
-                        disabledBorderColor     = Color.Transparent,
-                        focusedTextColor        = pillFg,
-                        unfocusedTextColor      = pillFg,
-                        focusedLeadingIconColor = pillFg,
-                        unfocusedLeadingIconColor = pillFg,
-                        focusedTrailingIconColor = pillFg,
-                        unfocusedTrailingIconColor = pillFg,
-                        focusedPlaceholderColor = pillFg.copy(alpha = .7f),
-                        unfocusedPlaceholderColor = pillFg.copy(alpha = .7f),
-                    )
-                )
-            }
-
-            // Título
-            item {
-                Text(
-                    text = category.prettyLabel(),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 4.dp, bottom = 2.dp),
-                    textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.headlineSmall.copy( // antes era titleMedium
-                        fontWeight = FontWeight.SemiBold
-                    ),
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-            }
-
-            // Chips redondeados
-            val chipW = 104.dp
-            val chipH = 32.dp
-
+            // "Categorías | Lana" (Lana subrayado como el mock)
             item {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterHorizontally)
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    FilterPill(
-                        navController = navController,"Ordenar\ny filtrar", width = chipW, height = chipH, twoLines = true)
-                    { /* TODO */ }
-                    FilterPill(
-                        navController = navController, width = chipW, height = chipH, label = "Region")
-                    { /* TODO */ }
-                    FilterPill(
-                        navController = navController,"Precio", width = chipW, height = chipH)
-                    { /* TODO */ }
-                }
-                Spacer(Modifier.height(20.dp))
-            }
-
-
-            // Lista de subcategorías (botones)
-            items(subcats.filter { q.isBlank() || it.label().contains(q, true) }) { sub ->
-                val btnBg = MaterialTheme.colorScheme.primary
-                val btnFg = MaterialTheme.colorScheme.onPrimary
-
-                Button(
-                    onClick = {
-                        navController.navigate("catalog?type=${category.name}&sub=${sub.name}")
-                    },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = btnBg,
-                        contentColor   = btnFg,
-                        disabledContainerColor = btnBg.copy(alpha = .4f),
-                        disabledContentColor   = btnFg.copy(alpha = .6f)
-                    ),
-                    shape = RoundedCornerShape(24.dp),     // pill
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(48.dp)
-                ) {
-                    Text(sub.label(), style = MaterialTheme.typography.titleMedium, maxLines = 1)
+                    Text(
+                        text = "Categorías",
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    Text(
+                        text = "  |  ",
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    Text(
+                        text = category.prettyLabel(),
+                        style = MaterialTheme.typography.labelMedium.copy(
+                            fontWeight = FontWeight.SemiBold,
+                            textDecoration = TextDecoration.Underline
+                        ),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 }
                 Spacer(Modifier.height(10.dp))
             }
+
+            // Buscador
+            item {
+                OutlinedTextField(
+                    value = q,
+                    onValueChange = { q = it; onSearch(it) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(min = 48.dp),
+                    singleLine = true,
+                    textStyle = MaterialTheme.typography.bodyMedium,
+                    placeholder = { Text("¿Qué artesanía buscas?", style = MaterialTheme.typography.bodyMedium) },
+                    leadingIcon = { Icon(Icons.Outlined.Search, contentDescription = null) },
+                    shape = MaterialTheme.shapes.large,
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedContainerColor = Color.White,
+                        unfocusedContainerColor = Color.White,
+                        focusedBorderColor = MaterialTheme.colorScheme.outline,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant
+                    )
+                )
+                Spacer(Modifier.height(10.dp))
+            }
+
+
+            // "Ver filtros" + título centrado
+            item {
+                var leftWidthPx by remember { mutableIntStateOf(0) }
+                val density = LocalDensity.current
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(min = 36.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    // Izquierda: Ver filtros (medimos su ancho)
+                    Row(
+                        modifier = Modifier
+                            .onGloballyPositioned { leftWidthPx = it.size.width }
+                            .clickable { navController.navigate("regionScreen") },
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.Tune,
+                            contentDescription = null,
+                            modifier = Modifier.size(18.dp),
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                        Spacer(Modifier.width(6.dp))
+                        Text(
+                            text = "Ver filtros",
+                            style = MaterialTheme.typography.labelLarge,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
+
+                    // Centro: título centrado REAL
+                    Box(
+                        modifier = Modifier.weight(1f),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = category.prettyLabel(),
+                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+
+                    // Derecha: espacio “espejo” del ancho izquierdo para centrar perfecto
+                    Spacer(
+                        Modifier.width(with(density) { leftWidthPx.toDp() })
+                    )
+                }
+
+                Spacer(Modifier.height(6.dp))
+            }
+
+            itemsIndexed(filtered) { index, sub ->
+                Surface(
+                    modifier = Modifier.fillMaxWidth(),
+                    color = rowBg,
+                    tonalElevation = 0.dp,
+                    shadowElevation = 0.dp
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                navController.navigate("catalog?type=${category.name}&sub=${sub.name}")
+                            }
+                            .heightIn(min = 44.dp) // ✅ altura más parecida al mock
+                            .padding(horizontal = 16.dp, vertical = 10.dp), // ✅ menos alto
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = sub.label(),
+                            style = MaterialTheme.typography.bodyMedium, // ✅ texto más chico
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                }
+
+                //
+                if (index != filtered.lastIndex) {
+                    Spacer(Modifier.height(6.dp))
+                }
+            }
         }
     }
-}
-@Composable
-private fun FilterPill(
-    navController: NavController,
-    label: String,
-    width: Dp,
-    height: Dp,
-    twoLines: Boolean = false,
-    onClick: () -> Unit = {}
-) {
-    val pillBg = MaterialTheme.colorScheme.primaryContainer
-    val pillFg = MaterialTheme.colorScheme.onPrimaryContainer
-
-    AssistChip(
-        onClick = {
-            navController.navigate("regionScreen")
-            onClick()
-        },
-        label = {
-            Text(
-                text = label.uppercase(),
-                maxLines = if (twoLines) 2 else 1,
-                softWrap = twoLines,
-                textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.labelSmall,
-                lineHeight = 12.sp
-            )
-        },
-        trailingIcon = {
-            Icon(
-                imageVector = Icons.Outlined.ArrowDropDown,
-                contentDescription = null,
-                modifier = Modifier.size(14.dp)
-            )
-        },
-        shape = RoundedCornerShape(18.dp),
-        modifier = Modifier
-            .width(width)
-            .height(height),
-        colors = AssistChipDefaults.assistChipColors(
-            containerColor = pillBg,
-            labelColor = pillFg,
-            leadingIconContentColor = pillFg,
-            trailingIconContentColor = pillFg
-        )
-    )
 }
 

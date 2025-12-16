@@ -227,7 +227,7 @@ fun HomeScreen(
                     }
                 }
 
-                // Un pequeño espacio extra para que “Lo nuevo…” quede más abajo
+
                 item { Spacer(Modifier.height(12.dp)) }
 
                 // LO NUEVO DE ESTE MES
