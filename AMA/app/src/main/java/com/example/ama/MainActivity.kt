@@ -11,6 +11,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
+import com.example.ama.ui.components.Product
+import com.example.ama.ui.components.ProductType
+import com.example.ama.ui.components.Subcategory
 import com.example.ama.ui.navigation.AppNavigation
 import com.example.ama.ui.theme.AMATheme
 import kotlinx.coroutines.delay
@@ -41,6 +44,7 @@ class MainActivity : ComponentActivity() {
             val prefs = remember(ctx) { ThemePrefs(ctx) }
             val themeOpt by prefs.themeFlow.collectAsState(initial = ThemeOption.SYSTEM)
 
+
             val dark = when (themeOpt) {
                 ThemeOption.SYSTEM -> isSystemInDarkTheme()
                 ThemeOption.DARK   -> true
@@ -50,10 +54,11 @@ class MainActivity : ComponentActivity() {
             AMATheme(darkTheme = dark) {
                 AppNavigation(
                     skipLogin = false,
-                    themeOpt = themeOpt,
                     onChangeTheme = { opt: ThemeOption ->
                         lifecycleScope.launch { prefs.setTheme(opt) }
-                    }
+                    },
+                    themeOpt = themeOpt
+
                 )
             }
         }

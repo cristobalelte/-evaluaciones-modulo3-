@@ -15,7 +15,7 @@ import com.example.ama.ui.screens.catalog.CatalogRoute
 import kotlinx.coroutines.launch
 
 //NO SE ESTA USANDO ESTE COMPOSE
-@Composable
+/*@Composable
 fun ProductDetailRoute(
     navController: NavController,
     productId: String,
@@ -39,7 +39,7 @@ fun ProductDetailRoute(
     ProductDetailScreen(
         navController = navController,
         product = product,
-        onOpenPublish = { /* ... */ },
+        onOpenPublish = { *//* ... *//* },
         onBack = onBack,
         onAddToCart = { p ->
             scope.launch {
@@ -50,5 +50,5 @@ fun ProductDetailRoute(
         cartCount = cartCount,
         onOpenCart = onOpenCart
     )
-}
+}*/
 

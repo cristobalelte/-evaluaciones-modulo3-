@@ -8,9 +8,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -27,10 +24,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
+import androidx.navigation.NavController
 import com.example.ama.data.dataclass.ProductData
+import com.example.ama.ui.navigation.Routes
 
 @Composable
-fun PublicadosCard(product: ProductData) {
+fun PublicadosCard(
+    navController: NavController,
+    product: ProductData
+) {
     Card(
         modifier = Modifier
             .fillMaxSize()
@@ -199,6 +201,7 @@ fun PublicadosCard(product: ProductData) {
                 .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+//            Box para contenedor gris oscuro del precio:
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
@@ -215,13 +218,17 @@ fun PublicadosCard(product: ProductData) {
                     style = MaterialTheme.typography.titleMedium,
                     color = Color.White
                 )
-            }
+            } //Fin box
+
+//            Texto: Nombre producto:
             Text(
                 textAlign = TextAlign.Center,
                 text = "${product.name}",
                 style = MaterialTheme.typography.titleMedium,
                 color = Color.Black
             )
+
+//            Texto: Categoria producto:
             Text(
                 textAlign = TextAlign.Center,
                 text = "${product.craftType}", //Categoria
@@ -229,12 +236,17 @@ fun PublicadosCard(product: ProductData) {
                 color = Color.Black
             )
 
+//            Botones Eliminar y Editar:
             Row(
                 modifier = Modifier
                     .padding(16.dp)
                     .fillMaxWidth()
             ) {
                 Button(
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.DarkGray,
+                        contentColor = Color.White
+                    ),
                     onClick = { showPopup = true },
                     modifier = Modifier
                         .weight(1f)
@@ -244,7 +256,10 @@ fun PublicadosCard(product: ProductData) {
                 }
 
                 Button(
-                    onClick = { /* Acción al hacer clic en el botón */ },
+                    onClick = {
+                        /* Acción al hacer clic en el botón: Ir a pantalla de editar producto */
+                        navController.navigate(Routes.EDITAR_PRODUCTO)
+                    },
                     modifier = Modifier
                         .weight(1f)
                         .padding(end = 8.dp)
@@ -252,6 +267,7 @@ fun PublicadosCard(product: ProductData) {
                     Text(text = "Editar")
                 }
             }
+//            Fin Row de botones Eliminar y Editar:
 
         }
     }

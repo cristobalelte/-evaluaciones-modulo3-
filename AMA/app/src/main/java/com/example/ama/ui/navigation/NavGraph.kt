@@ -15,10 +15,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.ama.data.dataclass.ProductData
 import com.example.ama.ui.Login.LoginScreen
 import com.example.ama.ui.Register.RegisterScreen
 import com.example.ama.ui.Register.RolScreen
 import com.example.ama.ui.Register.StartScreen
+import com.example.ama.ui.components.Product
 import com.example.ama.ui.components.ProductType
 import com.example.ama.ui.screens.AddProductScreen.AddProductRoute
 
@@ -37,6 +39,7 @@ import com.example.ama.ui.screens.detail.ProductDetailScreen
 import com.example.ama.ui.screens.equipo.EquipoScreen
 import com.example.ama.ui.screens.perfil.PerfilScreen
 import com.example.ama.ui.screens.products.ProductScreen
+import com.example.ama.ui.screens.products.publicados.EditarProducto
 import com.example.ama.ui.screens.products.publicados.ProdPublicados
 import com.example.ama.ui.screens.settings.SettingsScreen
 import com.example.ama.ui.screens.subcategory.ProductSubCatScreen
@@ -103,16 +106,16 @@ fun AppNavigation(
         }
 
 
-    /*    composable("registerScreen") {
-            RegScreenDClass(
-                navController = navController,
-                onPublish = { register ->
-                    navController.navigate(Routes.HOME)
-                }
-            )
-        }*/
+        /*    composable("registerScreen") {
+                RegScreenDClass(
+                    navController = navController,
+                    onPublish = { register ->
+                        navController.navigate(Routes.HOME)
+                    }
+                )
+            }*/
 
-        composable("rolScreen"){
+        composable("rolScreen") {
             RolScreen(
                 navController = navController
             )
@@ -193,6 +196,42 @@ fun AppNavigation(
         }
 
 
+        composable(route = Routes.EDITAR_PRODUCTO)
+        {
+            EditarProducto(
+                navController = navController,
+                product = ProductData(
+                    name = "Producto de prueba",
+                    description = "Descripción de prueba",
+                    author = "Autor de prueba",
+                    price = 100.0,
+                    material = "Madera",
+                    craftType = "Cerámica",
+                    isFeatured = true,
+                    isActive = true,
+                    creatorId = "123",
+                    stock = 10,
+                    region = "Región de prueba",
+                    createdAt = "2023-09-01T12:00:00Z",
+                    imageUrl = "https://example.com/image.jpg",
+                    id = null
+                ),
+                onBack = { navController.popBackStack() },
+                onOpenPublish = { navController.navigate(Routes.PUBLISH) },
+                description = null,
+                cartCount = cartCount,
+                onOpenCart = { navController.navigate(Routes.CART) },
+
+            )
+
+        }
+
+
+
+
+
+
+
         composable(Routes.CART) {
             val cartVm: CartViewModel = viewModel()   // o hiltViewModel()
             CartRoute(
@@ -227,7 +266,7 @@ fun AppNavigation(
                 onBack = { navController.popBackStack() }
             )
         }
-        
+
 
 //Composable nueva de prueba: ProductTypeScreen.kt
         composable("productType") {
@@ -243,7 +282,7 @@ fun AppNavigation(
 
         composable(
             route = Routes.SUBCATEGORY, // "subcategory?category={category}"
-            arguments = listOf(navArgument("category"){ type = NavType.StringType })
+            arguments = listOf(navArgument("category") { type = NavType.StringType })
         ) { backStack ->
             val categoryStr = backStack.arguments?.getString("category") ?: ""
             val category = runCatching { ProductType.valueOf(categoryStr) }

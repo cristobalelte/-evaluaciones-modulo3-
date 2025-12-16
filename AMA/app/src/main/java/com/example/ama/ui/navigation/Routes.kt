@@ -14,6 +14,7 @@ object Routes {
     const val CATALOG = "catalog"
     const val SETTINGS = "settings"
     const val DETAIL = "detail/{id}"
+    const val EDITAR_PRODUCTO = "editarProducto/{id}"
     const val CATALOG_ARG = "catalog?type={type}&sub={sub}"
     const val SUBCATEGORY = "subcategory?category={category}"
     const val REGISTER = "register"
