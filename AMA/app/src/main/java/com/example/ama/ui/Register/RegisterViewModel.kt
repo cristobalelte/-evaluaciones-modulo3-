@@ -8,22 +8,29 @@ import androidx.navigation.NavController
 
 class RegisterViewModel : ViewModel() {
 
-    // Opcional: si quieres navegar desde el VM
     var navController: NavController? = null
 
-    // ---------------- CAMPOS DE FORMULARIO ----------------
-
+    // ---------- CAMPOS ----------
     var name by mutableStateOf("")
         private set
-    fun onNameChange(v: String) { name = v }
+    fun onNameChange(v: String) {
+        name = v
+        clearErrorIfValidNow()
+    }
 
     var lastName by mutableStateOf("")
         private set
-    fun onLastNameChange(v: String) { lastName = v }
+    fun onLastNameChange(v: String) {
+        lastName = v
+        clearErrorIfValidNow()
+    }
 
     var phone by mutableStateOf("")
         private set
-    fun onPhoneChange(v: String) { phone = v }
+    fun onPhoneChange(v: String) {
+        phone = v
+        clearErrorIfValidNow()
+    }
 
     var region by mutableStateOf("")
         private set
@@ -39,11 +46,18 @@ class RegisterViewModel : ViewModel() {
 
     var email by mutableStateOf("")
         private set
+    private val emailRegex =
+        Regex("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")
+
     fun onEmailChange(v: String) {
         email = v
-        // si está corrigiendo el correo, limpiamos el error
-        emailError = null
-        if (errorMessage.isNotBlank()) errorMessage = ""
+        // validación EN TIEMPO REAL para el color verde/rojo
+        emailError = when {
+            email.isBlank() -> "El correo no puede estar vacío"
+            !emailRegex.matches(email) -> "Por favor, ingresa bien tu correo"
+            else -> null
+        }
+        clearErrorIfValidNow()
     }
 
     var password by mutableStateOf("")
@@ -60,70 +74,87 @@ class RegisterViewModel : ViewModel() {
         clearErrorIfValidNow()
     }
 
-    // ---------------- ESTADO DE ERRORES ----------------
-
+    // ---------- ESTADO DE VALIDACIÓN ----------
     var emailError: String? by mutableStateOf(null)
         private set
 
-    // Mensaje general que se muestra bajo el botón
     var errorMessage by mutableStateOf("")
         private set
 
-    // ---------------- VALIDACIÓN GLOBAL ----------------
+    // ¿Ya se apretó el botón al menos una vez?
+    var hasSubmitted by mutableStateOf(false)
+        private set
 
+    // ---------- FLAGS POR CAMPO (para bordes e íconos) ----------
+
+    // Nombre
+    val isNameError: Boolean
+        get() = hasSubmitted && name.isBlank()
+
+    val isNameOk: Boolean
+        get() = name.isNotBlank()
+
+    // Apellido
+    val isLastNameError: Boolean
+        get() = hasSubmitted && lastName.isBlank()
+
+    val isLastNameOk: Boolean
+        get() = lastName.isNotBlank()
+
+    // Email
+    val isEmailError: Boolean
+        get() = emailError != null && email.isNotBlank()
+
+    val isEmailOk: Boolean
+        get() = emailError == null && email.isNotBlank()
+
+    // Contraseña (mínimo 6 caracteres)
+    val isPasswordError: Boolean
+        get() = hasSubmitted && password.length < 6
+
+    val isPasswordOk: Boolean
+        get() = password.length >= 6
+
+    // Confirmar contraseña
+    val isConfirmPasswordError: Boolean
+        get() = hasSubmitted &&
+                (confirmPassword.isBlank() || confirmPassword != password)
+
+    val isConfirmPasswordOk: Boolean
+        get() = confirmPassword.isNotBlank() && confirmPassword == password
+
+    // ---------- VALIDACIÓN GLOBAL ----------
     val isValid: Boolean
         get() = name.isNotBlank() &&
                 lastName.isNotBlank() &&
-                phone.isNotBlank() &&
-                region.isNotBlank() &&
-                city.isNotBlank() &&
-                address.isNotBlank() &&
                 email.isNotBlank() &&
-                emailError == null &&          // correo válido
-                password.isNotBlank() &&
+                emailError == null &&
+                password.length >= 6 &&
                 confirmPassword.isNotBlank() &&
                 password == confirmPassword
 
-    // Valida SOLO el correo (usado antes de hacer submit)
-    fun validateEmailNow() {
-        emailError =
-            if (email.isBlank()) {
-                "El correo no puede estar vacío"
-            } else if (!Regex("^[A-Za-z0-9+_.-]+@gmail\\.com$").matches(email)) {
-                "Debe ser un correo Gmail válido (ejemplo@gmail.com)"
-            } else {
-                null
-            }
-    }
-
-    // Limpia error general si todo quedó OK
     private fun clearErrorIfValidNow() {
-        if (isValid) errorMessage = ""
+        if (isValid) {
+            errorMessage = ""
+        }
     }
-
 
     fun onSubmit() {
-        // Siempre validar el correo al hacer submit
-        validateEmailNow()
+        hasSubmitted = true
 
+        // mensaje general
         errorMessage = when {
             name.isBlank() -> "El nombre es obligatorio"
             lastName.isBlank() -> "El apellido es obligatorio"
-            phone.isBlank() -> "El teléfono es obligatorio"
-            region.isBlank() -> "La región es obligatoria"
-            city.isBlank() -> "La ciudad/comuna es obligatoria"
-            address.isBlank() -> "La dirección es obligatoria"
             email.isBlank() -> "El correo es obligatorio"
             emailError != null -> emailError ?: "Correo inválido"
             password.isBlank() || confirmPassword.isBlank() ->
                 "Completa ambas contraseñas"
+            password.length < 6 ->
+                "La contraseña debe tener al menos 6 caracteres"
             password != confirmPassword ->
                 "Las contraseñas no coinciden"
-            else -> {
-                // Aquí podrías navegar si quieres:
-                // navController?.navigate("rolScreen")
-                ""
-            }
+            else -> ""
         }
     }
 }

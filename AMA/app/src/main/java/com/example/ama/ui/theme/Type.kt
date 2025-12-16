@@ -1,55 +1,76 @@
 package com.example.ama.ui.theme
-//package com.example.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
-
-import androidx.compose.ui.text.googlefonts.GoogleFont
 import androidx.compose.ui.text.googlefonts.Font
+import androidx.compose.ui.text.googlefonts.GoogleFont
 import com.example.ama.R
 
+// Provider de Google Fonts (ya lo tenías)
 val provider = GoogleFont.Provider(
     providerAuthority = "com.google.android.gms.fonts",
     providerPackage = "com.google.android.gms",
     certificates = R.array.com_google_android_gms_fonts_certs
 )
 
-val bodyFontFamily = FontFamily(
+// Familia Lato (normal + bold)
+private val latoFontFamily = FontFamily(
     Font(
-        googleFont = GoogleFont("Roboto Flex"),
+        googleFont = GoogleFont("Lato"),
         fontProvider = provider,
+        weight = FontWeight.Normal
+    ),
+    Font(
+        googleFont = GoogleFont("Lato"),
+        fontProvider = provider,
+        weight = FontWeight.Bold
     )
 )
 
-val displayFontFamily = FontFamily(
-    Font(
-        googleFont = GoogleFont("Noto Sans Thai"),
-        fontProvider = provider,
-    )
-)
+// Tipografía base de Material3
+private val baseline = Typography()
 
-// Default Material 3 typography values
-val baseline = Typography()
-
-// Usa fuentes del sistema por ahora (evita provider + certs)
+// AppTypography usando Lato y ajustando:
+// - headlineSmall = Heading S (24, bold, lh 24)
+// - bodyMedium    = Body B-1 (16, regular, lh 21)
 val AppTypography = Typography(
-    displayLarge  = Typography().displayLarge.copy(fontFamily = FontFamily.SansSerif),
-    displayMedium = Typography().displayMedium.copy(fontFamily = FontFamily.SansSerif),
-    displaySmall  = Typography().displaySmall.copy(fontFamily = FontFamily.SansSerif),
-    headlineLarge = Typography().headlineLarge.copy(fontFamily = FontFamily.SansSerif),
-    headlineMedium= Typography().headlineMedium.copy(fontFamily = FontFamily.SansSerif),
-    headlineSmall = Typography().headlineSmall.copy(fontFamily = FontFamily.SansSerif),
-    titleLarge    = Typography().titleLarge.copy(fontFamily = FontFamily.SansSerif),
-    titleMedium   = Typography().titleMedium.copy(fontFamily = FontFamily.SansSerif),
-    titleSmall    = Typography().titleSmall.copy(fontFamily = FontFamily.SansSerif),
-    bodyLarge     = Typography().bodyLarge.copy(fontFamily = FontFamily.SansSerif),
-    bodyMedium    = Typography().bodyMedium.copy(fontFamily = FontFamily.SansSerif),
-    bodySmall     = Typography().bodySmall.copy(fontFamily = FontFamily.SansSerif),
-    labelLarge    = Typography().labelLarge.copy(fontFamily = FontFamily.SansSerif),
-    labelMedium   = Typography().labelMedium.copy(fontFamily = FontFamily.SansSerif),
-    labelSmall    = Typography().labelSmall.copy(fontFamily = FontFamily.SansSerif),
-)
+    displayLarge  = baseline.displayLarge.copy(fontFamily = latoFontFamily),
+    displayMedium = baseline.displayMedium.copy(fontFamily = latoFontFamily),
+    displaySmall  = baseline.displaySmall.copy(fontFamily = latoFontFamily),
 
+    headlineLarge = baseline.headlineLarge.copy(fontFamily = latoFontFamily),
+    headlineMedium= baseline.headlineMedium.copy(fontFamily = latoFontFamily),
+
+    // Heading S
+    headlineSmall = baseline.headlineSmall.copy(
+        fontFamily = latoFontFamily,
+        fontWeight = FontWeight.Bold,
+        fontSize   = 24.sp,
+        lineHeight = 24.sp,
+        letterSpacing = 0.sp
+    ),
+
+    titleLarge    = baseline.titleLarge.copy(fontFamily = latoFontFamily),
+    titleMedium   = baseline.titleMedium.copy(fontFamily = latoFontFamily),
+    titleSmall    = baseline.titleSmall.copy(fontFamily = latoFontFamily),
+
+    bodyLarge     = baseline.bodyLarge.copy(fontFamily = latoFontFamily),
+
+    // Body B-1
+    bodyMedium    = baseline.bodyMedium.copy(
+        fontFamily = latoFontFamily,
+        fontWeight = FontWeight.Normal,
+        fontSize   = 16.sp,
+        lineHeight = 21.sp,
+        letterSpacing = 0.sp
+    ),
+
+    bodySmall     = baseline.bodySmall.copy(fontFamily = latoFontFamily),
+
+    labelLarge    = baseline.labelLarge.copy(fontFamily = latoFontFamily),
+    labelMedium   = baseline.labelMedium.copy(fontFamily = latoFontFamily),
+    labelSmall    = baseline.labelSmall.copy(fontFamily = latoFontFamily),
+)

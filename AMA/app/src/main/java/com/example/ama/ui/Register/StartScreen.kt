@@ -17,6 +17,7 @@ import com.example.ama.ui.components.PrimaryButton
 import com.example.ama.ui.navigation.Routes
 import androidx.compose.foundation.BorderStroke
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StartScreen(navController: NavController) {
@@ -41,7 +42,7 @@ fun StartScreen(navController: NavController) {
 
             Spacer(Modifier.height(32.dp))
 
-            // ============= BOTÓN ROJO: INICIAR SESIÓN =============
+            //  BOTÓN ROJO: INICIAR SESIÓN
             PrimaryButton(
                 text = "Iniciar sesión",
                 onClick = { navController.navigate(Routes.LOGIN) },
@@ -50,9 +51,9 @@ fun StartScreen(navController: NavController) {
 
             Spacer(Modifier.height(16.dp))
 
-            // ============= BOTÓN AMARILLO: REGISTRARSE =============
+            //  BOTÓN AMARILLO: REGISTRARSE
             Button(
-                onClick = { navController.navigate(Routes.REGISTER) },
+                onClick = { navController.navigate(Routes.ROL) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(48.dp),
@@ -71,7 +72,7 @@ fun StartScreen(navController: NavController) {
 
             Spacer(Modifier.height(16.dp))
 
-            // ============= BOTÓN BORDE ROJO: INVITADO =============
+            // BOTÓN BORDE ROJO: INVITADO
             OutlinedButton(
                 onClick = {
                     navController.navigate(Routes.HOME) {
