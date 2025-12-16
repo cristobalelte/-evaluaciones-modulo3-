@@ -1,5 +1,6 @@
 package com.example.ama.ui.navigation
 
+import com.example.ama.ui.Register.RolScreen
 import com.example.ama.ui.components.ProductType
 
 
@@ -21,6 +22,8 @@ object Routes {
     const val START = "start"
     const val DATOS_ENVIO  = "datosEnvio"
     const val METODO_PAGO = "metodoPago"
+    const val ROL = "rolscreen"
+
 
 
 }

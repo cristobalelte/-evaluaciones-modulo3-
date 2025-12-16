@@ -1,4 +1,3 @@
-
 package com.example.ama.ui.Register
 
 import androidx.compose.foundation.Image
@@ -11,6 +10,8 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.outlined.Visibility
 import androidx.compose.material.icons.outlined.VisibilityOff
 import androidx.compose.material3.*
@@ -73,154 +74,187 @@ fun RegisterScreen(
                     contentScale = ContentScale.Fit
                 )
             }
-        }
-    ) { padding ->
-        Column(
+        },
+        containerColor = primaryLight
+    ) { innerPadding ->
+
+        val topPadding = innerPadding.calculateTopPadding()
+
+        // “Tarjeta” blanca con bordes superiores redondeados
+        Surface(
             modifier = Modifier
-                .padding(padding)
-                .padding(horizontal = 16.dp, vertical = 12.dp)
-                .verticalScroll(rememberScrollState())
-                .fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+                .fillMaxSize()
+                .padding(top = topPadding),
+            shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
+            color = Color.White
         ) {
-
-            // Título
-            Text(
-                text = "Ingresa tus datos",
-                style = MaterialTheme.typography.headlineMedium.copy(
-                    fontWeight = FontWeight.SemiBold
-                ),
-                textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth(),
-                color = Color.Gray
-            )
-
-            LabelWithAsterisk("Nombre")
-            FilledPillField(
-                value = registerVM.name,
-                onValueChange = registerVM::onNameChange,
-                placeholder = "Ingresa tu nombre aquí"
-            )
-
-
-            LabelWithAsterisk("Apellido")
-            FilledPillField(
-                value = registerVM.lastName,
-                onValueChange = registerVM::onLastNameChange,
-                placeholder = "Ingresa tu apellido aquí"
-            )
-
-            LabelWithAsterisk("Correo")
-            FilledPillField(
-                value = registerVM.email,
-                onValueChange = registerVM::onEmailChange,
-                placeholder = "Ingresa tu correo aquí",
-                isError = registerVM.emailError != null,
-                supportingText = registerVM.emailError,
-                keyboardType = KeyboardType.Email
-            )
-
-
-            LabelWithAsterisk("Teléfono de contacto")
-            FilledPillField(
-                value = registerVM.phone,
-                onValueChange = registerVM::onPhoneChange,
-                placeholder = "Ingresa tu número de teléfono aquí",
-                keyboardType = KeyboardType.Phone
-            )
-
-            LabelWithAsterisk("Región")
-            FilledPillField(
-                value = registerVM.region,
-                onValueChange = registerVM::onRegionChange,
-                placeholder = "Ingresa tu región aquí"
-            )
-
-            LabelWithAsterisk("Ciudad/Comuna")
-            FilledPillField(
-                value = registerVM.city,
-                onValueChange = registerVM::onCityChange,
-                placeholder = "Ingresa tu ciudad o comuna aquí"
-            )
-
-            LabelWithAsterisk("Dirección")
-            FilledPillField(
-                value = registerVM.address,
-                onValueChange = registerVM::onAddressChange,
-                placeholder = "Ingresa tu dirección aquí"
-            )
-
-            LabelWithAsterisk("Contraseña")
-            var showPass by remember { mutableStateOf(false) }
-            FilledPillField(
-                value = registerVM.password,
-                onValueChange = registerVM::onPasswordChange,
-                placeholder = "Ingresa tu contraseña aquí",
-                visualTransformation = if (showPass) VisualTransformation.None
-                else PasswordVisualTransformation(),
-                trailingIcon = {
-                    IconButton(onClick = { showPass = !showPass }) {
-                        Icon(
-                            imageVector = if (showPass)
-                                Icons.Outlined.VisibilityOff
-                            else
-                                Icons.Outlined.Visibility,
-                            contentDescription = null
-                        )
-                    }
-                }
-            )
-
-            LabelWithAsterisk("Volver a ingresar contraseña")
-            var showPass2 by remember { mutableStateOf(false) }
-            FilledPillField(
-                value = registerVM.confirmPassword,
-                onValueChange = registerVM::onConfirmPasswordChange,
-                placeholder = "Re-ingresa tu contraseña aquí",
-                visualTransformation = if (showPass2) VisualTransformation.None
-                else PasswordVisualTransformation(),
-                trailingIcon = {
-                    IconButton(onClick = { showPass2 = !showPass2 }) {
-                        Icon(
-                            imageVector = if (showPass2)
-                                Icons.Outlined.VisibilityOff
-                            else
-                                Icons.Outlined.Visibility,
-                            contentDescription = null
-                        )
-                    }
-                }
-            )
-
-            Spacer(Modifier.height(4.dp))
-
-            Button(
-                onClick = {
-                    registerVM.onSubmit()
-                    if (registerVM.isValid) {
-                        navController.navigate("rolScreen")
-                    }
-                },
-                // siempre enabled para que muestre errores
-                enabled = true,
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(48.dp),
-                shape = RoundedCornerShape(24.dp)
+                    .fillMaxSize()
+                    .padding(horizontal = 16.dp, vertical = 20.dp)
+                    .verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                Text("Registrarme")
-            }
 
-            // Error general bajo el botón
-            if (registerVM.errorMessage.isNotBlank()) {
+                // Título
                 Text(
-                    text = registerVM.errorMessage,
-                    color = MaterialTheme.colorScheme.error,
-                    style = MaterialTheme.typography.bodySmall
+                    text = "Ingresa tus datos",
+                    style = MaterialTheme.typography.headlineMedium.copy(
+                        fontWeight = FontWeight.Bold
+                    ),
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth(),
+                    color = Color.Black
                 )
-            }
 
-            Spacer(Modifier.height(12.dp))
+                // ===== NOMBRE (*) =====
+                LabelWithAsterisk("Nombre")
+                FilledPillField(
+                    value = registerVM.name,
+                    onValueChange = registerVM::onNameChange,
+                    placeholder = "Ingresa tu nombre aquí",
+                    isError = registerVM.isNameError,
+                    isOk = registerVM.isNameOk,
+                    showValidationIcon = true
+                )
+
+                // ===== APELLIDO (*) =====
+                LabelWithAsterisk("Apellido")
+                FilledPillField(
+                    value = registerVM.lastName,
+                    onValueChange = registerVM::onLastNameChange,
+                    placeholder = "Ingresa tu apellido aquí",
+                    isError = registerVM.isLastNameError,
+                    isOk = registerVM.isLastNameOk,
+                    showValidationIcon = true
+                )
+
+                // ===== CORREO (*) =====
+                LabelWithAsterisk("Correo")
+                FilledPillField(
+                    value = registerVM.email,
+                    onValueChange = registerVM::onEmailChange,
+                    placeholder = "Ingresa tu correo aquí",
+                    isError = registerVM.isEmailError,
+                    isOk = registerVM.isEmailOk,
+                    showValidationIcon = true,
+                    // solo mostramos el texto rojo si ya se apretó el botón
+                    supportingText = if (registerVM.hasSubmitted) registerVM.emailError else null,
+                    keyboardType = KeyboardType.Email
+                )
+
+                // ===== TELÉFONO (sin asterisco, sin check) =====
+                SimpleLabel("Teléfono de contacto")
+                FilledPillField(
+                    value = registerVM.phone,
+                    onValueChange = registerVM::onPhoneChange,
+                    placeholder = "Ingresa tu número de teléfono aquí",
+                    keyboardType = KeyboardType.Phone
+                )
+
+                // ===== REGIÓN =====
+                SimpleLabel("Región")
+                FilledPillField(
+                    value = registerVM.region,
+                    onValueChange = registerVM::onRegionChange,
+                    placeholder = "Ingresa tu región aquí"
+                )
+
+                // ===== CIUDAD / COMUNA =====
+                SimpleLabel("Ciudad/Comuna")
+                FilledPillField(
+                    value = registerVM.city,
+                    onValueChange = registerVM::onCityChange,
+                    placeholder = "Ingresa tu ciudad o comuna aquí"
+                )
+
+                // ===== DIRECCIÓN =====
+                SimpleLabel("Dirección")
+                FilledPillField(
+                    value = registerVM.address,
+                    onValueChange = registerVM::onAddressChange,
+                    placeholder = "Ingresa tu dirección aquí"
+                )
+
+                // ===== CONTRASEÑA (*) =====
+                LabelWithAsterisk("Contraseña")
+                var showPass by remember { mutableStateOf(false) }
+                FilledPillField(
+                    value = registerVM.password,
+                    onValueChange = registerVM::onPasswordChange,
+                    placeholder = "Ingresa tu contraseña aquí",
+                    isError = registerVM.isPasswordError,
+                    isOk = registerVM.isPasswordOk,
+                    showValidationIcon = true,
+                    visualTransformation = if (showPass) VisualTransformation.None
+                    else PasswordVisualTransformation(),
+                    trailingIcon = {
+                        IconButton(onClick = { showPass = !showPass }) {
+                            Icon(
+                                imageVector = if (showPass)
+                                    Icons.Outlined.VisibilityOff
+                                else
+                                    Icons.Outlined.Visibility,
+                                contentDescription = null
+                            )
+                        }
+                    }
+                )
+
+                // ===== REPETIR CONTRASEÑA (*) =====
+                LabelWithAsterisk("Volver a ingresar contraseña")
+                var showPass2 by remember { mutableStateOf(false) }
+                FilledPillField(
+                    value = registerVM.confirmPassword,
+                    onValueChange = registerVM::onConfirmPasswordChange,
+                    placeholder = "Re-ingresa tu contraseña aquí",
+                    isError = registerVM.isConfirmPasswordError,
+                    isOk = registerVM.isConfirmPasswordOk,
+                    showValidationIcon = true,
+                    visualTransformation = if (showPass2) VisualTransformation.None
+                    else PasswordVisualTransformation(),
+                    trailingIcon = {
+                        IconButton(onClick = { showPass2 = !showPass2 }) {
+                            Icon(
+                                imageVector = if (showPass2)
+                                    Icons.Outlined.VisibilityOff
+                                else
+                                    Icons.Outlined.Visibility,
+                                contentDescription = null
+                            )
+                        }
+                    }
+                )
+
+                Spacer(Modifier.height(4.dp))
+
+                Button(
+                    onClick = {
+                        registerVM.onSubmit()
+                        if (registerVM.isValid) {
+                            navController.navigate("home")
+                        }
+                    },
+                    // siempre enabled para que muestre errores al hacer click
+                    enabled = true,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(48.dp),
+                    shape = RoundedCornerShape(24.dp)
+                ) {
+                    Text("Registrarme")
+                }
+
+                if (registerVM.errorMessage.isNotBlank()) {
+                    Text(
+                        text = registerVM.errorMessage,
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+
+                Spacer(Modifier.height(12.dp))
+            }
         }
     }
 }
@@ -234,9 +268,22 @@ private fun LabelWithAsterisk(text: String) {
         letterSpacing = 0.sp
     )
     Row(verticalAlignment = Alignment.CenterVertically) {
-        Text(text = text, style = labelStyle)
-        Text(text = " *", style = labelStyle, color = MaterialTheme.colorScheme.primary)
+        Text(text = "$text ", style = labelStyle)
+        Text(text = "*", style = labelStyle, color = MaterialTheme.colorScheme.primary)
     }
+}
+
+/** Etiqueta normal SIN asterisco */
+@Composable
+private fun SimpleLabel(text: String) {
+    Text(
+        text = text,
+        style = MaterialTheme.typography.labelMedium.copy(
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            fontWeight = FontWeight.Medium,
+            letterSpacing = 0.sp
+        )
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -246,12 +293,20 @@ private fun FilledPillField(
     onValueChange: (String) -> Unit,
     placeholder: String,
     isError: Boolean = false,
+    isOk: Boolean = false,
+    showValidationIcon: Boolean = false,
     supportingText: String? = null,
     visualTransformation: VisualTransformation = VisualTransformation.None,
     trailingIcon: (@Composable (() -> Unit))? = null,
     keyboardType: KeyboardType = KeyboardType.Text,
 ) {
     val colors = MaterialTheme.colorScheme
+
+    val borderColor = when {
+        isError -> Color(0xFFF44336)      // rojo
+        isOk -> Color(0xFF4CAF50)         // verde
+        else -> Color(0xFFDDDDDD)         // gris
+    }
 
     OutlinedTextField(
         value = value,
@@ -262,7 +317,27 @@ private fun FilledPillField(
             .height(52.dp),
         placeholder = { Text(placeholder) },
         visualTransformation = visualTransformation,
-        trailingIcon = trailingIcon,
+        trailingIcon = {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                // Icono de validación (X o ✓)
+                if (showValidationIcon) {
+                    when {
+                        isError -> Icon(
+                            imageVector = Icons.Filled.Close,
+                            contentDescription = "Campo inválido",
+                            tint = Color(0xFFF44336)
+                        )
+                        isOk -> Icon(
+                            imageVector = Icons.Filled.CheckCircle,
+                            contentDescription = "Campo válido",
+                            tint = Color(0xFF4CAF50)
+                        )
+                    }
+                }
+                // Icono adicional (ojo de contraseña, etc.)
+                trailingIcon?.invoke()
+            }
+        },
         shape = RoundedCornerShape(26.dp),
         isError = isError,
         supportingText = supportingText?.let { { Text(it) } },
@@ -273,9 +348,9 @@ private fun FilledPillField(
             disabledContainerColor  = Color.White,
             errorContainerColor     = Color(0xFFFFEBEE),
 
-            focusedBorderColor      = colors.secondary,
-            unfocusedBorderColor    = Color(0xFFDDDDDD),
-            disabledBorderColor     = Color(0xFFDDDDDD),
+            focusedBorderColor      = borderColor,
+            unfocusedBorderColor    = borderColor,
+            disabledBorderColor     = borderColor,
             errorBorderColor        = Color(0xFFF44336),
 
             focusedTextColor        = colors.onSurface,

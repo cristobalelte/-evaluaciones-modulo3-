@@ -1,16 +1,15 @@
 package com.example.ama.ui.Register
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -18,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -25,12 +25,16 @@ import com.example.ama.R
 import com.example.ama.ui.components.PrimaryButton
 import com.example.ama.ui.navigation.Routes
 
-//ROute: rolScreen
+// Route: rolScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RolScreen(navController: NavController) {
-    Scaffold(containerColor = MaterialTheme.colorScheme.background, topBar = {}) { padding ->
+    Scaffold(
+        containerColor = MaterialTheme.colorScheme.background,
+        topBar = { }   // sin barra roja, todo va en el contenido
+    ) { padding ->
+
         Column(
             modifier = Modifier
                 .padding(padding)
@@ -38,19 +42,38 @@ fun RolScreen(navController: NavController) {
                 .padding(horizontal = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(Modifier.height(32.dp))
+            Spacer(Modifier.height(16.dp))
 
+            // FLECHA ATRÁS ARRIBA A LA IZQUIERDA
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(onClick = { navController.popBackStack() }) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Volver",
+                        tint = MaterialTheme.colorScheme.onBackground
+                    )
+                }
+            }
+
+            Spacer(Modifier.height(24.dp))
+
+            // LOGO CENTRADO (igual a la maqueta)
             Image(
                 painter = painterResource(R.drawable.logo_artemayor_horizontal),
                 contentDescription = "Arte Mayor",
-                modifier = Modifier.height(80.dp)
+                modifier = Modifier
+                    .height(80.dp),
+                contentScale = ContentScale.Fit
             )
 
-            Spacer(Modifier.height(30.dp))
+            Spacer(Modifier.height(250.dp))
 
-            // ============= BOTÓN AMARILLO: COMPRADOR =============
+            // BOTÓN AMARILLO: COMPRADOR
             Button(
-                onClick = { /*TODO*/ },
+                onClick = { navController.navigate(Routes.REGISTER) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(48.dp),
@@ -62,39 +85,23 @@ fun RolScreen(navController: NavController) {
                 elevation = ButtonDefaults.buttonElevation(defaultElevation = 0.dp)
             ) {
                 Text(
-                    text = "COMPRADOR",
-                    style = MaterialTheme.typography.labelLarge
+                    text = "Comprador",
+                    style = MaterialTheme.typography.labelLarge,
                 )
             }
 
-           /* PrimaryButton(
-                text = "COMPRADOR",
-                onClick = { navController.navigate(Routes.HOME) },
-                modifier = Modifier.padding(vertical = 6.dp)
-            )*/
+            Spacer(Modifier.height(24.dp))
 
-
-            Spacer(Modifier.height(30.dp))
-
+            // BOTÓN ROJO: ARTESANO/A VENDEDOR
             PrimaryButton(
-                text = "ARTESANO/A VENDEDOR",
-                onClick = { navController.navigate(Routes.HOME) },
-                modifier = Modifier.padding(vertical = 6.dp)
-            )
-            Spacer(Modifier.height(30.dp))
-
-           /* PrimaryButton(
-                text = "Entrar como invitado",
-                onClick = {
-                    navController.navigate(Routes.HOME) {
-                        popUpTo(Routes.START) { inclusive = true }
-                        launchSingleTop = true
-                    }
-                },
-                modifier = Modifier.padding(vertical = 6.dp)
+                text = "Artesano/a vendedor",
+                onClick = { navController.navigate(Routes.REGISTER) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(48.dp)
             )
 
-            Spacer(Modifier.height(24.dp))*/
+            Spacer(Modifier.height(32.dp))
         }
     }
 }
