@@ -13,9 +13,12 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 import kotlin.getValue
 
+//Este archivo se usa con el ProductData.kt
 interface BackEndApiService {
     object RetrofitInstance {
-        private const val BASE_URL = "http://3.128.184.226:3000/"
+        //        private const val BASE_URL = "http://3.128.184.226:3000/"
+        //Ultima version: http://44.222.218.77:3000/api#/
+        private const val BASE_URL = "http://44.222.218.77:3000/"
         val api: BackEndApiService by lazy {
             Retrofit.Builder()
                 .baseUrl(BASE_URL)
@@ -25,12 +28,14 @@ interface BackEndApiService {
         }
     }
 
-    @GET("productos?maxPrice=50000&minPrice=1000&sortByPrice=true&creatorId=42")
+    //    @GET("productos?maxPrice=50000&minPrice=1000&sortByPrice=true&creatorId=42")
+    @GET("productos")
     suspend fun getProducts(
         @Query("limit") limit: Int,
         @Query("offset") offset: Int
     ): List<ProductData>
 
+    //    @GET("carrito")
     @GET("carrito")
     suspend fun getCarrito(
         @Query("limit") limit: Int,
@@ -44,9 +49,6 @@ interface BackEndApiService {
         @Query("limit") limit: Int,
         @Query("offset") offset: Int
     ): List<EquipoAmaItem>
-
-
-
 
 
     /*    @GET("meds_list/{id}.json")

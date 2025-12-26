@@ -18,6 +18,7 @@ data class ProductData(
     val stock: Int? = null,
     val region: String? = null,
     val createdAt: String? = null,
+    val subcategory: String? = null,
 //    Faltaria el campo de una imagen del producto:
 //    val imageUrl: String? = null  o
     val imageUrl: String = "" // Si el campo del json del API no trae imagen, lo deja vacío o agrega campo si existe

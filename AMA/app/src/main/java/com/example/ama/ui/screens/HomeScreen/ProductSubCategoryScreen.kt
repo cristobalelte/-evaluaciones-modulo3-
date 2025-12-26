@@ -1,4 +1,4 @@
-package com.example.ama.ui.screens.subcategory
+package com.example.ama.ui.screens.HomeScreen
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -140,6 +140,7 @@ fun ProductSubCatScreen(
                     Row(
                         modifier = Modifier
                             .onGloballyPositioned { leftWidthPx = it.size.width }
+//                            Hay que cambiar la sgte linea para quer vaya a una nueva de filtros:
                             .clickable { navController.navigate("regionScreen") },
                         verticalAlignment = Alignment.CenterVertically
                     ) {

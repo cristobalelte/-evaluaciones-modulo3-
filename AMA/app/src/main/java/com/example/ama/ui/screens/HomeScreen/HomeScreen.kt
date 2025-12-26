@@ -289,16 +289,16 @@ fun HomeScreen(
                     }
                 }
 
-                // CARRITO
+                // CATALOGO DE PRODUCTOS:
                 item {
                     Column(modifier = Modifier.padding(horizontal = 16.dp)) {
                         SectionTitle(
-                            title = "Carrito de compras",
+                            title = "Catalogo de productos",
                             trailing = {
                                 TextButton(
-                                    onClick = { navController.navigate("carritoList") }
+                                    onClick = { navController.navigate("productList") }
                                 ) {
-                                    Text("Ver carrito de backend")
+                                    Text("Ver Catalogo de productos de backend")
                                 }
                             }
                         )
