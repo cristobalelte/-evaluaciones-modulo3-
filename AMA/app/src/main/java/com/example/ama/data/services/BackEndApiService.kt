@@ -37,6 +37,9 @@ interface BackEndApiService {
         @Query("offset") offset: Int
     ): List<ProductData>
 
+  /*  @POST("productos")
+    suspend fun addProduct(@Body product: ProductData): ProductData*/
+
 
     // URL para get equipo: http://3.128.184.226:3000/equipo/integrante/todo
     @GET("equipo/integrante/todo")
