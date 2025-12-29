@@ -26,8 +26,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
@@ -43,7 +41,6 @@ import com.example.ama.ui.components.BottomBar
 import com.example.ama.ui.components.Product
 import com.example.ama.ui.components.ProductType
 import com.example.ama.ui.components.priceFormatted
-import com.example.ama.ui.navigation.Routes
 import androidx.compose.foundation.ExperimentalFoundationApi
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -64,6 +61,7 @@ fun HomeScreen(
     onOpenProduct: (Product) -> Unit = {},
     onSeeAllNew: () -> Unit = {},
 ) {
+    // ViewModel (factory estable)
     val productListViewModel: ProductViewModel = viewModel(factory = ProductViewModelFactory())
     val productList by productListViewModel.productList.collectAsState()
 
@@ -86,8 +84,8 @@ fun HomeScreen(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Image(
-                        painter = painterResource(R.drawable.logo_artemayor_blanco),
+                    SafeImageRes(
+                        resId = R.drawable.logo_artemayor_blanco,
                         contentDescription = "Arte Mayor",
                         modifier = Modifier.height(40.dp),
                         contentScale = ContentScale.Fit
@@ -111,12 +109,11 @@ fun HomeScreen(
             )
         }
     ) { padding ->
-        val topPadding = padding.calculateTopPadding()
 
         Surface(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = topPadding),
+                .padding(top = padding.calculateTopPadding()),
             shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
             color = Color.White
         ) {
@@ -175,9 +172,7 @@ fun HomeScreen(
                 item {
                     Text(
                         text = "Categorías",
-                        style = MaterialTheme.typography.titleMedium.copy(
-                            fontWeight = FontWeight.SemiBold
-                        ),
+                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(top = 12.dp, bottom = 4.dp),
@@ -190,17 +185,17 @@ fun HomeScreen(
                     Box(modifier = Modifier.padding(horizontal = 16.dp)) {
                         CategoryCarousel(
                             items = categories,
-                            onClick = { onCategoryClick(it.type) },
+                            onClick = { onCategoryClick(it.type) }
                         )
                     }
                 }
 
-                // BLOQUE DESTACADO: CONOCE A NUESTROS ARTESANOS
+                // BLOQUE DESTACADO: ARTESANOS
                 item {
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .background(Color(0xFFFFF3E8)) // cremita
+                            .background(Color(0xFFFFF3E8))
                     ) {
                         Column(
                             modifier = Modifier
@@ -226,9 +221,6 @@ fun HomeScreen(
                         }
                     }
                 }
-
-
-                item { Spacer(Modifier.height(12.dp)) }
 
                 // LO NUEVO DE ESTE MES
                 item {
@@ -257,15 +249,12 @@ fun HomeScreen(
                                 horizontalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
                                 rowItems.forEach { product ->
-                                    Box(
-                                        modifier = Modifier.weight(1f)
-                                    ) {
+                                    Box(modifier = Modifier.weight(1f)) {
+                                        // OJO: NuevoMesCard debe existir en tu proyecto
                                         NuevoMesCard(product = product)
                                     }
                                 }
-                                if (rowItems.size == 1) {
-                                    Spacer(modifier = Modifier.weight(1f))
-                                }
+                                if (rowItems.size == 1) Spacer(modifier = Modifier.weight(1f))
                             }
                         }
                     }
@@ -289,16 +278,14 @@ fun HomeScreen(
                     }
                 }
 
-                // CATALOGO DE PRODUCTOS:
+                // CATÁLOGO BACKEND
                 item {
                     Column(modifier = Modifier.padding(horizontal = 16.dp)) {
                         SectionTitle(
-                            title = "Catalogo de productos",
+                            title = "Catálogo de productos",
                             trailing = {
-                                TextButton(
-                                    onClick = { navController.navigate("productList") }
-                                ) {
-                                    Text("Ver Catalogo de productos de backend")
+                                TextButton(onClick = { navController.navigate("productList") }) {
+                                    Text("Ver catálogo")
                                 }
                             }
                         )
@@ -311,9 +298,7 @@ fun HomeScreen(
                         SectionTitle(
                             title = "Equipo de trabajo AMA",
                             trailing = {
-                                TextButton(
-                                    onClick = { navController.navigate("equipoScreen") }
-                                ) {
+                                TextButton(onClick = { navController.navigate("equipoScreen") }) {
                                     Text("Nuestro equipo")
                                 }
                             }
@@ -321,13 +306,12 @@ fun HomeScreen(
                     }
                 }
 
-                // Fila extra de productos (si quieres usarla)
-                item {
-                    Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-                        ProductRow(
-                            products = newThisMonth,
-                            onClick = onOpenProduct
-                        )
+                // Fila extra (si viene vacía, no renderiza nada)
+                if (newThisMonth.isNotEmpty()) {
+                    item {
+                        Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+                            ProductRow(products = newThisMonth, onClick = onOpenProduct)
+                        }
                     }
                 }
             }
@@ -348,6 +332,28 @@ data class ArtisanBanner(
     val title: String,
     @DrawableRes val imageRes: Int
 )
+
+/* --------------------------- SAFE IMAGE --------------------------- */
+
+@Composable
+fun SafeImageRes(
+    @DrawableRes resId: Int,
+    contentDescription: String?,
+    modifier: Modifier = Modifier,
+    contentScale: ContentScale = ContentScale.Crop,
+    fallbackColor: Color = Color(0xFFEFEFEF)
+) {
+    if (resId == 0) {
+        Box(modifier = modifier.background(fallbackColor))
+    } else {
+        Image(
+            painter = painterResource(resId),
+            contentDescription = contentDescription,
+            modifier = modifier,
+            contentScale = contentScale
+        )
+    }
+}
 
 /* --------------------------- UI HELPERS --------------------------- */
 
@@ -385,13 +391,13 @@ fun CroppedCategoryImage(
             },
         contentAlignment = Alignment.Center
     ) {
-        Image(
-            painter = painterResource(resId),
+        SafeImageRes(
+            resId = resId,
             contentDescription = null,
             modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop,
-            alignment = Alignment.TopCenter
+            contentScale = ContentScale.Crop
         )
+
         Box(
             Modifier
                 .align(Alignment.BottomCenter)
@@ -426,20 +432,14 @@ fun CategoryCarousel(
                         .size(72.dp)
                         .clip(CircleShape)
                         .background(Color.White)
-                        .border(
-                            width = 1.dp,
-                            color = Color(0xFFE0E0E0),
-                            shape = CircleShape
-                        )
+                        .border(1.dp, Color(0xFFE0E0E0), CircleShape)
                         .clickable { onClick(item) },
                     contentAlignment = Alignment.Center
                 ) {
-                    Image(
-                        painter = painterResource(item.iconRes),
+                    SafeImageRes(
+                        resId = item.iconRes,
                         contentDescription = item.label,
-                        modifier = Modifier
-                            .size(60.dp)
-                            .clip(CircleShape),
+                        modifier = Modifier.size(60.dp).clip(CircleShape),
                         contentScale = ContentScale.Crop
                     )
                 }
@@ -481,12 +481,13 @@ private fun ArtisanBannerRow(
                     .height(120.dp)
             ) {
                 Box {
-                    Image(
-                        painter = painterResource(b.imageRes),
+                    SafeImageRes(
+                        resId = b.imageRes,
                         contentDescription = b.title,
                         modifier = Modifier.fillMaxSize(),
                         contentScale = ContentScale.Crop
                     )
+
                     Box(
                         Modifier
                             .fillMaxSize()
@@ -496,6 +497,7 @@ private fun ArtisanBannerRow(
                                 )
                             )
                     )
+
                     Text(
                         b.title,
                         color = Color.White,
@@ -509,6 +511,8 @@ private fun ArtisanBannerRow(
         }
     }
 }
+
+/* --------------------------- PRODUCTS --------------------------- */
 
 @Composable
 private fun ProductRow(
@@ -551,9 +555,7 @@ private fun ProductCardSmall(
                 ) {
                     Text(
                         text = product.priceFormatted,
-                        style = MaterialTheme.typography.labelLarge.copy(
-                            fontWeight = FontWeight.SemiBold
-                        ),
+                        style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.SemiBold),
                         modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
                     )
                 }
@@ -588,11 +590,11 @@ private fun SeasonalBanner(@DrawableRes resId: Int) {
             .fillMaxWidth()
             .height(160.dp)
     ) {
-        Image(
-            painter = painterResource(resId),
+        SafeImageRes(
+            resId = resId,
             contentDescription = "Especial de temporada",
-            contentScale = ContentScale.Crop,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop
         )
     }
 }
@@ -608,6 +610,11 @@ private fun defaultCategories() = listOf(
     CategoryItem("Pintura", R.drawable.pintura_icon, ProductType.PINTURA),
 )
 
+/**
+ * IMPORTANTE:
+ * Si ImagenesEnumeration.*.imgLoc devuelve 0 (o algún drawable no existe),
+ * antes te crasheaba. Ahora no: SafeImageRes lo bloquea.
+ */
 private fun sampleArtisanBanners() = listOf(
     ArtisanBanner(
         id = "a1",

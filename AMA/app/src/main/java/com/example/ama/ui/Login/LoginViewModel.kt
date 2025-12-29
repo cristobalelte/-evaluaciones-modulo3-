@@ -10,7 +10,6 @@ import com.example.ama.core.network.NetworkModule
 import com.example.ama.data.auth.AuthRepository
 import com.example.ama.data.auth.AuthRepositoryImpl
 import com.example.ama.data.local.UserPrefs
-import kotlinx.coroutines.delay
 
 class LoginViewModel : ViewModel() {
 
@@ -19,14 +18,14 @@ class LoginViewModel : ViewModel() {
     var email by mutableStateOf("")
         private set
     fun onEmailChange(v: String) { email = v }
-    var rememberMe by mutableStateOf(false)
-        private set
-    fun onRememberMeChange(v: Boolean) {
-        rememberMe = v
-    }
+
     var password by mutableStateOf("")
         private set
     fun onPasswordChange(v: String) { password = v }
+
+    var rememberMe by mutableStateOf(false)
+        private set
+    fun onRememberMeChange(v: Boolean) { rememberMe = v }
 
     var errorMessage by mutableStateOf("")
         private set
@@ -34,8 +33,12 @@ class LoginViewModel : ViewModel() {
     var isLoading by mutableStateOf(false)
         private set
 
+    private fun cleanEmail(raw: String): String =
+        raw.trim().trim('"').lowercase() // ✅ por tu caso: vict...com"
+
     fun validate(): Boolean {
-        if (email.isBlank()) { errorMessage = "El correo es obligatorio"; return false }
+        val e = cleanEmail(email)
+        if (e.isBlank()) { errorMessage = "El correo es obligatorio"; return false }
         if (password.length < 6) { errorMessage = "Mínimo 6 caracteres"; return false }
         errorMessage = ""
         return true
@@ -49,23 +52,23 @@ class LoginViewModel : ViewModel() {
         val prefs = UserPrefs(context)
 
         return try {
-            val result = repo.login(LoginRequest(email.trim().lowercase(), password))
+            val e = cleanEmail(email)
+            val result = repo.login(LoginRequest(e, password))
 
             result
                 .onSuccess { resp ->
                     prefs.saveAuth(
                         token = resp.token,
                         userId = resp.id,
-                        email = (resp.email ?: email.trim().lowercase())
+                        email = (resp.email ?: e)
                     )
+                    // si quieres “recordarme”, acá podrías guardar un flag
+                    // prefs.setRememberMe(rememberMe)
                 }
-                .onFailure { e ->
-                    errorMessage = e.message ?: "No se pudo iniciar sesión"
+                .onFailure { err ->
+                    errorMessage = err.message ?: "No se pudo iniciar sesión"
                 }
                 .isSuccess
-        } catch (e: Exception) {
-            errorMessage = e.message ?: "Error de red"
-            false
         } finally {
             isLoading = false
         }
