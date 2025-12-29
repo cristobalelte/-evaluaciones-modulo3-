@@ -5,14 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,7 +25,7 @@ import com.example.ama.ui.navigation.Routes
 fun RolScreen(navController: NavController) {
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
-        topBar = { }   // sin barra roja, todo va en el contenido
+        topBar = { }
     ) { padding ->
 
         Column(
@@ -44,7 +37,6 @@ fun RolScreen(navController: NavController) {
         ) {
             Spacer(Modifier.height(16.dp))
 
-            // FLECHA ATRÁS ARRIBA A LA IZQUIERDA
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
@@ -60,27 +52,25 @@ fun RolScreen(navController: NavController) {
 
             Spacer(Modifier.height(24.dp))
 
-            // LOGO CENTRADO (igual a la maqueta)
             Image(
                 painter = painterResource(R.drawable.logo_artemayor_horizontal),
                 contentDescription = "Arte Mayor",
-                modifier = Modifier
-                    .height(80.dp),
+                modifier = Modifier.height(80.dp),
                 contentScale = ContentScale.Fit
             )
 
             Spacer(Modifier.height(250.dp))
 
-            // BOTÓN AMARILLO: COMPRADOR
+
             Button(
-                onClick = { navController.navigate(Routes.REGISTER) },
+                onClick = { navController.navigate(Routes.registerWithRole("BUYER")) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(48.dp),
                 shape = RoundedCornerShape(24.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFFFFC107),  // Amarillo
-                    contentColor = Color(0xFF7B001A)     // Rojo Arte Mayor
+                    containerColor = Color(0xFFFFC107),
+                    contentColor = Color(0xFF7B001A)
                 ),
                 elevation = ButtonDefaults.buttonElevation(defaultElevation = 0.dp)
             ) {
@@ -92,10 +82,10 @@ fun RolScreen(navController: NavController) {
 
             Spacer(Modifier.height(24.dp))
 
-            // BOTÓN ROJO: ARTESANO/A VENDEDOR
+
             PrimaryButton(
                 text = "Artesano/a vendedor",
-                onClick = { navController.navigate(Routes.REGISTER) },
+                onClick = { navController.navigate(Routes.registerWithRole("SELLER")) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(48.dp)

@@ -20,7 +20,6 @@ import com.example.ama.ui.Login.LoginScreen
 import com.example.ama.ui.Register.RegisterScreen
 import com.example.ama.ui.Register.RolScreen
 import com.example.ama.ui.Register.StartScreen
-import com.example.ama.ui.components.Product
 import com.example.ama.ui.components.ProductType
 import com.example.ama.ui.screens.AddProductScreen.AddProductRoute
 
@@ -42,7 +41,7 @@ import com.example.ama.ui.screens.products.ProductScreen
 import com.example.ama.ui.screens.products.publicados.EditarProducto
 import com.example.ama.ui.screens.products.publicados.ProdPublicados
 import com.example.ama.ui.screens.settings.SettingsScreen
-import com.example.ama.ui.screens.subcategory.ProductSubCatScreen
+import com.example.ama.ui.screens.HomeScreen.ProductSubCatScreen
 import com.example.ama.ui.theme.ThemeOption
 
 
@@ -91,7 +90,16 @@ fun AppNavigation(
                 }
             )
         }
-
+        composable(
+            route = Routes.REGISTER_WITH_ROLE,
+            arguments = listOf(navArgument("role") { defaultValue = "BUYER" })
+        ) { backStackEntry ->
+            val role = backStackEntry.arguments?.getString("role") ?: "BUYER"
+            RegisterScreen(
+                navController = navController,
+                initialRole = role
+            )
+        }
 
         composable(Routes.LOGIN) {
             LoginScreen(
@@ -187,6 +195,7 @@ fun AppNavigation(
                 product = product,
                 onOpenPublish = { navController.navigate(Routes.PUBLISH) },
                 onBack = { navController.popBackStack() },
+//                Agregamos el producto al carrito:
                 onAddToCart = {
                     vm.addToCart(product)
                 },

@@ -53,7 +53,7 @@ fun StartScreen(navController: NavController) {
 
             //  BOTÓN AMARILLO: REGISTRARSE
             Button(
-                onClick = { navController.navigate(Routes.ROL) },
+                onClick = { navController.navigate(Routes.ROLE) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(48.dp),

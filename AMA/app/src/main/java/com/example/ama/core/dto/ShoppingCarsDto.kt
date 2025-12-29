@@ -1,17 +1,13 @@
-// core/dto/ShoppingCarsDto.kt
 package com.example.ama.core.dto
-import com.squareup.moshi.JsonClass
 
-@JsonClass(generateAdapter = true)
 data class ShoppingCarsDto(
     val id: Int? = null,
-    val productos: List<ProductDto>,
-    val total: Int,
-    val owner: String,
+    val productos: List<ProductDto> = emptyList(),
+    val total: Int = 0,
+    val owner: String = "",
     val createdAt: String? = null
 )
 
-@JsonClass(generateAdapter = true)
 data class ProductDto(
     val id: Int,
     val name: String,
