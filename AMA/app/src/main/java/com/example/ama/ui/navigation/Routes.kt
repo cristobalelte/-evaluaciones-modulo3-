@@ -22,8 +22,13 @@ object Routes {
     const val START = "start"
     const val DATOS_ENVIO  = "datosEnvio"
     const val METODO_PAGO = "metodoPago"
-    const val ROL = "rolscreen"
+    const val ROLE = "rolScreen"
 
+
+    const val REGISTER_WITH_ROLE = "register?role={role}"
+
+
+    fun registerWithRole(role: String): String = "register?role=$role"
 
 
 }

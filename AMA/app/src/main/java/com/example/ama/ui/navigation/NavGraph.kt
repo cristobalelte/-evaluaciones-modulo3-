@@ -90,7 +90,16 @@ fun AppNavigation(
                 }
             )
         }
-
+        composable(
+            route = Routes.REGISTER_WITH_ROLE,
+            arguments = listOf(navArgument("role") { defaultValue = "BUYER" })
+        ) { backStackEntry ->
+            val role = backStackEntry.arguments?.getString("role") ?: "BUYER"
+            RegisterScreen(
+                navController = navController,
+                initialRole = role
+            )
+        }
 
         composable(Routes.LOGIN) {
             LoginScreen(

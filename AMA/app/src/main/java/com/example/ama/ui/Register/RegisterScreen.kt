@@ -20,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -40,8 +41,14 @@ import com.example.ama.ui.theme.primaryLight
 fun RegisterScreen(
     navController: NavController,
     onBack: (() -> Unit)? = null,
+    initialRole: String = "BUYER",
     registerVM: RegisterViewModel = viewModel()
+
 ) {
+    val context = LocalContext.current
+    LaunchedEffect(initialRole) {
+        registerVM.onRoleChange(initialRole)
+    }
     Scaffold(
         topBar = {
             Box(
@@ -80,12 +87,11 @@ fun RegisterScreen(
 
         val topPadding = innerPadding.calculateTopPadding()
 
-        // “Tarjeta” blanca con bordes superiores redondeados
         Surface(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(top = topPadding),
-            shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
+           // shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
             color = Color.White
         ) {
             Column(
@@ -96,7 +102,6 @@ fun RegisterScreen(
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
 
-                // Título
                 Text(
                     text = "Ingresa tus datos",
                     style = MaterialTheme.typography.headlineMedium.copy(
@@ -106,6 +111,21 @@ fun RegisterScreen(
                     modifier = Modifier.fillMaxWidth(),
                     color = Color.Black
                 )
+
+
+                SimpleLabel("Tipo de cuenta")
+                Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                    FilterChip(
+                        selected = registerVM.role == "BUYER",
+                        onClick = { registerVM.onRoleChange("BUYER") },
+                        label = { Text("Comprador") }
+                    )
+                    FilterChip(
+                        selected = registerVM.role == "SELLER",
+                        onClick = { registerVM.onRoleChange("SELLER") },
+                        label = { Text("Vendedor") }
+                    )
+                }
 
                 // ===== NOMBRE (*) =====
                 LabelWithAsterisk("Nombre")
@@ -138,12 +158,11 @@ fun RegisterScreen(
                     isError = registerVM.isEmailError,
                     isOk = registerVM.isEmailOk,
                     showValidationIcon = true,
-                    // solo mostramos el texto rojo si ya se apretó el botón
                     supportingText = if (registerVM.hasSubmitted) registerVM.emailError else null,
                     keyboardType = KeyboardType.Email
                 )
 
-                // ===== TELÉFONO (sin asterisco, sin check) =====
+                // ===== TELÉFONO =====
                 SimpleLabel("Teléfono de contacto")
                 FilledPillField(
                     value = registerVM.phone,
@@ -191,10 +210,7 @@ fun RegisterScreen(
                     trailingIcon = {
                         IconButton(onClick = { showPass = !showPass }) {
                             Icon(
-                                imageVector = if (showPass)
-                                    Icons.Outlined.VisibilityOff
-                                else
-                                    Icons.Outlined.Visibility,
+                                imageVector = if (showPass) Icons.Outlined.VisibilityOff else Icons.Outlined.Visibility,
                                 contentDescription = null
                             )
                         }
@@ -216,10 +232,7 @@ fun RegisterScreen(
                     trailingIcon = {
                         IconButton(onClick = { showPass2 = !showPass2 }) {
                             Icon(
-                                imageVector = if (showPass2)
-                                    Icons.Outlined.VisibilityOff
-                                else
-                                    Icons.Outlined.Visibility,
+                                imageVector = if (showPass2) Icons.Outlined.VisibilityOff else Icons.Outlined.Visibility,
                                 contentDescription = null
                             )
                         }
@@ -228,21 +241,29 @@ fun RegisterScreen(
 
                 Spacer(Modifier.height(4.dp))
 
+                // ✅ Botón conectado al backend
                 Button(
                     onClick = {
-                        registerVM.onSubmit()
-                        if (registerVM.isValid) {
-                            navController.navigate("home")
+                        registerVM.register(context) {
+                            navController.navigate("home") {
+                                popUpTo(Routes.REGISTER) { inclusive = true }
+                            }
                         }
                     },
-                    // siempre enabled para que muestre errores al hacer click
-                    enabled = true,
+                    enabled = !registerVM.isLoading,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(48.dp),
                     shape = RoundedCornerShape(24.dp)
                 ) {
-                    Text("Registrarme")
+                    if (registerVM.isLoading) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(20.dp),
+                            strokeWidth = 2.dp
+                        )
+                    } else {
+                        Text("Registrarme")
+                    }
                 }
 
                 if (registerVM.errorMessage.isNotBlank()) {
@@ -303,9 +324,9 @@ private fun FilledPillField(
     val colors = MaterialTheme.colorScheme
 
     val borderColor = when {
-        isError -> Color(0xFFF44336)      // rojo
-        isOk -> Color(0xFF4CAF50)         // verde
-        else -> Color(0xFFDDDDDD)         // gris
+        isError -> Color(0xFFF44336)
+        isOk -> Color(0xFF4CAF50)
+        else -> Color(0xFFDDDDDD)
     }
 
     OutlinedTextField(
@@ -319,7 +340,6 @@ private fun FilledPillField(
         visualTransformation = visualTransformation,
         trailingIcon = {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                // Icono de validación (X o ✓)
                 if (showValidationIcon) {
                     when {
                         isError -> Icon(
@@ -334,7 +354,6 @@ private fun FilledPillField(
                         )
                     }
                 }
-                // Icono adicional (ojo de contraseña, etc.)
                 trailingIcon?.invoke()
             }
         },
@@ -343,28 +362,28 @@ private fun FilledPillField(
         supportingText = supportingText?.let { { Text(it) } },
         keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
         colors = OutlinedTextFieldDefaults.colors(
-            focusedContainerColor   = Color.White,
+            focusedContainerColor = Color.White,
             unfocusedContainerColor = Color.White,
-            disabledContainerColor  = Color.White,
-            errorContainerColor     = Color(0xFFFFEBEE),
+            disabledContainerColor = Color.White,
+            errorContainerColor = Color(0xFFFFEBEE),
 
-            focusedBorderColor      = borderColor,
-            unfocusedBorderColor    = borderColor,
-            disabledBorderColor     = borderColor,
-            errorBorderColor        = Color(0xFFF44336),
+            focusedBorderColor = borderColor,
+            unfocusedBorderColor = borderColor,
+            disabledBorderColor = borderColor,
+            errorBorderColor = Color(0xFFF44336),
 
-            focusedTextColor        = colors.onSurface,
-            unfocusedTextColor      = colors.onSurface,
-            disabledTextColor       = colors.onSurfaceVariant,
-            errorTextColor          = colors.onSurface,
+            focusedTextColor = colors.onSurface,
+            unfocusedTextColor = colors.onSurface,
+            disabledTextColor = colors.onSurfaceVariant,
+            errorTextColor = colors.onSurface,
 
-            focusedPlaceholderColor   = colors.onSurfaceVariant,
+            focusedPlaceholderColor = colors.onSurfaceVariant,
             unfocusedPlaceholderColor = colors.onSurfaceVariant,
-            errorPlaceholderColor     = colors.onSurfaceVariant,
+            errorPlaceholderColor = colors.onSurfaceVariant,
 
-            focusedTrailingIconColor   = colors.onSurfaceVariant,
+            focusedTrailingIconColor = colors.onSurfaceVariant,
             unfocusedTrailingIconColor = colors.onSurfaceVariant,
-            errorTrailingIconColor     = Color(0xFFF44336)
+            errorTrailingIconColor = Color(0xFFF44336)
         )
     )
 }
