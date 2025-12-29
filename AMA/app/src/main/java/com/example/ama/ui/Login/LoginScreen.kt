@@ -13,8 +13,10 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.ama.R
 import com.example.ama.ui.navigation.Routes
@@ -30,7 +32,8 @@ fun LoginScreen(
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
-    val vm = androidx.lifecycle.viewmodel.compose.viewModel<LoginViewModel>()
+    val vm: LoginViewModel = viewModel()
+    val context = LocalContext.current
 
     Scaffold(
         topBar = {
@@ -41,7 +44,6 @@ fun LoginScreen(
                     .background(primaryLight)
                     .padding(horizontal = 16.dp),
             ) {
-                // Flecha de volver (usa el navController directamente)
                 IconButton(
                     onClick = { navController.popBackStack() },
                     modifier = Modifier.align(Alignment.CenterStart)
@@ -69,8 +71,9 @@ fun LoginScreen(
         LoginForm(
             modifier = Modifier.padding(padding),
             snackbarHostState = snackbarHostState,
+            vm = vm,
             onSubmit = {
-                val ok = vm.login()
+                val ok = vm.login(context) // o vm.login() si tu función no recibe context
                 if (ok) {
                     scope.launch { snackbarHostState.showSnackbar("¡Bienvenido!") }
                     onLoggedIn()
@@ -80,3 +83,4 @@ fun LoginScreen(
         )
     }
 }
+

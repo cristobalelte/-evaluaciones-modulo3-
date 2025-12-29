@@ -41,7 +41,8 @@ import com.example.ama.ui.screens.products.ProductScreen
 import com.example.ama.ui.screens.products.publicados.EditarProducto
 import com.example.ama.ui.screens.products.publicados.ProdPublicados
 import com.example.ama.ui.screens.settings.SettingsScreen
-import com.example.ama.ui.screens.HomeScreen.ProductSubCatScreen
+import com.example.ama.ui.screens.subcategory.ProductSubCatScreen
+
 import com.example.ama.ui.theme.ThemeOption
 
 

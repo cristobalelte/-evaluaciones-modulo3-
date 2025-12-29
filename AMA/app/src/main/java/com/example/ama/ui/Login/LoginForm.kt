@@ -36,15 +36,16 @@ import androidx.compose.runtime.rememberCoroutineScope
 fun LoginForm(
     modifier: Modifier = Modifier,
     snackbarHostState: SnackbarHostState,
+    vm: LoginViewModel,
     onSubmit: suspend () -> Boolean,
 ) {
     var showPassword by remember { mutableStateOf(false) }
 
-    val vm = androidx.lifecycle.viewmodel.compose.viewModel<LoginViewModel>()
 
     // VALIDACIÓN LOCAL
     val isEmailValid = vm.email.isNotBlank() // si quieres, aquí puedes meter regex de correo
     val isPasswordValid = vm.password.length >= 6
+
 
     val emailHasError = !isEmailValid && vm.email.isNotBlank()
     val passwordHasError = !isPasswordValid && vm.password.isNotBlank()
@@ -188,7 +189,7 @@ fun LoginForm(
         Row(verticalAlignment = Alignment.CenterVertically) {
             Checkbox(
                 checked = vm.rememberMe,
-                onCheckedChange = { vm.toggleRememberMe() }
+                onCheckedChange = { vm.onRememberMeChange(it) }
             )
             Text("Recordarme")
             Spacer(Modifier.weight(1f))

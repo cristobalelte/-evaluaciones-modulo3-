@@ -18,6 +18,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import retrofit2.HttpException
+import java.io.IOException
 import java.text.Normalizer
 import java.util.UUID
 import kotlin.math.min
@@ -77,11 +79,23 @@ class CatalogViewModel : ViewModel() {
     fun loadNewProducts() = viewModelScope.launch {
         _isLoadingNew.value = true
         _errorNew.value = null
+
         try {
-            val dtos = productRepo.getAllNewProducts()       // List<ProductDto>
-            _newProducts.value = dtos.map { it.toUi() }      // List<Product>
+            val dtos = withContext(Dispatchers.IO) {
+                productRepo.getAllNewProducts()
+            }
+            _newProducts.value = dtos.map { it.toUi() }
+
+        } catch (e: HttpException) {
+            // aquí cae cuando backend devuelve 400/401/404 y tu API está como `suspend fun(): T`
+            _errorNew.value = "HTTP ${e.code()}: ${e.message()}"
+
+        } catch (e: IOException) {
+            _errorNew.value = "Error de red (sin conexión o servidor caído)"
+
         } catch (e: Exception) {
             _errorNew.value = e.message ?: "Error al cargar productos nuevos"
+
         } finally {
             _isLoadingNew.value = false
         }

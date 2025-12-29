@@ -9,7 +9,7 @@ import com.example.ama.data.network.AuthApi
 object NetworkModule {
 
 
-    private const val BASE_URL = "http://3.128.184.226:3000/api/"
+    private const val BASE_URL = "http://3.128.184.226:3000/"
 
     private val logging = HttpLoggingInterceptor().apply {
         level = HttpLoggingInterceptor.Level.BODY

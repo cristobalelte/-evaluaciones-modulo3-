@@ -1,64 +1,73 @@
 package com.example.ama.ui.Login
 
+import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import com.example.ama.core.dto.LoginRequest
+import com.example.ama.core.network.NetworkModule
+import com.example.ama.data.auth.AuthRepository
+import com.example.ama.data.auth.AuthRepositoryImpl
+import com.example.ama.data.local.UserPrefs
 import kotlinx.coroutines.delay
 
 class LoginViewModel : ViewModel() {
 
+    private val repo: AuthRepository = AuthRepositoryImpl(NetworkModule.authApi)
+
     var email by mutableStateOf("")
         private set
-    fun onEmailChange(v: String) {
-        email = v
-        validateEmail(v) // 👈 validación inmediata al escribir
+    fun onEmailChange(v: String) { email = v }
+    var rememberMe by mutableStateOf(false)
+        private set
+    fun onRememberMeChange(v: Boolean) {
+        rememberMe = v
     }
-
     var password by mutableStateOf("")
         private set
     fun onPasswordChange(v: String) { password = v }
 
-    var rememberMe by mutableStateOf(false)
+    var errorMessage by mutableStateOf("")
         private set
-    fun toggleRememberMe() { rememberMe = !rememberMe }
-
-    var emailError: String? by mutableStateOf(null)
-    var passwordError: String? by mutableStateOf(null)
 
     var isLoading by mutableStateOf(false)
         private set
 
-    // Valida correo */
-    private fun validateEmail(value: String) {
-        emailError =
-            if (value.isBlank()) "El correo no puede estar vacío"
-            else if (!Regex("^[A-Za-z0-9+_.-]+@gmail\\.com$").matches(value))
-                "Debe ser un correo Gmail válido (ejemplo@gmail.com)"
-            else null
-    }
-
-    /** 🔎 Valida TODO (correo + contraseña) */
     fun validate(): Boolean {
-        validateEmail(email)
-
-        passwordError =
-            if (password.isBlank()) "La contraseña no puede estar vacía"
-            else if (password.length < 6) "Mínimo 6 caracteres"
-            else null
-
-        return emailError == null && passwordError == null
+        if (email.isBlank()) { errorMessage = "El correo es obligatorio"; return false }
+        if (password.length < 6) { errorMessage = "Mínimo 6 caracteres"; return false }
+        errorMessage = ""
+        return true
     }
 
-    /**
-     * Simulación de login.
-     * Retorna `true` si el login “resultó”.
-     */
-    suspend fun login(): Boolean {
+    suspend fun login(context: Context): Boolean {
         if (!validate()) return false
+
         isLoading = true
-        delay(800) // Simula red
-        isLoading = false
-        return true
+        errorMessage = ""
+        val prefs = UserPrefs(context)
+
+        return try {
+            val result = repo.login(LoginRequest(email.trim().lowercase(), password))
+
+            result
+                .onSuccess { resp ->
+                    prefs.saveAuth(
+                        token = resp.token,
+                        userId = resp.id,
+                        email = (resp.email ?: email.trim().lowercase())
+                    )
+                }
+                .onFailure { e ->
+                    errorMessage = e.message ?: "No se pudo iniciar sesión"
+                }
+                .isSuccess
+        } catch (e: Exception) {
+            errorMessage = e.message ?: "Error de red"
+            false
+        } finally {
+            isLoading = false
+        }
     }
 }
