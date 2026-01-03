@@ -7,12 +7,14 @@ import androidx.room.migration.Migration
 import androidx.room.withTransaction
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.ama.core.dto.ShoppingCarsDto
-import com.example.ama.core.network.NetworkModule
+
 import com.example.ama.data.db.AppDb
 import com.example.ama.data.db.CartRow
+import com.example.ama.data.network.NetworkModule
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
+import safeApiCall
 import java.time.Instant
 import kotlin.math.roundToInt
 
@@ -39,13 +41,13 @@ class CartRepository(context: Context) {
     private val dao = db.cartDao()
 
 
-    private val api = NetworkModule.api
+    private val api = NetworkModule.apiService
 
     val rows: Flow<List<CartRow>> = dao.observeAll()
 
     /** Trae el carrito del backend y lo guarda en Room. */
     suspend fun refreshFromServer(owner: String? = null) = withContext(Dispatchers.IO) {
-        val carts: List<ShoppingCarsDto> = api.getShoppingCarList(owner)
+        val carts = safeApiCall("CART") { api.getShoppingCarList(owner) } ?: return@withContext
 
         val chosen = if (owner != null) {
             carts.firstOrNull { it.owner.equals(owner, ignoreCase = true) }
@@ -59,15 +61,17 @@ class CartRepository(context: Context) {
         }
 
         val mapped = chosen?.productos
-            ?.map { p ->
+            ?.mapNotNull { p ->
+                val pid = p.id ?: return@mapNotNull null     // si no hay id, no lo guardes
                 CartRow(
-                    productId = p.id.toString(),
-                    name = p.name,
-                    price = p.price.toDouble(),
+                    productId = pid.toString(),
+                    name = p.name ?: "(Sin nombre)",
+                    price = p.price?.toDoubleOrNull() ?: 0.0,
                     imageUrl = null,
                     qty = 1
                 )
-            }.orEmpty()
+            }
+            .orEmpty()
 
         db.withTransaction {
             dao.clear()
@@ -99,7 +103,7 @@ class CartRepository(context: Context) {
             mapOf(
                 "id" to pid,
                 "name" to r.name,
-                "price" to (r.price.roundToInt()).coerceAtLeast(0)
+                "price" to (r.price.roundToInt())
             )
         }
 

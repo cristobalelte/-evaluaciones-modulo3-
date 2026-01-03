@@ -2,17 +2,19 @@ package com.example.ama.data.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.ama.data.dataclass.ProductData
+import com.example.ama.core.dto.ProductDto
 import com.example.ama.data.repository.ProductRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
+class ProductViewModel : ViewModel() {
 
-class ProductViewModel: ViewModel() {
     private val productRepository = ProductRepository()
-    val productList = MutableStateFlow<List<ProductData>>(emptyList())
 
-    private var nextPage = 0
+    val productList = MutableStateFlow<List<ProductDto>>(emptyList())
+
+    private var nextPage = 1
+    private val limit = 10
 
     init {
         getProducts()
@@ -25,8 +27,8 @@ class ProductViewModel: ViewModel() {
 
     fun getProducts() {
         viewModelScope.launch {
-            productRepository.getProducts().collect {
-                productList.value = it
+            productRepository.getProducts(page = nextPage, limit = limit).collect { list ->
+                productList.value = list
             }
         }
     }

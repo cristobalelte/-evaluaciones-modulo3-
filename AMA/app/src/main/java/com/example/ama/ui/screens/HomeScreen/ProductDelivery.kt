@@ -1,4 +1,4 @@
-@file:OptIn(ExperimentalMaterial3Api::class)
+
 
 package com.example.ama.ui.screens.HomeScreen
 
@@ -41,6 +41,7 @@ fun DataEnvioScreen(
             BottomBar(
                 navController = navController,
                 onPublishClick = onOpenPublish,
+                onHelpClick = onOpenSettings,
                 onProfileClick = { navController.navigate("perfil") })
         }
     )

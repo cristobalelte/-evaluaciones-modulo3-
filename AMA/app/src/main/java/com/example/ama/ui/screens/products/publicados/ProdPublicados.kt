@@ -2,6 +2,7 @@ package com.example.ama.ui.screens.products.publicados
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
@@ -16,8 +17,6 @@ import com.example.ama.data.viewmodel.ProductViewModelFactory
 import com.example.ama.ui.components.BottomBar
 import com.example.ama.ui.components.TopBar
 
-//ruta: prodPublicados
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProdPublicados(
@@ -27,44 +26,42 @@ fun ProdPublicados(
     onOpenCart: () -> Unit,
     onOpenPublish: () -> Unit,
     onOpenSettings: () -> Unit
-
 ) {
-//    Crear un viewmodel para la lista de prod publicados y llamarlo desde acá, reempl las sgtes vars:
     val productListViewModel: ProductViewModel = viewModel(
         factory = ProductViewModelFactory()
     )
+
     val productList by productListViewModel.productList.collectAsState()
     val listState = rememberLazyListState()
 
     Scaffold(
         topBar = {
             TopBar(
-                navController,
-                cartCount,
-                onOpenCart
+                navController = navController,
+                cartCount = cartCount,
+                onOpenCart = onOpenCart
             )
         },
         bottomBar = {
             BottomBar(
                 navController = navController,
+                onHelpClick = {},
                 onPublishClick = onOpenPublish,
-                onProfileClick = { navController.navigate("perfil") })
+                onProfileClick = { navController.navigate("profile") }
+            )
         }
-    ) //Cierre Scaffold
-    { paddingValues ->
+    ) { paddingValues ->
         LazyColumn(
-            modifier = Modifier.padding(paddingValues),
-            state = listState,
+            modifier = modifier.padding(paddingValues),
+            state = listState
         ) {
-            items(productList.size) { index ->
+
+            items(productList) { product ->
                 PublicadosCard(
                     navController = navController,
-                    product = productList[index]
+                    product = product
                 )
             }
-
         }
-
     }
-
 }

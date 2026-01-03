@@ -172,8 +172,9 @@ fun ProductDetailScreen(
         bottomBar = {
             BottomBar(
                 navController = navController,
+                onHelpClick = {},
                 onPublishClick = onOpenPublish,
-                onProfileClick = { navController.navigate("perfil") }
+                onProfileClick = { navController.navigate("profile") }
             )
         }
     ) { padding ->

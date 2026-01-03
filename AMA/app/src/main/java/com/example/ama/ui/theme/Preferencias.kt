@@ -1,24 +1,24 @@
 package com.example.ama.ui.theme
 
-
 import android.content.Context
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
-import androidx.datastore.preferences.preferencesDataStore
+import com.example.ama.data.local.userPrefsDataStore
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import java.io.IOException
 
 enum class ThemeOption { SYSTEM, LIGHT, DARK }
 
-val Context.dataStore by preferencesDataStore("user_prefs")
+class ThemePrefs(context: Context) {
 
-class ThemePrefs(private val context: Context) {
+    private val appContext = context.applicationContext
+    private val dataStore = appContext.userPrefsDataStore
 
     private object Keys { val THEME = stringPreferencesKey("theme_option") }
 
-    val themeFlow = context.dataStore.data
+    val themeFlow = dataStore.data
         .catch { if (it is IOException) emit(emptyPreferences()) else throw it }
         .map { prefs ->
             when (prefs[Keys.THEME]) {
@@ -29,7 +29,6 @@ class ThemePrefs(private val context: Context) {
         }
 
     suspend fun setTheme(option: ThemeOption) {
-        context.dataStore.edit { it[Keys.THEME] = option.name }
+        dataStore.edit { it[Keys.THEME] = option.name }
     }
 }
-

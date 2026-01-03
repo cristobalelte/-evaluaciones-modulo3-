@@ -31,11 +31,11 @@ fun CatalogRoute(
     }
 
     // State de VM
-    val products      by vm.products.collectAsStateWithLifecycle()
-    val cartCount     by vm.cartCount.collectAsStateWithLifecycle()
-    val onlyAvail     by vm.onlyAvailable.collectAsStateWithLifecycle()
-    val query         by vm.query.collectAsStateWithLifecycle()
-    val selectedRegs  by vm.regions.collectAsStateWithLifecycle()
+    val products by vm.products.collectAsStateWithLifecycle()
+    val cartCount by vm.cartCount.collectAsStateWithLifecycle()
+    val onlyAvail by vm.onlyAvailable.collectAsStateWithLifecycle()
+    val query by vm.query.collectAsStateWithLifecycle()
+    val selectedRegs by vm.regions.collectAsStateWithLifecycle()
     val selectedTypes by vm.types.collectAsStateWithLifecycle()
 
     val snackbarHost = remember { SnackbarHostState() }

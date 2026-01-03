@@ -1,12 +1,14 @@
 package com.example.ama.data.repository
 
+import com.example.ama.core.network.ApiService
 import com.example.ama.data.dataclass.ProductData
-import com.example.ama.data.services.BackEndApiService
+import com.example.ama.data.network.NetworkModule
+
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 class AddProductRepository {
-    private val backEndApiService = BackEndApiService.RetrofitInstance.api
+    private val api: ApiService = NetworkModule.apiService
 
     //    val products: Flow<List<ProductData>> = dao.getAll()
     private val limit = 3

@@ -23,6 +23,8 @@ object Routes {
     const val DATOS_ENVIO  = "datosEnvio"
     const val METODO_PAGO = "metodoPago"
     const val ROLE = "rolScreen"
+    const val HELP = "help"
+    const val PROFILE = "perfil"
 
 
     const val REGISTER_WITH_ROLE = "register?role={role}"

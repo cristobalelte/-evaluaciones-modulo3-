@@ -25,13 +25,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import androidx.navigation.NavController
-import com.example.ama.data.dataclass.ProductData
+import com.example.ama.core.dto.ProductDto
 import com.example.ama.ui.navigation.Routes
 
 @Composable
 fun PublicadosCard(
     navController: NavController,
-    product: ProductData
+    product: ProductDto
 ) {
     Card(
         modifier = Modifier
@@ -41,22 +41,22 @@ fun PublicadosCard(
         var showPopup by remember { mutableStateOf(false) }
         var showPopup2 by remember { mutableStateOf(false) }
 
-        // 3. Usa el componente Popup
+        val priceText = "${product.price ?: 0} ${product.currency ?: ""}".trim()
+        val nameText = product.name ?: "(Sin nombre)"
+        val categoryText = product.categoryId?.let { "Categoría: $it" } ?: "Categoría: -"
+
+        // ---------------- POPUP 1 (Confirmación) ----------------
         if (showPopup) {
             Popup(
                 alignment = Alignment.Center,
-                onDismissRequest = { showPopup = false } // Cierra la ventana al tocar fuera
-            )
-            {
-                // Fondo oscuro y difuminado
+                onDismissRequest = { showPopup = false }
+            ) {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(Color.Black.copy(alpha = 0.6f)), // Color negro semitransparente
+                        .background(Color.Black.copy(alpha = 0.6f)),
                     contentAlignment = Alignment.Center
-                )
-                {
-                    // Define el contenido de la ventana emergente aquí
+                ) {
                     Column(
                         modifier = Modifier
                             .padding(16.dp)
@@ -64,36 +64,33 @@ fun PublicadosCard(
                             .background(Color.White),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
-                    )
-                    {
+                    ) {
                         Text(
                             textAlign = TextAlign.Center,
-                            modifier = Modifier
-                                .padding(top = 8.dp),
+                            modifier = Modifier.padding(top = 8.dp),
                             text = "¿Estás seguro de que deseas eliminar tu artesanía?",
                             style = MaterialTheme.typography.titleMedium,
                             color = Color.Black
                         )
+
                         Box(
                             contentAlignment = Alignment.Center,
                             modifier = Modifier
                                 .padding(8.dp)
                                 .fillMaxWidth()
                                 .background(Color.DarkGray)
-                        )
-                        {
+                        ) {
                             Text(
                                 textAlign = TextAlign.Center,
-                                modifier = Modifier
-                                    .padding(top = 8.dp),
-                                text = "$${product.price}",
+                                modifier = Modifier.padding(top = 8.dp),
+                                text = "$$priceText",
                                 style = MaterialTheme.typography.titleMedium,
                                 color = Color.White
                             )
-                        } //Cierre box
+                        }
 
                         Text(
-                            text = "${product.name}",
+                            text = nameText,
                             style = MaterialTheme.typography.titleMedium,
                             color = Color.Black
                         )
@@ -103,14 +100,9 @@ fun PublicadosCard(
                                 showPopup = false
                                 showPopup2 = true
                             },
-                            modifier = Modifier
-                                .padding(end = 8.dp)
-                        )
-                        {
-                            Text(
-                                text = "Sí. Estoy seguro",
-                                color = Color.White
-                            )
+                            modifier = Modifier.padding(end = 8.dp)
+                        ) {
+                            Text(text = "Sí. Estoy seguro", color = Color.White)
                         }
 
                         Button(
@@ -119,34 +111,27 @@ fun PublicadosCard(
                                 contentColor = Color.Black
                             ),
                             onClick = { showPopup = false },
-                            modifier = Modifier
-                                .padding(end = 8.dp)
-                        )
-                        {
-                            Text(
-                                text = "No. Cancelar"
-                            )
+                            modifier = Modifier.padding(end = 8.dp)
+                        ) {
+                            Text(text = "No. Cancelar")
                         }
+                    }
+                }
+            }
+        }
 
-
-                    } //Cierre Column
-                } //Cierre Box
-            } //Cierre Popup
-        } //Cierre if
-
+        // ---------------- POPUP 2 (Confirmación eliminado) ----------------
         if (showPopup2) {
             Popup(
                 alignment = Alignment.Center,
-                onDismissRequest = { showPopup2 = false } // Cierra la ventana al tocar fuera
-            )
-            {  // Fondo oscuro y difuminado
+                onDismissRequest = { showPopup2 = false }
+            ) {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(Color.Black.copy(alpha = 0.6f)), // Color negro semitransparente
+                        .background(Color.Black.copy(alpha = 0.6f)),
                     contentAlignment = Alignment.Center
-                )
-                {
+                ) {
                     Column(
                         modifier = Modifier
                             .padding(16.dp)
@@ -154,89 +139,62 @@ fun PublicadosCard(
                             .background(Color.White),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
-                    )
-                    {
+                    ) {
                         Text(
                             textAlign = TextAlign.Center,
-                            modifier = Modifier
-                                .padding(top = 8.dp),
-                            text = "Tu artesanía ${product.name} se ha eliminado correctamente",
+                            modifier = Modifier.padding(top = 8.dp),
+                            text = "Tu artesanía $nameText se ha eliminado correctamente",
                             style = MaterialTheme.typography.titleMedium,
                             color = Color.Black
                         )
 
                         Button(
                             onClick = { showPopup2 = false },
-                            modifier = Modifier
-                                .padding(end = 8.dp)
+                            modifier = Modifier.padding(end = 8.dp)
                         ) {
-                            Text(
-                                text = "Volver",
-                                color = Color.White
-                            )
+                            Text(text = "Volver", color = Color.White)
                         }
-
                     }
                 }
-
             }
         }
 
-        /*Image(
-        painter = painterResource(id = R.drawable.logo_artemayor_horizontal),
-        contentDescription = "Descripción de la imagen", // Es importante para la accesibilidad
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(194.dp), // Ajusta la altura según sea necesario
-        contentScale = ContentScale.Crop // O usa ContentScale.Fit si prefieres
-    )
-    // Puedes agregar aquí otros elementos como texto, botones, etc.
-    Text(
-        text = "Título de la tarjeta",
-        style = MaterialTheme.typography.titleMedium,
-        modifier = Modifier.padding(16.dp)
-    )*/
+        // ---------------- CONTENIDO CARD ----------------
         Column(
-            modifier = Modifier
-                .fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-//            Box para contenedor gris oscuro del precio:
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
                     .padding(8.dp)
                     .fillMaxWidth()
                     .background(Color.DarkGray)
-            )
-            {
+            ) {
                 Text(
                     textAlign = TextAlign.Center,
-                    modifier = Modifier
-                        .padding(top = 8.dp),
-                    text = "$${product.price}",
+                    modifier = Modifier.padding(top = 8.dp),
+                    text = "$$priceText",
                     style = MaterialTheme.typography.titleMedium,
                     color = Color.White
                 )
-            } //Fin box
+            }
 
-//            Texto: Nombre producto:
             Text(
                 textAlign = TextAlign.Center,
-                text = "${product.name}",
+                text = nameText,
                 style = MaterialTheme.typography.titleMedium,
                 color = Color.Black
             )
 
-//            Texto: Categoria producto:
+
             Text(
                 textAlign = TextAlign.Center,
-                text = "${product.craftType}", //Categoria
+                text = categoryText,
                 style = MaterialTheme.typography.titleMedium,
                 color = Color.Black
             )
 
-//            Botones Eliminar y Editar:
             Row(
                 modifier = Modifier
                     .padding(16.dp)
@@ -257,7 +215,6 @@ fun PublicadosCard(
 
                 Button(
                     onClick = {
-                        /* Acción al hacer clic en el botón: Ir a pantalla de editar producto */
                         navController.navigate(Routes.EDITAR_PRODUCTO)
                     },
                     modifier = Modifier
@@ -267,9 +224,6 @@ fun PublicadosCard(
                     Text(text = "Editar")
                 }
             }
-//            Fin Row de botones Eliminar y Editar:
-
         }
     }
-
 }

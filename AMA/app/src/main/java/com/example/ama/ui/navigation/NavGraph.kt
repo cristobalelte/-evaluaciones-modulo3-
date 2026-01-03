@@ -132,15 +132,15 @@ fun AppNavigation(
 
         composable(Routes.HOME) {
             HomeScreen(
+                navController = navController,
                 cartCount = cartCount,
-                onOpenCart = { navController.navigate(Routes.CART) },
-                onSearch = { /* TODO */ },
-                onCategoryClick = { type ->
-                    navController.navigate("subcategory?category=${Uri.encode(type.name)}")
+                onOpenCart = { navController.navigate("carrito") },
+                onSearch = { q -> navController.navigate("productList?q=$q") },
+                onCategoryClickCategoryId = { categoryId ->
+                    navController.navigate("productList?categoryId=$categoryId")
                 },
-                onOpenPublish = { navController.navigate(Routes.PUBLISH) },
-                onOpenSettings = { navController.navigate(Routes.SETTINGS) },
-                navController = navController //SOLO PARA BOTON DE PRUEBA
+                onOpenPublish = { navController.navigate("publicar") },
+                onOpenSettings = { navController.navigate("settings") }
             )
         }
 
@@ -150,7 +150,8 @@ fun AppNavigation(
                 onBack = { navController.popBackStack() }
             )
         }
-
+        composable(Routes.HELP) { /* HelpScreen(...) */ }
+        composable(Routes.PROFILE) { /* PerfilScreen(...) */ }
         composable(Routes.CATALOG) {
             CatalogRoute(
                 vm = vm,

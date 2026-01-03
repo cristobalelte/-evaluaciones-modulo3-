@@ -6,10 +6,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.example.ama.core.dto.LoginRequest
-import com.example.ama.core.network.NetworkModule
+
 import com.example.ama.data.auth.AuthRepository
 import com.example.ama.data.auth.AuthRepositoryImpl
 import com.example.ama.data.local.UserPrefs
+import com.example.ama.data.network.NetworkModule
 
 class LoginViewModel : ViewModel() {
 

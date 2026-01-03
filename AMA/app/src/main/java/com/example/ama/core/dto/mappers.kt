@@ -1,18 +1,21 @@
-package com.example.ama.core.dto
+package com.example.ama.core.mappers
 
+import com.example.ama.core.dto.ProductDto
 import com.example.ama.ui.components.Product
 import com.example.ama.ui.components.ProductType
 
+
 // DTO -> UI model
-fun ProductDto.toUi(): Product = Product(
-    id        = id.toString(),
-    name      = name,
-    price     = price.toDouble(),
-    imageUrl  = "",                 // tu DTO no trae imagen; deja vacío o agrega campo si existe
-    author    = creator ?: "",
-    isActive  = true,
-    stock     = 0,
-    region    = region ?: "",
-    type      = ProductType.OTRO,
-    description = ""                // ajusta si el DTO trae descripción
+private fun ProductDto.toUi(): Product = Product(
+    id = (id ?: 0).toString(),
+    name = name ?: "(Sin nombre)",
+    price = (price?.toDoubleOrNull() ?: 0.0),
+    imageUrl = "",
+    author = sellerUserId?.toString() ?: "",
+    isActive = publicationStatus == "PUBLISHED",
+    stock = stock ?: 0,
+    region = "",
+    type = ProductType.OTRO,
+    description = description ?: "",
+    createdAt = 0L
 )

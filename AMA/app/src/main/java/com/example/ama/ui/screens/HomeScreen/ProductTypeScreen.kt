@@ -1,5 +1,6 @@
 package com.example.ama.ui.screens.HomeScreen
 
+
 import android.widget.Toast
 import androidx.compose.animation.expandHorizontally
 import androidx.compose.foundation.Image
@@ -71,9 +72,11 @@ fun ProductTypeScreen(
         },
         bottomBar = {
             BottomBar(
+                onHelpClick = {},
                 navController = navController,
                 onPublishClick = onOpenPublish,
-                onProfileClick = { navController.navigate("perfil") })
+                onProfileClick = { navController.navigate("profile") }
+            )
         }
     )
     { padding ->

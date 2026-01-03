@@ -8,10 +8,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.ama.data.dataclass.ProductData
+import com.example.ama.core.dto.ProductDto
 
 @Composable
-fun ProductCard(product: ProductData) {
+fun ProductCard(product: ProductDto) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -19,100 +19,107 @@ fun ProductCard(product: ProductData) {
     ) {
         product.name?.let {
             Text(
-                text = "Nombre: $it", style = MaterialTheme.typography.titleMedium,
+                text = "Nombre: $it",
+                style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.padding(16.dp)
             )
         }
 
-        product.creatorId?.let {
+        product.id?.let {
             Text(
-                text = "creator_Id: $it", style = MaterialTheme.typography.bodyMedium,
+                text = "Id: $it",
+                style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.padding(16.dp)
             )
         }
 
-//      Categoria:
-        product.craftType?.let {
+        product.sellerUserId?.let {
             Text(
-                text = "Categoria: $it", style = MaterialTheme.typography.bodyMedium,
+                text = "SellerUserId: $it",
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(16.dp)
+            )
+        }
+
+        product.description?.let {
+            Text(
+                text = "Descripción: $it",
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(16.dp)
+            )
+        }
+
+        product.categoryId?.let {
+            Text(
+                text = "CategoryId: $it",
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(16.dp)
+            )
+        }
+
+        product.material?.let {
+            Text(
+                text = "Material: $it",
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(16.dp)
+            )
+        }
+
+        product.color?.let {
+            Text(
+                text = "Color: $it",
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(16.dp)
+            )
+        }
+
+        product.size?.let {
+            Text(
+                text = "Tamaño: $it",
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(16.dp)
+            )
+        }
+
+        product.price?.let { price ->
+            val currency = product.currency ?: ""
+            Text(
+                text = "Precio: $price $currency",
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(16.dp)
+            )
+        }
+
+        product.stock?.let {
+            Text(
+                text = "Stock: $it",
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(16.dp)
+            )
+        }
+
+        product.publicationStatus?.let {
+            Text(
+                text = "Estado: $it",
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(16.dp)
+            )
+        }
+
+        product.publishedAt?.let {
+            Text(
+                text = "Publicado: $it",
+                style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.padding(16.dp)
             )
         }
 
         product.createdAt?.let {
             Text(
-                text = "Fecha: $it", style = MaterialTheme.typography.bodyMedium,
+                text = "Creado: $it",
+                style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.padding(16.dp)
             )
         }
-
-
-
-        product.id?.let {
-            Text(
-                text = "Id: $it", style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.padding(16.dp)
-            )
-        }
-
-        product.price?.let {
-            Text(
-                text = "Precio: $it", style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.padding(16.dp)
-            )
-        }
-
-        product.region?.let {
-            Text(
-                text = "Region: $it", style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.padding(16.dp)
-            )
-        }
-
-        product.material?: let {
-            Text(
-                text = "Material: $it", style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.padding(16.dp)
-            )
-
-        }
-
-        product.stock?.let {
-            Text(
-                text ="Stock: $it", style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.padding(16.dp)
-            )
-        }
-        product.isFeatured?.let {
-            if (it) {
-                Text(
-                    text = "Producto destacado", style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(16.dp)
-                )
-            } else {
-                Text(
-                    text = "Producto no destacado", style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(16.dp)
-                )
-            }
-
-        }
-
-        product.isActive?.let {
-            if (it) {
-                Text(
-                    text = "Producto activo", style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(16.dp)
-                )
-            }
-            else {
-                Text(
-                    text = "Producto inactivo", style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(16.dp)
-                )
-            }
-        }
-
     }
-
 }
