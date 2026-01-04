@@ -1,18 +1,18 @@
-package com.example.ama.ui.screens.AddProductScreen
+package com.example.ama.core.mappers
 
 import com.example.ama.core.dto.CreateProductRequest
-import com.example.ama.core.dto.PublishForm
+import com.example.ama.ui.screens.AddProductScreen.PublishForm
 
-private fun PublishForm.toCreateRequestOrNull(): CreateProductRequest? {
+fun PublishForm.toCreateRequestOrNull(): CreateProductRequest? {
     val nameOk = name.trim().takeIf { it.isNotBlank() } ?: return null
+
     val priceInt = price.trim().toIntOrNull() ?: return null
     if (priceInt <= 0) return null
 
     val stockInt = stock.trim().toIntOrNull() ?: 1
 
-    val categoryInt = categoryId.trim()
-        .takeIf { it.isNotBlank() }
-        ?.toIntOrNull()
+    val chosenCategoryId = subcategoryId.trim().ifBlank { categoryId.trim() }
+    val categoryInt = chosenCategoryId.takeIf { it.isNotBlank() }?.toIntOrNull()
 
     return CreateProductRequest(
         name = nameOk,

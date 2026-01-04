@@ -259,7 +259,9 @@ fun HomeScreen(
 
                                 CategoriesCarouselFigma(
                                     categories = categories,
-                                    onCategoryClickCategoryId = onCategoryClickCategoryId,
+                                    onCategoryClickCategoryId = { categoryId ->
+                                        navController.navigate("subcategory/$categoryId")
+                                    },
                                     modifier = Modifier.fillMaxWidth()
                                 )
                             }

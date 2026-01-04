@@ -3,7 +3,7 @@ package com.example.ama.ui.theme
 import androidx.compose.ui.graphics.Color
 
 /* ---------- Light ---------- */
-val primaryLight            = Color(0xFFB31217) // rojo marca
+val primaryLight            = Color(0xFF870A10) // rojo marca
 val onPrimaryLight          = Color(0xFFFFFFFF)
 val primaryContainerLight   = Color(0xFFF9E1E2) // rosado claro (chips/inputs)
 val onPrimaryContainerLight = Color(0xFF7F0E12) // rojo más oscuro para texto

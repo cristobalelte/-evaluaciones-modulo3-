@@ -1,9 +1,11 @@
 package com.example.ama.data.repository
 
+import com.example.ama.core.dto.CategoryDto
 import com.example.ama.core.dto.CreateProductRequest
 import com.example.ama.core.dto.ProductDto
 import com.example.ama.core.network.ApiService
 import com.example.ama.data.network.NetworkModule
+import com.example.ama.data.network.NetworkModule.apiService
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import retrofit2.HttpException
@@ -93,7 +95,15 @@ class ProductRepository(
     suspend fun createProduct(body: CreateProductRequest): ProductDto {
         return api.createProduct(body)
     }
-
+    suspend fun getCategories(): List<CategoryDto> {
+        return try {
+            api.getCategories()
+        } catch (_: Exception) {
+            emptyList()
+        }
+    }
+    suspend fun getAllCategories(): List<CategoryDto> =
+        apiService.getCategories()
     fun fullImageUrl(path: String?): String? {
         val p = path?.trim().orEmpty()
         if (p.isBlank()) return null

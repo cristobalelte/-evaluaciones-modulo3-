@@ -72,6 +72,7 @@ dependencies {
     implementation(libs.androidx.compose.ui.text)
     implementation(libs.androidx.compose.foundation.layout)
     implementation(libs.androidx.compose.foundation)
+    implementation(libs.androidx.compose.ui)
     ksp("androidx.room:room-compiler:2.6.1")
 
     // Kotlin Serialization (si lo ocupas en otra parte, déjalo; si no, bórralo)

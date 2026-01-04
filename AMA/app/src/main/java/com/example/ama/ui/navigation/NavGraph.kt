@@ -144,14 +144,24 @@ fun AppNavigation(
                 onOpenSettings = { navController.navigate("settings") }
             )
         }
+        composable("subcategory/{categoryId}") { backStackEntry ->
+            val categoryId = backStackEntry.arguments?.getString("categoryId")
 
+            ProductSubCatScreen(
+                navController = navController,
+                categoryId = categoryId ?: "0", // cambia este param en tu screen
+                cartCount = cartCount,
+                onOpenCart = { navController.navigate("cart") },
+                onOpenPublish = { navController.navigate("publish") },
+                onBack = { navController.popBackStack() }
+            )
+        }
         composable(Routes.PUBLISH) {
             AddProductRoute(
                 navController = navController,
-                catalogVm = vm,                 // vm = CatalogViewModel
-                cartCount = cartCount,          // usa tu state real
-                onOpenCart = { navController.navigate(Routes.CART) },       // usa tu lambda real
-                onBack = { navController.popBackStack() }
+                catalogVm = vm,
+                onBack = { navController.popBackStack() },
+
             )
         }
         composable(Routes.HELP) { /* HelpScreen(...) */ }
@@ -295,24 +305,7 @@ fun AppNavigation(
             )
         }
 
-        composable(
-            route = Routes.SUBCATEGORY, // "subcategory?category={category}"
-            arguments = listOf(navArgument("category") { type = NavType.StringType })
-        ) { backStack ->
-            val categoryStr = backStack.arguments?.getString("category") ?: ""
-            val category = runCatching { ProductType.valueOf(categoryStr) }
-                .getOrElse { ProductType.LANA } // fallback seguro
 
-            ProductSubCatScreen(
-                navController = navController,
-                category = category,
-                cartCount = cartCount,
-                onOpenCart = { navController.navigate(Routes.CART) },        // ✅ lambda en este scope
-                onOpenPublish = { navController.navigate(Routes.PUBLISH) },  // ✅ lambda en este scope
-                onBack = { navController.popBackStack() },
-                onSearch = { /* opcional: reenviar búsqueda */ }
-            )
-        }
 
 
         composable("regionScreen") {

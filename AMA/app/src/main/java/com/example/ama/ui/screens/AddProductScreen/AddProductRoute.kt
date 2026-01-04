@@ -2,34 +2,29 @@ package com.example.ama.ui.screens.AddProductScreen
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.ama.ui.screens.AddProductScreen
 import com.example.ama.ui.screens.catalog.CatalogViewModel
 
 @Composable
 fun AddProductRoute(
     navController: NavController,
     catalogVm: CatalogViewModel,
-    cartCount: Int,
-    onOpenCart: () -> Unit,
     onBack: () -> Unit
 ) {
-    val ctx = LocalContext.current
+    val vm: AddProductViewModel = viewModel()
 
+    // 1) Carga catálogo (si lo necesitas para refrescar después)
     LaunchedEffect(Unit) {
-        catalogVm.attachCatalog(ctx)
-        catalogVm.attachCart(ctx)
-        catalogVm.loadFromDisk(ctx)
+        // si tú realmente necesitas esto, déjalo:
+        // catalogVm.attachCatalog(ctx) etc...
+        vm.loadCategories() // <-- categorías backend
     }
-
-    val addVm: AddProductViewModel = viewModel()
 
     AddProductScreen(
         navController = navController,
-        cartCount = cartCount,
-        onOpenCart = onOpenCart,
-        vm = addVm,
+        vm = vm,
         onBack = onBack
     )
 }
