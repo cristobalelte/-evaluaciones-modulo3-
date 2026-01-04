@@ -1,5 +1,6 @@
 package com.example.ama.core.dto
 
+import android.net.Uri
 import com.google.gson.annotations.SerializedName
 
 data class ShoppingCarsDto(
@@ -44,17 +45,31 @@ data class ProductDto(
 )
 data class CreateProductRequest(
     val name: String,
-    val description: String,
-    val categoryId: Int,
-    val material: String,
-    val color: String,
-    val size: String,
+    val description: String? = null,
+    val categoryId: Int? = null,
+    val material: String? = null,
+    val color: String? = null,
+    val size: String? = null,
     val price: Int,
-    val currency: String,
-    val stock: Int,
-    val publicationStatus: String
+    val currency: String? = "CLP",
+    val stock: Int? = 1,
+    val publicationStatus: String? = "PUBLISHED"
+)
+data class PublishForm(
+    val name: String = "",
+    val description: String = "",
+    val categoryId: String = "",
+    val material: String = "",
+    val color: String = "",
+    val size: String = "",
+    val price: String = "",
+    val currency: String = "CLP",
+    val stock: String = "1",
+    val publicationStatus: String = "PUBLISHED",
+    val imageUri: Uri? = null
 )
 
+enum class PublishStep { STEP_1, STEP_2, STEP_3 }
 //LOGIN
 data class LoginRequest(
     val email: String,

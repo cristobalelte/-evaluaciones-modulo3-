@@ -1,29 +1,10 @@
-package com.example.ama.core.mappers
+package com.example.ama.ui.screens.AddProductScreen
 
 import com.example.ama.core.dto.CreateProductRequest
-import com.example.ama.core.dto.ProductDto
 import com.example.ama.core.dto.PublishForm
-import com.example.ama.ui.components.Product
-import com.example.ama.ui.components.ProductType
 
-
-// DTO -> UI model
-private fun ProductDto.toUi(): Product = Product(
-    id = (id ?: 0).toString(),
-    name = name ?: "(Sin nombre)",
-    price = (price?.toDoubleOrNull() ?: 0.0),
-    imageUrl = "",
-    author = sellerUserId?.toString() ?: "",
-    isActive = publicationStatus == "PUBLISHED",
-    stock = stock ?: 0,
-    region = "",
-    type = ProductType.OTRO,
-    description = description ?: "",
-    createdAt = 0L
-)
-fun PublishForm.toCreateRequestOrNull(): CreateProductRequest? {
+private fun PublishForm.toCreateRequestOrNull(): CreateProductRequest? {
     val nameOk = name.trim().takeIf { it.isNotBlank() } ?: return null
-
     val priceInt = price.trim().toIntOrNull() ?: return null
     if (priceInt <= 0) return null
 
@@ -31,7 +12,7 @@ fun PublishForm.toCreateRequestOrNull(): CreateProductRequest? {
 
     val categoryInt = categoryId.trim()
         .takeIf { it.isNotBlank() }
-        ?.toIntOrNull() // si viene texto raro, queda null
+        ?.toIntOrNull()
 
     return CreateProductRequest(
         name = nameOk,

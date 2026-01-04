@@ -1,5 +1,6 @@
 package com.example.ama.data.repository
 
+import com.example.ama.core.dto.CreateProductRequest
 import com.example.ama.core.dto.ProductDto
 import com.example.ama.core.network.ApiService
 import com.example.ama.data.network.NetworkModule
@@ -89,7 +90,9 @@ class ProductRepository(
             null
         }
     }
-
+    suspend fun createProduct(body: CreateProductRequest): ProductDto {
+        return api.createProduct(body)
+    }
 
     fun fullImageUrl(path: String?): String? {
         val p = path?.trim().orEmpty()

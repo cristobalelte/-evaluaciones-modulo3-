@@ -23,6 +23,7 @@ import com.example.ama.ui.Register.StartScreen
 import com.example.ama.ui.components.ProductType
 import com.example.ama.ui.screens.AddProductScreen.AddProductRoute
 
+
 import com.example.ama.ui.screens.HomeScreen.ProductPay
 import com.example.ama.ui.screens.HomeScreen.ProductRegionScreen
 import com.example.ama.ui.screens.HomeScreen.ProductTypeScreen
@@ -134,19 +135,22 @@ fun AppNavigation(
             HomeScreen(
                 navController = navController,
                 cartCount = cartCount,
-                onOpenCart = { navController.navigate("carrito") },
+                onOpenCart = { navController.navigate("cart") },
                 onSearch = { q -> navController.navigate("productList?q=$q") },
                 onCategoryClickCategoryId = { categoryId ->
                     navController.navigate("productList?categoryId=$categoryId")
                 },
-                onOpenPublish = { navController.navigate("publicar") },
+                onOpenPublish = { navController.navigate("publish") },
                 onOpenSettings = { navController.navigate("settings") }
             )
         }
 
         composable(Routes.PUBLISH) {
             AddProductRoute(
-                vm = vm,
+                navController = navController,
+                catalogVm = vm,                 // vm = CatalogViewModel
+                cartCount = cartCount,          // usa tu state real
+                onOpenCart = { navController.navigate(Routes.CART) },       // usa tu lambda real
                 onBack = { navController.popBackStack() }
             )
         }
